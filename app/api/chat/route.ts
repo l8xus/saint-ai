@@ -41,3 +41,6 @@ export async function POST(req: Request) {
   return result.toDataStreamResponse()
 }
 
+export async function GET() {
+  return new Response("🟢 API is working — POST only", { status: 200 })
+}
