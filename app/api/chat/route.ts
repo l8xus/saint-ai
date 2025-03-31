@@ -42,5 +42,6 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  return new Response("🟢 API is working — POST only", { status: 200 })
+  console.log("GET route hit");
+  return new Response("✅ Hello from the GET route!");
 }
