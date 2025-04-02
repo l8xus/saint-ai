@@ -1,14 +1,10 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
-import { ChevronLeft, ChevronRight, Menu, Send, User } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ChevronLeft, ChevronRight, Menu, Send } from "lucide-react"
 
 export default function Home() {
   const [selectedSaint, setSelectedSaint] = useState("St. Francis of Assisi")
@@ -134,234 +130,161 @@ export default function Home() {
     "What is your view on suffering?",
   ]
 
+  const handleSaintChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSaint(e.target.value)
+  }
+
   return (
-    <div className="flex min-h-screen bg-[#f0e6da]">
-      {/* Sidebar - Always visible on desktop, hidden on mobile unless toggled */}
-      <div
-        className={`${
-          isMobileMenuOpen ? "block" : "hidden"
-        } md:block fixed md:static md:w-[200px] lg:w-[250px] bg-[#f0e6da] border-r border-[#d0b557] z-20 md:z-0 h-full`}
-      >
-        <div className="p-4 h-full">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-['Cinzel'] font-bold text-[#2b2357]">Sanctus Dialogus</h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden text-[#76070d]"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-['Cinzel'] font-medium text-[#2b2357]">Choose Your Saint</h3>
-            <Select value={selectedSaint} onValueChange={setSelectedSaint}>
-              <SelectTrigger className="w-full border-[#d0b557] bg-[#f0e6da] text-[#2b2357] font-['Cormorant_Garamond']">
-                <SelectValue placeholder="Select a saint" />
-              </SelectTrigger>
-              <SelectContent className="bg-[#f0e6da] border-[#d0b557]">
-                <SelectItem value="St. Francis of Assisi" className="font-['Cormorant_Garamond']">
-                  St. Francis of Assisi
-                </SelectItem>
-                <SelectItem value="St. Thomas Aquinas" className="font-['Cormorant_Garamond']">
-                  St. Thomas Aquinas
-                </SelectItem>
-                <SelectItem value="St. Teresa of Ávila" className="font-['Cormorant_Garamond']">
-                  St. Teresa of Ávila
-                </SelectItem>
-                <SelectItem value="St. Augustine" className="font-['Cormorant_Garamond']">
-                  St. Augustine
-                </SelectItem>
-                <SelectItem value="St. Thérèse of Lisieux" className="font-['Cormorant_Garamond']">
-                  St. Thérèse of Lisieux
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="mt-6 p-4 bg-white/50 rounded-lg border border-[#d0b557]">
-            <div className="flex flex-col items-center mb-3">
-              <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-[#d0b557] mb-2">
-                <img
-                  src={saintInfo.image || "/placeholder.svg"}
-                  alt={saintInfo.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="text-lg font-['Cinzel'] text-[#2b2357] text-center">{saintInfo.name}</h3>
-              <p className="text-xs text-[#76070d] font-['Cormorant_Garamond'] italic">{saintInfo.years}</p>
-            </div>
-            <p className="text-sm text-black font-['Cormorant_Garamond'] mb-3 text-center">{saintInfo.description}</p>
-            <a
-              href={saintInfo.articleLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full text-center py-1 px-3 bg-[#2b2357] text-white font-['Cinzel'] text-sm rounded hover:bg-[#2b2357]/80 transition-colors"
-            >
-              Read More
-            </a>
-          </div>
-
-          <Separator className="my-4 bg-[#d0b557]" />
+    <div className="app-container">
+      {/* Sidebar */}
+      <div className={`sidebar ${isMobileMenuOpen ? "open" : ""}`}>
+        <div className="sidebar-header">
+          <h2 className="sidebar-title">Sanctus Dialogus</h2>
+          <button
+            className="close-button"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ display: isMobileMenuOpen ? "block" : "none" }}
+          >
+            ✕
+          </button>
         </div>
+
+        <div>
+          <h3>Choose Your Saint</h3>
+          <select className="saint-selector" value={selectedSaint} onChange={handleSaintChange}>
+            <option value="St. Francis of Assisi">St. Francis of Assisi</option>
+            <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
+            <option value="St. Teresa of Ávila">St. Teresa of Ávila</option>
+            <option value="St. Augustine">St. Augustine</option>
+            <option value="St. Thérèse of Lisieux">St. Thérèse of Lisieux</option>
+          </select>
+        </div>
+
+        <div className="saint-profile">
+          <div className="saint-image">
+            <img src={saintInfo.image || "/placeholder.svg"} alt={saintInfo.name} />
+          </div>
+          <h3 className="saint-name">{saintInfo.name}</h3>
+          <p className="saint-years">{saintInfo.years}</p>
+          <p className="saint-description">{saintInfo.description}</p>
+          <a href={saintInfo.articleLink} target="_blank" rel="noopener noreferrer" className="read-more">
+            Read More
+          </a>
+        </div>
+
+        <div className="separator"></div>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col h-screen max-w-full">
+      <div className="main-content">
         {/* Header */}
-        <header className="sticky top-0 z-10 bg-[#f0e6da] border-b border-[#d0b557] p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden text-[#76070d]"
+        <header className="header">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <button
                 onClick={() => setIsMobileMenuOpen(true)}
+                style={{ display: "block", background: "none", border: "none", cursor: "pointer" }}
+                className="menu-button"
               >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <h1 className="text-xl font-['Cinzel'] font-bold text-[#2b2357]">Dialogue with {selectedSaint}</h1>
+                <Menu size={24} />
+              </button>
+              <h1 className="header-title">Dialogue with {selectedSaint}</h1>
             </div>
-            <div className="md:hidden">
-              <Select value={selectedSaint} onValueChange={setSelectedSaint}>
-                <SelectTrigger className="h-8 border-[#d0b557] bg-[#f0e6da] text-[#2b2357] font-['Cormorant_Garamond']">
-                  <SelectValue placeholder="Select a saint" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#f0e6da] border-[#d0b557]">
-                  <SelectItem value="St. Francis of Assisi" className="font-['Cormorant_Garamond']">
-                    St. Francis of Assisi
-                  </SelectItem>
-                  <SelectItem value="St. Thomas Aquinas" className="font-['Cormorant_Garamond']">
-                    St. Thomas Aquinas
-                  </SelectItem>
-                  <SelectItem value="St. Teresa of Ávila" className="font-['Cormorant_Garamond']">
-                    St. Teresa of Ávila
-                  </SelectItem>
-                  <SelectItem value="St. Augustine" className="font-['Cormorant_Garamond']">
-                    St. Augustine
-                  </SelectItem>
-                  <SelectItem value="St. Thérèse of Lisieux" className="font-['Cormorant_Garamond']">
-                    St. Thérèse of Lisieux
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+            <div style={{ display: "block" }} className="mobile-selector">
+              <select
+                className="saint-selector"
+                value={selectedSaint}
+                onChange={handleSaintChange}
+                style={{ padding: "0.25rem", fontSize: "0.875rem" }}
+              >
+                <option value="St. Francis of Assisi">St. Francis of Assisi</option>
+                <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
+                <option value="St. Teresa of Ávila">St. Teresa of Ávila</option>
+                <option value="St. Augustine">St. Augustine</option>
+                <option value="St. Thérèse of Lisieux">St. Thérèse of Lisieux</option>
+              </select>
             </div>
           </div>
         </header>
 
         {/* Chat area */}
-        <div className="flex-1 flex flex-col h-full bg-white/50 overflow-hidden">
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full p-4">
-              <div className="space-y-4 max-w-3xl mx-auto">
-                {messages.map((message) => (
-                  <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`flex items-start gap-3 max-w-[80%]`}>
-                      {message.role !== "user" && (
-                        <Avatar className="mt-1 border-2 border-[#d0b557]">
-                          <AvatarImage src={saintInfo.image} alt={selectedSaint} />
-                          <AvatarFallback className="bg-[#f0e6da] text-[#76070d] font-['Cinzel']">
-                            {selectedSaint
-                              .split(" ")
-                              .map((word) => word[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
-
-                      <div
-                        className={`p-3 rounded-lg ${
-                          message.role === "user"
-                            ? "bg-[#2b2357] text-white"
-                            : "bg-[#f0e6da] border border-[#d0b557] text-black"
-                        } font-['Cormorant_Garamond']`}
-                      >
-                        <p className="whitespace-pre-wrap">{message.content}</p>
-                      </div>
-
-                      {message.role === "user" && (
-                        <Avatar className="mt-1 border-2 border-[#d0b557]">
-                          <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
-                          <AvatarFallback className="bg-[#f0e6da] text-[#76070d]">
-                            <User className="h-5 w-5" />
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
-                    </div>
+        <div className="chat-area">
+          <div style={{ maxWidth: "768px", margin: "0 auto" }}>
+            {messages.map((message) => (
+              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
+                {message.role !== "user" && (
+                  <div className="message-avatar">
+                    <img src={saintInfo.image || "/placeholder.svg"} alt={selectedSaint} />
                   </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            </ScrollArea>
-          </div>
+                )}
 
-          <div className="p-4 border-t border-[#d0b557] flex flex-col">
-            {showSuggestions && (
-              <div className="relative w-full mb-4 max-w-3xl mx-auto">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-[#f0e6da] border border-[#d0b557] text-[#2b2357] hover:text-[#76070d]"
-                  onClick={() => scrollSuggestions("left")}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-
-                <div
-                  ref={suggestionsRef}
-                  className="flex overflow-x-auto py-2 px-8 scrollbar-hide"
-                  style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                >
-                  {suggestedQuestions.map((question) => (
-                    <Button
-                      key={question}
-                      variant="outline"
-                      size="sm"
-                      className="flex-shrink-0 mx-1 bg-[#f0e6da] border-[#d0b557] text-[#2b2357] font-['Cormorant_Garamond'] hover:bg-white hover:text-[#76070d] whitespace-nowrap"
-                      onClick={() => {
-                        handleInputChange({ target: { value: question } } as any)
-                        setTimeout(() => {
-                          const form = document.querySelector("form")
-                          if (form) form.dispatchEvent(new Event("submit", { cancelable: true }))
-                        }, 100)
-                      }}
-                    >
-                      {question}
-                    </Button>
-                  ))}
+                <div className="message-content">
+                  <p>{message.content}</p>
                 </div>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-[#f0e6da] border border-[#d0b557] text-[#2b2357] hover:text-[#76070d]"
-                  onClick={() => scrollSuggestions("right")}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+                {message.role === "user" && (
+                  <div className="message-avatar">
+                    <img src="/placeholder.svg?height=40&width=40" alt="User" />
+                  </div>
+                )}
               </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="flex w-full gap-2 max-w-3xl mx-auto">
-              <Input
-                value={input}
-                onChange={handleInputChange}
-                placeholder="Ask for wisdom..."
-                className="flex-1 border-[#d0b557] bg-[#f0e6da] text-black font-['Cormorant_Garamond']"
-                disabled={isLoading}
-              />
-              <Button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                className="bg-[#76070d] hover:bg-[#76070d]/80 text-white font-['Cinzel']"
-              >
-                <Send className="h-4 w-4 mr-2" />
-                Send
-              </Button>
-            </form>
+            ))}
+            <div ref={messagesEndRef}></div>
           </div>
+        </div>
+
+        {/* Input area */}
+        <div className="input-area">
+          {showSuggestions && (
+            <div className="suggestions hide-scrollbar" style={{ maxWidth: "768px", margin: "0 auto" }}>
+              <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+                <ChevronLeft size={16} />
+              </button>
+
+              <div
+                ref={suggestionsRef}
+                className="hide-scrollbar"
+                style={{ display: "flex", overflowX: "auto", padding: "0 1.5rem" }}
+              >
+                {suggestedQuestions.map((question) => (
+                  <button
+                    key={question}
+                    className="suggestion-button"
+                    onClick={() => {
+                      handleInputChange({ target: { value: question } } as any)
+                      setTimeout(() => {
+                        const form = document.querySelector("form")
+                        if (form) form.dispatchEvent(new Event("submit", { cancelable: true }))
+                      }, 100)
+                    }}
+                  >
+                    {question}
+                  </button>
+                ))}
+              </div>
+
+              <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="input-form" style={{ maxWidth: "768px", margin: "0 auto" }}>
+            <input
+              type="text"
+              value={input}
+              onChange={handleInputChange}
+              placeholder="Ask for wisdom..."
+              className="input-field"
+              disabled={isLoading}
+            />
+            <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
+              <span className="send-icon">
+                <Send size={16} />
+              </span>
+              Send
+            </button>
+          </form>
         </div>
       </div>
     </div>
