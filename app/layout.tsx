@@ -1,20 +1,20 @@
 import type React from "react"
-import type { Metadata } from "next"
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import "./styles.css"
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Sanctus Dialogus - Converse with Catholic Saints",
-  description: "Experience spiritual conversations with Catholic saints through AI",
+  title: "Sanctus Dialogus - Catholic Saints Chatbot",
+  description: "Engage in spiritual conversations with Catholic saints",
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -23,11 +23,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
