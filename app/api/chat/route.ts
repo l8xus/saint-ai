@@ -1,5 +1,4 @@
 import { StreamingTextResponse, type Message } from "ai"
-import { experimental_StreamData } from "ai"
 import OpenAI from "openai"
 
 // Create an OpenAI API client
@@ -22,31 +21,45 @@ export async function POST(req: Request) {
     ...messages.filter((message: Message) => message.role !== "system"),
   ]
 
-  // Create a data stream
-  const data = new experimental_StreamData()
+  try {
+    // Generate a response using the OpenAI API with streaming
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // Using GPT-4o as requested
+      messages: messagesToSend.map((message) => ({
+        role: message.role,
+        content: message.content,
+      })),
+      temperature: 0.7,
+      stream: true,
+    })
 
-  // Generate a response using the OpenAI API (non-streaming)
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: messagesToSend.map((message) => ({
-      role: message.role,
-      content: message.content,
-    })),
-    temperature: 0.7,
-  })
+    // Create a stream from the response
+    const stream = new ReadableStream({
+      async start(controller) {
+        const encoder = new TextEncoder()
 
-  // Get the response content
-  const responseText = response.choices[0].message.content || ""
+        // Process each chunk from the OpenAI stream
+        for await (const chunk of response) {
+          // Extract the content delta if it exists
+          const content = chunk.choices[0]?.delta?.content || ""
+          if (content) {
+            // Send the content to the stream
+            controller.enqueue(encoder.encode(content))
+          }
+        }
 
-  // Create a ReadableStream from the response text
-  const stream = new ReadableStream({
-    start(controller) {
-      controller.enqueue(new TextEncoder().encode(responseText))
-      controller.close()
-    },
-  })
+        controller.close()
+      },
+    })
 
-  // Return a streaming response
-  return new StreamingTextResponse(stream, {}, data)
+    // Return a streaming response
+    return new StreamingTextResponse(stream)
+  } catch (error) {
+    console.error("Error calling OpenAI:", error)
+    return new Response(JSON.stringify({ error: "Failed to generate response" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    })
+  }
 }
 
