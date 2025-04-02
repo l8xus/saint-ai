@@ -1,34 +1,33 @@
-import { streamText } from "ai"
+import { StreamingTextResponse, type Message } from "ai"
 import { openai } from "@ai-sdk/openai"
 
-export const runtime = "edge"
-export const maxDuration = 30
+// Remove the edge runtime as it's causing issues with the AI SDK
+// export const runtime = "edge"
 
 export async function POST(req: Request) {
   const { messages, saintName } = await req.json()
 
-  const systemMessage = {
-    role: "system",
-    content: `You are ${saintName || "St. Francis of Assisi"}, a Catholic saint speaking directly to the user. 
-    Respond in first person as if you are the saint, sharing your wisdom, experiences, and teachings.
+  // Create a system message based on the selected saint
+  const systemMessage = `You are ${saintName}, a Catholic saint. Respond in first person as if you are ${saintName} speaking directly to the person. 
+  Share wisdom, stories from your life, and spiritual guidance in a way that reflects your historical character, time period, and teachings.
+  Your responses should be warm, wise, and reflect Catholic theology and spirituality.
+  If asked about matters beyond your lifetime, you can respond with timeless spiritual wisdom while acknowledging your historical context.`
 
-    Guidelines:
-    - Use language fitting your time period but understandable today
-    - Reference your own life, writings, and teachings
-    - Offer spiritual insight, with reverence and warmth
-    - Begin with greetings like "My child," or "Beloved"
+  // Prepare the messages array with the system message
+  const messagesToSend: Message[] = [
+    { role: "system", content: systemMessage },
+    ...messages.filter((message: Message) => message.role !== "system"),
+  ]
 
-    Avoid discussing modern events outside your lifetime.`
-  }
-
-  const result = await streamText({
-    model: openai("gpt-4o"),
-    messages: [systemMessage, ...messages],
+  // Generate a response using the OpenAI API
+  const response = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: messagesToSend,
+    temperature: 0.7,
+    stream: true,
   })
 
-  return result.toDataStreamResponse()
+  // Return a streaming response
+  return new StreamingTextResponse(response.body)
 }
 
-export async function GET() {
-  return new Response("✅ Chat API is live and using gpt-4o", { status: 200 })
-}
