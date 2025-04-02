@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
-import { ChevronLeft, ChevronRight, Menu, Send } from "lucide-react"
+import { ChevronLeft, ChevronRight, Menu, Send, X } from "lucide-react"
 
 export default function Home() {
   const [selectedSaint, setSelectedSaint] = useState("St. Francis of Assisi")
@@ -140,12 +140,8 @@ export default function Home() {
       <div className={`sidebar ${isMobileMenuOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <h2 className="sidebar-title">Sanctus Dialogus</h2>
-          <button
-            className="close-button"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={{ display: isMobileMenuOpen ? "block" : "none" }}
-          >
-            ✕
+          <button className="close-button" onClick={() => setIsMobileMenuOpen(false)}>
+            <X size={20} />
           </button>
         </div>
 
@@ -161,8 +157,8 @@ export default function Home() {
         </div>
 
         <div className="saint-profile">
-          <div className="saint-image">
-            <img src={saintInfo.image || "/placeholder.svg"} alt={saintInfo.name} />
+          <div className="saint-image-container">
+            <img src={saintInfo.image || "/placeholder.svg"} alt={saintInfo.name} className="saint-image" />
           </div>
           <h3 className="saint-name">{saintInfo.name}</h3>
           <p className="saint-years">{saintInfo.years}</p>
@@ -172,30 +168,26 @@ export default function Home() {
           </a>
         </div>
 
-        <div className="separator"></div>
+        <hr className="separator" />
       </div>
 
       {/* Main content */}
       <div className="main-content">
         {/* Header */}
         <header className="header">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <button
-                onClick={() => setIsMobileMenuOpen(true)}
-                style={{ display: "block", background: "none", border: "none", cursor: "pointer" }}
-                className="menu-button"
-              >
+          <div className="header-content">
+            <div className="header-left">
+              <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
                 <Menu size={24} />
               </button>
               <h1 className="header-title">Dialogue with {selectedSaint}</h1>
             </div>
-            <div style={{ display: "block" }} className="mobile-selector">
+            <div className="mobile-selector">
               <select
                 className="saint-selector"
                 value={selectedSaint}
                 onChange={handleSaintChange}
-                style={{ padding: "0.25rem", fontSize: "0.875rem" }}
+                style={{ padding: "0.5rem", fontSize: "0.875rem" }}
               >
                 <option value="St. Francis of Assisi">St. Francis of Assisi</option>
                 <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
@@ -209,7 +201,7 @@ export default function Home() {
 
         {/* Chat area */}
         <div className="chat-area">
-          <div style={{ maxWidth: "768px", margin: "0 auto" }}>
+          <div className="chat-container">
             {messages.map((message) => (
               <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
                 {message.role !== "user" && (
@@ -235,56 +227,54 @@ export default function Home() {
 
         {/* Input area */}
         <div className="input-area">
-          {showSuggestions && (
-            <div className="suggestions hide-scrollbar" style={{ maxWidth: "768px", margin: "0 auto" }}>
-              <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
-                <ChevronLeft size={16} />
-              </button>
+          <div className="input-container">
+            {showSuggestions && (
+              <div className="suggestions-container">
+                <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+                  <ChevronLeft size={16} />
+                </button>
 
-              <div
-                ref={suggestionsRef}
-                className="hide-scrollbar"
-                style={{ display: "flex", overflowX: "auto", padding: "0 1.5rem" }}
-              >
-                {suggestedQuestions.map((question) => (
-                  <button
-                    key={question}
-                    className="suggestion-button"
-                    onClick={() => {
-                      handleInputChange({ target: { value: question } } as any)
-                      setTimeout(() => {
-                        const form = document.querySelector("form")
-                        if (form) form.dispatchEvent(new Event("submit", { cancelable: true }))
-                      }, 100)
-                    }}
-                  >
-                    {question}
-                  </button>
-                ))}
+                <div ref={suggestionsRef} className="suggestions hide-scrollbar">
+                  {suggestedQuestions.map((question) => (
+                    <button
+                      key={question}
+                      className="suggestion-button"
+                      onClick={() => {
+                        handleInputChange({ target: { value: question } } as any)
+                        setTimeout(() => {
+                          const form = document.querySelector("form")
+                          if (form) form.dispatchEvent(new Event("submit", { cancelable: true }))
+                        }, 100)
+                      }}
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+
+                <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+                  <ChevronRight size={16} />
+                </button>
               </div>
+            )}
 
-              <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
-                <ChevronRight size={16} />
+            <form onSubmit={handleSubmit} className="input-form">
+              <input
+                type="text"
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Ask for wisdom..."
+                className="input-field"
+                disabled={isLoading}
+              />
+              <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
+                <span className="send-icon">
+                  <Send size={16} />
+                </span>
+                Send
               </button>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="input-form" style={{ maxWidth: "768px", margin: "0 auto" }}>
-            <input
-              type="text"
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Ask for wisdom..."
-              className="input-field"
-              disabled={isLoading}
-            />
-            <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
-              <span className="send-icon">
-                <Send size={16} />
-              </span>
-              Send
-            </button>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
