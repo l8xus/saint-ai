@@ -28,7 +28,7 @@ h6 {
 
 /* Sidebar */
 .sidebar {
-  width: 250px;
+  width: 300px; /* Increased from 250px */
   background-color: #f0e6da;
   border-right: 1px solid #d0b557;
   padding: 1.5rem;
@@ -60,6 +60,7 @@ h6 {
   font-size: 1.25rem;
   cursor: pointer;
   padding: 0.25rem;
+  display: none; /* Hide by default on desktop */
 }
 
 .saint-selector {
@@ -151,11 +152,11 @@ h6 {
 /* Main content */
 .main-content {
   flex: 1;
-  margin-left: 250px;
+  margin-left: 300px; /* Increased from 250px */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  width: calc(100% - 250px);
+  width: calc(100% - 300px); /* Adjusted to match new sidebar width */
 }
 
 /* Header */
@@ -390,6 +391,10 @@ h6 {
 
   .sidebar.open {
     display: block;
+  }
+
+  .close-button {
+    display: block; /* Show only on mobile */
   }
 
   .main-content {
