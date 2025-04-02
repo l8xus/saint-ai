@@ -2,13 +2,13 @@
 
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
+import { Button } from "../../components/ui/button"
+import { Input } from "../../components/ui/input"
+import { ScrollArea } from "../../components/ui/scroll-area"
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
+import { Separator } from "../../components/ui/separator"
 import { ChevronLeft, ChevronRight, Cross, Send, User } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 
 export default function Home() {
   const [selectedSaint, setSelectedSaint] = useState("St. Francis of Assisi")
