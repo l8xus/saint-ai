@@ -1,5 +1,5 @@
 import { StreamingTextResponse, type Message } from "ai"
-import { OpenAIStream } from "ai"
+import { experimental_StreamData } from "ai"
 import OpenAI from "openai"
 
 // Create an OpenAI API client
@@ -22,18 +22,31 @@ export async function POST(req: Request) {
     ...messages.filter((message: Message) => message.role !== "system"),
   ]
 
-  // Generate a response using the OpenAI API
+  // Create a data stream
+  const data = new experimental_StreamData()
+
+  // Generate a response using the OpenAI API (non-streaming)
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: messagesToSend,
+    model: "gpt-4o",
+    messages: messagesToSend.map((message) => ({
+      role: message.role,
+      content: message.content,
+    })),
     temperature: 0.7,
-    stream: true,
   })
 
-  // Convert the response to a readable stream
-  const stream = OpenAIStream(response)
+  // Get the response content
+  const responseText = response.choices[0].message.content || ""
+
+  // Create a ReadableStream from the response text
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new TextEncoder().encode(responseText))
+      controller.close()
+    },
+  })
 
   // Return a streaming response
-  return new StreamingTextResponse(stream)
+  return new StreamingTextResponse(stream, {}, data)
 }
 
