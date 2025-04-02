@@ -1,8 +1,6 @@
 import { StreamingTextResponse, type Message } from "ai"
+import { generateText } from "ai"
 import { openai } from "@ai-sdk/openai"
-
-// Remove the edge runtime as it's causing issues with the AI SDK
-// export const runtime = "edge"
 
 export async function POST(req: Request) {
   const { messages, saintName } = await req.json()
@@ -13,21 +11,21 @@ export async function POST(req: Request) {
   Your responses should be warm, wise, and reflect Catholic theology and spirituality.
   If asked about matters beyond your lifetime, you can respond with timeless spiritual wisdom while acknowledging your historical context.`
 
-  // Prepare the messages array with the system message
-  const messagesToSend: Message[] = [
-    { role: "system", content: systemMessage },
-    ...messages.filter((message: Message) => message.role !== "system"),
-  ]
+  // Get the last user message
+  const lastUserMessage = messages[messages.length - 1]
 
-  // Generate a response using the OpenAI API
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: messagesToSend,
+  // Generate a response using the AI SDK
+  const result = await generateText({
+    model: openai("gpt-4o"),
+    messages: [
+      { role: "system", content: systemMessage },
+      ...messages.filter((message: Message) => message.role !== "system"),
+    ],
     temperature: 0.7,
     stream: true,
   })
 
   // Return a streaming response
-  return new StreamingTextResponse(response.body)
+  return new StreamingTextResponse(result.toStream())
 }
 
