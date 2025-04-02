@@ -138,11 +138,14 @@ export default function Home() {
     <div className="app-container">
       {/* Sidebar */}
       <div className={`sidebar ${isMobileMenuOpen ? "open" : ""}`}>
+        {/* Sidebar Header */}
         <div className="sidebar-header">
           <h2 className="sidebar-title">Sanctus Dialogus</h2>
-          <button className="close-button" onClick={() => setIsMobileMenuOpen(false)}>
-            <X size={20} />
-          </button>
+          {isMobileMenuOpen && (
+            <button className="close-button" onClick={() => setIsMobileMenuOpen(false)}>
+              <X size={20} />
+            </button>
+          )}
         </div>
 
         <div>
