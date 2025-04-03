@@ -6,20 +6,13 @@ import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
 import { ChevronLeft, ChevronRight, Menu, Send, X } from "lucide-react"
 
-// Import the images directly to ensure they're properly handled by Next.js
-import stFrancisImage from "../public/images/saints/st-francis.jpg"
-import stThomasImage from "../public/images/saints/st-thomas.jpg"
-import stTeresaImage from "../public/images/saints/st-teresa.jpg"
-import stAugustineImage from "../public/images/saints/st-augustine.jpg"
-import stThereseImage from "../public/images/saints/st-therese.jpg"
-
 export default function Home() {
   const [selectedSaint, setSelectedSaint] = useState("St. Francis of Assisi")
   const [saintInfo, setSaintInfo] = useState({
     name: "St. Francis of Assisi",
     years: "1181-1226",
     description: "Founder of the Franciscan Order, known for my love of nature and animals.",
-    image: stFrancisImage.src,
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/assissi-xsrYL2QtPtrEYH4rNJYmlDIPqYzdw0.jpeg", // Direct URL to the image
     articleLink: "/articles/st-francis-of-assisi",
   })
   const [showSuggestions, setShowSuggestions] = useState(true)
@@ -67,35 +60,35 @@ export default function Home() {
         name: "St. Francis of Assisi",
         years: "1181-1226",
         description: "Founder of the Franciscan Order, known for my love of nature and animals.",
-        image: stFrancisImage.src,
+        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/assissi-xsrYL2QtPtrEYH4rNJYmlDIPqYzdw0.jpeg",
         articleLink: "/articles/st-francis-of-assisi",
       },
       "St. Thomas Aquinas": {
         name: "St. Thomas Aquinas",
         years: "1225-1274",
         description: "Dominican friar and Doctor of the Church, known for my theological writings.",
-        image: stThomasImage.src,
+        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/thomas-9Kv24UV6iR1gEISzY3XtHAr1G57l4j.jpeg",
         articleLink: "/articles/st-thomas-aquinas",
       },
       "St. Teresa of Ávila": {
         name: "St. Teresa of Ávila",
         years: "1515-1582",
         description: "Spanish mystic, Carmelite nun, and reformer of the Carmelite Order.",
-        image: stTeresaImage.src,
+        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avila-zcNzree2r4Y7mMecpkqr7lvi1IHEtN.jpeg",
         articleLink: "/articles/st-teresa-of-avila",
       },
       "St. Augustine": {
         name: "St. Augustine",
         years: "354-430",
         description: "Bishop of Hippo and Doctor of the Church, known for my theological writings.",
-        image: stAugustineImage.src,
+        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/augistine-cl5Y961nWwBEBoAmBuuXZ41Sn3vjsb.jpeg",
         articleLink: "/articles/st-augustine",
       },
       "St. Thérèse of Lisieux": {
         name: "St. Thérèse of Lisieux",
         years: "1873-1897",
         description: 'Carmelite nun known as "The Little Flower" and Doctor of the Church.',
-        image: stThereseImage.src,
+        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lisieux-d4NxJJC52xSrbWtRRCfpWKOksK3XYV.jpeg",
         articleLink: "/articles/st-therese-of-lisieux",
       },
     }
