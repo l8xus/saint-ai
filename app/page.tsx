@@ -12,7 +12,7 @@ export default function Home() {
     name: "St. Francis of Assisi",
     years: "1181-1226",
     description: "Founder of the Franciscan Order, known for my love of nature and animals.",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "/images/saints/st-francis.jpg",
     articleLink: "/articles/st-francis-of-assisi",
   })
   const [showSuggestions, setShowSuggestions] = useState(true)
@@ -60,35 +60,35 @@ export default function Home() {
         name: "St. Francis of Assisi",
         years: "1181-1226",
         description: "Founder of the Franciscan Order, known for my love of nature and animals.",
-        image: "/placeholder.svg?height=200&width=200",
+        image: "/images/saints/st-francis.jpg",
         articleLink: "/articles/st-francis-of-assisi",
       },
       "St. Thomas Aquinas": {
         name: "St. Thomas Aquinas",
         years: "1225-1274",
         description: "Dominican friar and Doctor of the Church, known for my theological writings.",
-        image: "/placeholder.svg?height=200&width=200",
+        image: "/images/saints/st-thomas.jpg",
         articleLink: "/articles/st-thomas-aquinas",
       },
       "St. Teresa of Ávila": {
         name: "St. Teresa of Ávila",
         years: "1515-1582",
         description: "Spanish mystic, Carmelite nun, and reformer of the Carmelite Order.",
-        image: "/placeholder.svg?height=200&width=200",
+        image: "/images/saints/st-teresa.jpg",
         articleLink: "/articles/st-teresa-of-avila",
       },
       "St. Augustine": {
         name: "St. Augustine",
         years: "354-430",
         description: "Bishop of Hippo and Doctor of the Church, known for my theological writings.",
-        image: "/placeholder.svg?height=200&width=200",
+        image: "/images/saints/st-augustine.jpg",
         articleLink: "/articles/st-augustine",
       },
       "St. Thérèse of Lisieux": {
         name: "St. Thérèse of Lisieux",
         years: "1873-1897",
         description: 'Carmelite nun known as "The Little Flower" and Doctor of the Church.',
-        image: "/placeholder.svg?height=200&width=200",
+        image: "/images/saints/st-therese.jpg",
         articleLink: "/articles/st-therese-of-lisieux",
       },
     }
@@ -134,6 +134,11 @@ export default function Home() {
     setSelectedSaint(e.target.value)
   }
 
+  // Function to handle image loading errors
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = "/placeholder.svg?height=200&width=200"
+  }
+
   return (
     <div className="app-container">
       {/* Sidebar */}
@@ -161,7 +166,12 @@ export default function Home() {
 
         <div className="saint-profile">
           <div className="saint-image-container">
-            <img src={saintInfo.image || "/placeholder.svg"} alt={saintInfo.name} className="saint-image" />
+            <img
+              src={saintInfo.image || "/placeholder.svg"}
+              alt={saintInfo.name}
+              className="saint-image"
+              onError={handleImageError}
+            />
           </div>
           <h3 className="saint-name">{saintInfo.name}</h3>
           <p className="saint-years">{saintInfo.years}</p>
@@ -209,7 +219,7 @@ export default function Home() {
               <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
                 {message.role !== "user" && (
                   <div className="message-avatar">
-                    <img src={saintInfo.image || "/placeholder.svg"} alt={selectedSaint} />
+                    <img src={saintInfo.image || "/placeholder.svg"} alt={selectedSaint} onError={handleImageError} />
                   </div>
                 )}
 
