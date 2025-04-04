@@ -67,11 +67,11 @@ export default function Home() {
       saintName: selectedSaint,
     },
     onFinish: () => {
-      // Check if there are user messages and hide suggestions if there are
-      const userMessages = messages.filter((msg) => msg.role === "user")
-      if (userMessages.length > 0) {
-        setShowSuggestions(false)
-      }
+      // Generate new contextual suggestions after receiving a response
+      const newSuggestions = generateContextualSuggestions()
+      setDynamicSuggestions(newSuggestions)
+      // Always show suggestions
+      setShowSuggestions(true)
     },
   })
 
@@ -82,11 +82,164 @@ export default function Home() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  // Check if there are user messages and update showSuggestions
-  useEffect(() => {
+  // First, let's modify the useEffect that currently hides suggestions after the first message
+  // We'll remove this effect since we want suggestions to always show
+
+  // Remove or comment out this useEffect:
+  // useEffect(() => {
+  //   const userMessages = messages.filter((msg) => msg.role === "user")
+  //   setShowSuggestions(userMessages.length === 0)
+  // }, [messages])
+
+  // Instead, let's always show suggestions and make them contextual
+  // Add these new functions and state for dynamic suggestions
+
+  // Add this new state for dynamic suggestions after the other state declarations
+  const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([])
+
+  // Add this function to generate contextual follow-up questions based on conversation
+  const generateContextualSuggestions = () => {
+    // Only generate contextual suggestions if there's at least one exchange
+    if (messages.length < 2) {
+      return suggestedQuestions // Return default questions for the first interaction
+    }
+
+    // Get the last user message and saint response
     const userMessages = messages.filter((msg) => msg.role === "user")
-    setShowSuggestions(userMessages.length === 0)
-  }, [messages])
+    const lastUserMessage = userMessages[userMessages.length - 1]?.content.toLowerCase() || ""
+    const lastSaintResponse = messages[messages.length - 1]?.content || ""
+
+    // Define patterns to look for and corresponding follow-up questions
+    const patterns = [
+      {
+        keywords: ["pray", "prayer", "praying"],
+        questions: [
+          "Can you teach me a prayer you often said?",
+          "How did prayer transform your life?",
+          "What advice do you have for someone struggling with prayer?",
+        ],
+      },
+      {
+        keywords: ["suffering", "pain", "difficult", "hardship", "challenge"],
+        questions: [
+          "How did you find meaning in suffering?",
+          "What was your greatest trial?",
+          "How can I offer up my suffering as you did?",
+        ],
+      },
+      {
+        keywords: ["conversion", "change", "transform"],
+        questions: [
+          "What was the moment that changed your life?",
+          "How did your conversion affect those around you?",
+          "What advice do you have for someone seeking conversion?",
+        ],
+      },
+      {
+        keywords: ["teaching", "wisdom", "lesson"],
+        questions: [
+          "What other teachings are important for our times?",
+          "How did you share your wisdom with others?",
+          "What is the most misunderstood aspect of your teachings?",
+        ],
+      },
+      {
+        keywords: ["call", "vocation", "purpose"],
+        questions: [
+          "How did you discern God's will in your life?",
+          "What advice do you have for finding one's vocation?",
+          "Did you ever doubt your calling?",
+        ],
+      },
+      {
+        keywords: ["miracle", "supernatural", "vision"],
+        questions: [
+          "Can you tell me about a miracle in your life?",
+          "How did your mystical experiences shape your faith?",
+          "What should we understand about supernatural experiences?",
+        ],
+      },
+      {
+        keywords: ["church", "catholic", "faith", "belief"],
+        questions: [
+          "What do you think of the Church today?",
+          "How did you remain faithful during difficult times?",
+          "What is the most important aspect of the faith to preserve?",
+        ],
+      },
+      {
+        keywords: ["sin", "temptation", "struggle", "weakness"],
+        questions: [
+          "How did you overcome your greatest temptation?",
+          "What advice do you have for those struggling with sin?",
+          "How did you find forgiveness?",
+        ],
+      },
+      {
+        keywords: ["love", "charity", "compassion"],
+        questions: [
+          "How did you practice charity in your daily life?",
+          "What does true Christian love look like?",
+          "How can I grow in compassion for others?",
+        ],
+      },
+      {
+        keywords: ["heaven", "afterlife", "eternity", "death"],
+        questions: [
+          "What do you think heaven is like?",
+          "How should we prepare for death?",
+          "How do you intercede for us now?",
+        ],
+      },
+    ]
+
+    // Check if any keywords match the last exchange
+    let matchedQuestions: string[] = []
+
+    // Check user message for keywords
+    for (const pattern of patterns) {
+      if (pattern.keywords.some((keyword) => lastUserMessage.includes(keyword))) {
+        matchedQuestions = [...matchedQuestions, ...pattern.questions]
+      }
+    }
+
+    // Also check saint response for keywords to catch themes in the response
+    for (const pattern of patterns) {
+      if (pattern.keywords.some((keyword) => lastSaintResponse.toLowerCase().includes(keyword))) {
+        matchedQuestions = [...matchedQuestions, ...pattern.questions]
+      }
+    }
+
+    // If we found matches, return them (up to 5 random ones)
+    if (matchedQuestions.length > 0) {
+      // Shuffle and take up to 5
+      return shuffleArray(matchedQuestions).slice(0, 5)
+    }
+
+    // If no specific matches, return general follow-up questions
+    return [
+      "Can you elaborate on that?",
+      "How does that relate to your spirituality?",
+      "What scripture guided you in this area?",
+      "How can I apply this wisdom today?",
+      "Did you write about this in your works?",
+    ]
+  }
+
+  // Helper function to shuffle an array (for randomizing suggestions)
+  const shuffleArray = (array: string[]) => {
+    const newArray = [...array]
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+    }
+    return newArray
+  }
+
+  // Initialize dynamic suggestions with default questions
+  useEffect(() => {
+    setDynamicSuggestions(suggestedQuestions)
+  }, [])
 
   // List of all saints with their alternative names for search
   const saintsWithAlternatives = [
@@ -564,7 +717,7 @@ export default function Home() {
                 </button>
 
                 <div ref={suggestionsRef} className="suggestions hide-scrollbar">
-                  {suggestedQuestions.map((question) => (
+                  {dynamicSuggestions.map((question) => (
                     <button
                       key={question}
                       className="suggestion-button"
