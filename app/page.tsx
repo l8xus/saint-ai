@@ -76,16 +76,18 @@ export default function Home() {
   // Generate contextual follow-up questions based on conversation
   const generateContextualSuggestions = () => {
     console.log("Generating contextual suggestions...")
+    console.log("Current messages:", messages)
 
     // Only generate contextual suggestions if there's at least one exchange
     if (messages.length < 2) {
-      return defaultSuggestedQuestions // Return default questions for the first interaction
+      console.log("Not enough messages, returning default questions")
+      return defaultSuggestedQuestions
     }
 
     // Get the last user message and saint response
     const userMessages = messages.filter((msg) => msg.role === "user")
     const lastUserMessage = userMessages[userMessages.length - 1]?.content.toLowerCase() || ""
-    const lastSaintResponse = messages[messages.length - 1]?.content || ""
+    const lastSaintResponse = messages[messages.length - 1]?.content.toLowerCase() || ""
 
     console.log("Last user message:", lastUserMessage)
     console.log("Last saint response:", lastSaintResponse)
@@ -128,7 +130,7 @@ export default function Home() {
         keywords: ["call", "vocation", "purpose"],
         questions: [
           "How did you discern God's will in your life?",
-          "What advice do you have for finding one's vocation?",
+          "What advice do you have for someone finding one's vocation?",
           "Did you ever doubt your calling?",
         ],
       },
@@ -180,24 +182,30 @@ export default function Home() {
     // Check user message for keywords
     for (const pattern of patterns) {
       if (pattern.keywords.some((keyword) => lastUserMessage.includes(keyword))) {
+        console.log(`Found keyword match in user message: ${pattern.keywords}`)
         matchedQuestions = [...matchedQuestions, ...pattern.questions]
       }
     }
 
     // Also check saint response for keywords to catch themes in the response
     for (const pattern of patterns) {
-      if (pattern.keywords.some((keyword) => lastSaintResponse.toLowerCase().includes(keyword))) {
+      if (pattern.keywords.some((keyword) => lastSaintResponse.includes(keyword))) {
+        console.log(`Found keyword match in saint response: ${pattern.keywords}`)
         matchedQuestions = [...matchedQuestions, ...pattern.questions]
       }
     }
 
     // If we found matches, return them (up to 5 random ones)
     if (matchedQuestions.length > 0) {
+      console.log(`Found ${matchedQuestions.length} matched questions, shuffling and taking 5`)
       // Shuffle and take up to 5
-      return shuffleArray(matchedQuestions).slice(0, 5)
+      const shuffled = shuffleArray(matchedQuestions).slice(0, 5)
+      console.log("Returning shuffled questions:", shuffled)
+      return shuffled
     }
 
     // If no specific matches, return general follow-up questions
+    console.log("No specific matches found, returning general follow-up questions")
     return [
       "Can you elaborate on that?",
       "How does that relate to your spirituality?",
@@ -229,25 +237,37 @@ export default function Home() {
     body: {
       saintName: selectedSaint,
     },
-    onFinish: () => {
-      // Generate new contextual suggestions after receiving a response
-      const newSuggestions = generateContextualSuggestions()
-      console.log("New suggestions:", newSuggestions)
-      setDynamicSuggestions(newSuggestions)
+    onFinish: (message) => {
+      console.log("onFinish triggered with message:", message)
 
-      // Always show suggestions
-      setShowSuggestions(true)
-
-      // Ensure we scroll to the bottom after the response is complete
+      // Force update suggestions with a slight delay to ensure the message is processed
       setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-      }, 100)
+        const newSuggestions = generateContextualSuggestions()
+        console.log("Generated new suggestions:", newSuggestions)
+        setDynamicSuggestions(newSuggestions)
+        setShowSuggestions(true)
+
+        // Force scroll to bottom
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+        }
+      }, 300)
     },
   })
 
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  // Add this useEffect to ensure suggestions are updated when messages change
+  useEffect(() => {
+    // Skip the initial render
+    if (messages.length > 1) {
+      console.log("Messages changed, updating suggestions")
+      const newSuggestions = generateContextualSuggestions()
+      setDynamicSuggestions(newSuggestions)
+    }
   }, [messages])
 
   // List of all saints with their alternative names for search
@@ -504,6 +524,15 @@ export default function Home() {
     setSearchQuery("")
   }, [selectedSaint, setMessages])
 
+  // Add this useEffect to ensure scrolling works
+  useEffect(() => {
+    // Force scroll to bottom whenever messages change
+    if (messagesEndRef.current) {
+      console.log("Scrolling to bottom due to message change")
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [messages])
+
   // Scroll suggestions
   const scrollSuggestions = (direction: "left" | "right") => {
     if (suggestionsRef.current) {
@@ -561,19 +590,49 @@ export default function Home() {
 
   // Function to handle suggestion click
   const handleSuggestionClick = (question: string) => {
+    // First update the UI to show the question was selected
     append({
       role: "user",
       content: question,
     })
+
+    // Force scroll to bottom immediately
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+      }
+    }, 100)
   }
 
   // Custom submit handler to ensure suggestions update
   const customSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!input.trim() || isLoading) return
 
-    if (input.trim()) {
-      handleSubmit(e)
-    }
+    // Call the original submit handler
+    handleSubmit(e)
+
+    // Force scroll to bottom immediately after submitting
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+      }
+    }, 100)
+  }
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!input.trim() || isLoading) return
+
+    // Call the original submit handler
+    handleSubmit(e)
+
+    // Force scroll to bottom immediately after submitting
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+      }
+    }, 100)
   }
 
   return (
@@ -713,7 +772,7 @@ export default function Home() {
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef}></div>
+            <div ref={messagesEndRef} style={{ height: "1px", width: "100%" }}></div>
           </div>
         </div>
 
@@ -744,7 +803,7 @@ export default function Home() {
               </div>
             )}
 
-            <form onSubmit={customSubmitHandler} className="input-form">
+            <form onSubmit={handleFormSubmit} className="input-form">
               <input
                 type="text"
                 value={input}
