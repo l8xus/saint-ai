@@ -85,6 +85,73 @@ h6 {
   background-size: 1em;
 }
 
+/* Search styles */
+.search-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: #76070d;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #d0b557;
+  border-radius: 0.25rem;
+  background-color: #f0e6da;
+  font-family: "Domine", serif;
+  color: #2b2357;
+  font-size: 1rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #2b2357;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  background-color: #f0e6da;
+  border: 1px solid #d0b557;
+  border-top: none;
+  border-radius: 0 0 0.25rem 0.25rem;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-result-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:hover,
+.search-result-item.active {
+  background-color: rgba(208, 181, 87, 0.2);
+}
+
+.search-no-results {
+  padding: 0.75rem 1rem;
+  color: #76070d;
+  font-style: italic;
+}
+
 .saint-profile {
   background-color: rgba(255, 255, 255, 0.5);
   border: 1px solid #d0b557;
@@ -490,6 +557,33 @@ h6 {
 
   .send-icon {
     margin-right: 0;
+  }
+}
+
+/* Mobile search styles */
+.mobile-search {
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+.mobile-search .search-input {
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  font-size: 0.9rem;
+}
+
+.mobile-search .search-icon {
+  left: 0.5rem;
+}
+
+.mobile-search-results {
+  position: absolute;
+  max-height: 200px;
+  z-index: 50;
+}
+
+@media (max-width: 768px) {
+  .search-results {
+    max-height: 200px;
   }
 }
 
