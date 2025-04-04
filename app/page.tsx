@@ -1,828 +1,638 @@
-"use client"
+/* Base styles */
+body {
+  font-family: "Domine", serif;
+  background-color: #f0e6da;
+  margin: 0;
+  padding: 0;
+  color: #2b2357;
+  overflow-x: hidden;
+}
 
-import type React from "react"
-import { useState, useRef, useEffect } from "react"
-import { useChat } from "ai/react"
-import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
-import { useRouter, useSearchParams } from "next/navigation"
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Cinzel", serif;
+  color: #2b2357;
+  margin-top: 0;
+}
 
-export default function Home() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+/* Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
 
-  // Get the saint from URL parameters or default to St. Francis
-  const saintParam = searchParams.get("saint")
+/* Sidebar */
+.sidebar {
+  width: 300px;
+  background-color: #f0e6da;
+  border-right: 1px solid #d0b557;
+  padding: 1.5rem;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  z-index: 40;
+  overflow-y: auto;
+}
 
-  const [selectedSaint, setSelectedSaint] = useState(saintParam || "St. Francis of Assisi")
-  const [saintInfo, setSaintInfo] = useState({
-    name: "St. Francis of Assisi",
-    years: "1181-1226",
-    description: "Founder of the Franciscan Order, known for my love of nature and animals.",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/assissi-xsrYL2QtPtrEYH4rNJYmlDIPqYzdw0.jpeg",
-    articleLink: "https://www.thecatholicvoice.com/saints/saint-francis-of-assisi-biography-miracles-and-wisdom",
-  })
-  const [showSuggestions, setShowSuggestions] = useState(true)
-  const suggestionsRef = useRef<HTMLDivElement>(null)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([])
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
 
-  // Search functionality
-  const [searchQuery, setSearchQuery] = useState("")
-  const [showSearchResults, setShowSearchResults] = useState(false)
-  const searchInputRef = useRef<HTMLInputElement>(null)
+.sidebar-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
 
-  // Create separate refs for desktop and mobile search
-  const desktopSearchRef = useRef<HTMLDivElement>(null)
-  const mobileSearchRef = useRef<HTMLDivElement>(null)
+.close-button {
+  background: none;
+  border: none;
+  color: #76070d;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: none; /* Hide by default on desktop */
+}
 
-  // Chat area ref for scrolling
-  const chatAreaRef = useRef<HTMLDivElement>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+.saint-selector {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d0b557;
+  border-radius: 0.25rem;
+  background-color: #f0e6da;
+  font-family: "Domine", serif;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: #2b2357;
+  font-size: 1rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232b2357' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1em;
+}
 
-  // Default suggested questions
-  const defaultSuggestedQuestions = [
-    "What is your greatest teaching?",
-    "How did you find your calling?",
-    "What challenges did you face?",
-    "What advice would you give me?",
-    "Tell me about your spiritual journey",
-    "How did you pray?",
-    "What is your view on suffering?",
-  ]
+/* Search styles */
+.search-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
 
-  // Initialize with the saint from URL if available
-  useEffect(() => {
-    if (saintParam) {
-      setSelectedSaint(saintParam)
-    }
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
 
-    // Initialize dynamic suggestions with default questions
-    setDynamicSuggestions(defaultSuggestedQuestions)
-  }, [saintParam])
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: #76070d;
+}
 
-  // Add/remove body class when sidebar is open on mobile
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.classList.add("sidebar-open")
-    } else {
-      document.body.classList.remove("sidebar-open")
-    }
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #d0b557;
+  border-radius: 0.25rem;
+  background-color: #f0e6da;
+  font-family: "Domine", serif;
+  color: #2b2357;
+  font-size: 1rem;
+}
 
-    return () => {
-      document.body.classList.remove("sidebar-open")
-    }
-  }, [isMobileMenuOpen])
+.search-input:focus {
+  outline: none;
+  border-color: #2b2357;
+}
 
-  // Generate contextual follow-up questions based on conversation
-  const generateContextualSuggestions = () => {
-    console.log("Generating contextual suggestions...")
-    console.log("Current messages:", messages)
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  background-color: #f0e6da;
+  border: 1px solid #d0b557;
+  border-top: none;
+  border-radius: 0 0 0.25rem 0.25rem;
+  z-index: 50; /* Increase z-index to ensure it's above other elements */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    // Only generate contextual suggestions if there's at least one exchange
-    if (messages.length < 2) {
-      console.log("Not enough messages, returning default questions")
-      return defaultSuggestedQuestions
-    }
+.search-result-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  user-select: none; /* Prevent text selection on click */
+}
 
-    // Get the last user message and saint response
-    const userMessages = messages.filter((msg) => msg.role === "user")
-    const lastUserMessage = userMessages[userMessages.length - 1]?.content.toLowerCase() || ""
-    const lastSaintResponse = messages[messages.length - 1]?.content.toLowerCase() || ""
+.search-result-item:hover,
+.search-result-item.active {
+  background-color: rgba(208, 181, 87, 0.2);
+}
 
-    console.log("Last user message:", lastUserMessage)
-    console.log("Last saint response:", lastSaintResponse)
+.search-no-results {
+  padding: 0.75rem 1rem;
+  color: #76070d;
+  font-style: italic;
+}
 
-    // Define patterns to look for and corresponding follow-up questions
-    const patterns = [
-      {
-        keywords: ["pray", "prayer", "praying"],
-        questions: [
-          "Can you teach me a prayer you often said?",
-          "How did prayer transform your life?",
-          "What advice do you have for someone struggling with prayer?",
-        ],
-      },
-      {
-        keywords: ["suffering", "pain", "difficult", "hardship", "challenge"],
-        questions: [
-          "How did you find meaning in suffering?",
-          "What was your greatest trial?",
-          "How can I offer up my suffering as you did?",
-        ],
-      },
-      {
-        keywords: ["conversion", "change", "transform"],
-        questions: [
-          "What was the moment that changed your life?",
-          "How did your conversion affect those around you?",
-          "What advice do you have for someone seeking conversion?",
-        ],
-      },
-      {
-        keywords: ["teaching", "wisdom", "lesson"],
-        questions: [
-          "What other teachings are important for our times?",
-          "How did you share your wisdom with others?",
-          "What is the most misunderstood aspect of your teachings?",
-        ],
-      },
-      {
-        keywords: ["call", "vocation", "purpose"],
-        questions: [
-          "How did you discern God's will in your life?",
-          "What advice do you have for someone finding one's vocation?",
-          "Did you ever doubt your calling?",
-        ],
-      },
-      {
-        keywords: ["miracle", "supernatural", "vision"],
-        questions: [
-          "Can you tell me about a miracle in your life?",
-          "How did your mystical experiences shape your faith?",
-          "What should we understand about supernatural experiences?",
-        ],
-      },
-      {
-        keywords: ["church", "catholic", "faith", "belief"],
-        questions: [
-          "What do you think of the Church today?",
-          "How did you remain faithful during difficult times?",
-          "What is the most important aspect of the faith to preserve?",
-        ],
-      },
-      {
-        keywords: ["sin", "temptation", "struggle", "weakness"],
-        questions: [
-          "How did you overcome your greatest temptation?",
-          "What advice do you have for those struggling with sin?",
-          "How did you find forgiveness?",
-        ],
-      },
-      {
-        keywords: ["love", "charity", "compassion"],
-        questions: [
-          "How did you practice charity in your daily life?",
-          "What does true Christian love look like?",
-          "How can I grow in compassion for others?",
-        ],
-      },
-      {
-        keywords: ["heaven", "afterlife", "eternity", "death"],
-        questions: [
-          "What do you think heaven is like?",
-          "How should we prepare for death?",
-          "How do you intercede for us now?",
-        ],
-      },
-    ]
+.saint-profile {
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid #d0b557;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  text-align: center;
+}
 
-    // Check if any keywords match the last exchange
-    let matchedQuestions: string[] = []
+.saint-image-container {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #d0b557;
+  margin: 0 auto 1rem;
+  overflow: hidden;
+  position: relative;
+}
 
-    // Check user message for keywords
-    for (const pattern of patterns) {
-      if (pattern.keywords.some((keyword) => lastUserMessage.includes(keyword))) {
-        console.log(`Found keyword match in user message: ${pattern.keywords}`)
-        matchedQuestions = [...matchedQuestions, ...pattern.questions]
-      }
-    }
+.saint-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
-    // Also check saint response for keywords to catch themes in the response
-    for (const pattern of patterns) {
-      if (pattern.keywords.some((keyword) => lastSaintResponse.includes(keyword))) {
-        console.log(`Found keyword match in saint response: ${pattern.keywords}`)
-        matchedQuestions = [...matchedQuestions, ...pattern.questions]
-      }
-    }
+.saint-name {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+  font-weight: bold;
+}
 
-    // If we found matches, return them (up to 5 random ones)
-    if (matchedQuestions.length > 0) {
-      console.log(`Found ${matchedQuestions.length} matched questions, shuffling and taking 5`)
-      // Shuffle and take up to 5
-      const shuffled = shuffleArray(matchedQuestions).slice(0, 5)
-      console.log("Returning shuffled questions:", shuffled)
-      return shuffled
-    }
+.saint-years {
+  font-size: 0.875rem;
+  color: #76070d;
+  font-style: italic;
+  margin-bottom: 0.75rem;
+}
 
-    // If no specific matches, return general follow-up questions
-    console.log("No specific matches found, returning general follow-up questions")
-    return [
-      "Can you elaborate on that?",
-      "How does that relate to your spirituality?",
-      "What scripture guided you in this area?",
-      "How can I apply this wisdom today?",
-      "Did you write about this in your works?",
-    ]
+.saint-description {
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.4;
+}
+
+.read-more {
+  display: inline-block;
+  background-color: #2b2357;
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-family: "Cinzel", serif;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.read-more:hover {
+  background-color: rgba(43, 35, 87, 0.8);
+}
+
+.separator {
+  height: 1px;
+  background-color: #d0b557;
+  margin: 1.5rem 0;
+  border: none;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  margin-left: 300px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: calc(100% - 300px);
+}
+
+/* Header */
+.header {
+  background-color: #f0e6da;
+  border-bottom: 1px solid #d0b557;
+  padding: 1rem 1.5rem;
+  position: fixed;
+  top: 0;
+  left: 300px;
+  right: 0;
+  z-index: 30;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Space between title and menu button */
+  position: relative;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.menu-button {
+  display: none; /* Hidden on desktop */
+  background: none;
+  border: none;
+  color: #76070d;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-align: left;
+}
+
+.mobile-selector {
+  display: none;
+  margin-top: 0.75rem;
+  text-align: left; /* Align to the left */
+}
+
+/* Chat area */
+.chat-area {
+  flex: 1;
+  background-color: #f8f3ec;
+  overflow-y: auto !important;
+  padding: 1.5rem;
+  padding-bottom: 100px; /* Space for input area */
+  margin-top: 70px; /* Space for fixed header */
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 300px;
+  right: 0;
+  height: calc(100vh - 170px);
+  z-index: 10;
+}
+
+.chat-container {
+  max-width: 768px;
+  margin: 0 auto;
+  padding-bottom: 1rem;
+  overflow-y: visible;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 1.5rem;
+  max-width: 80%;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.message.user {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #d0b557;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+  margin-right: 0.75rem;
+}
+
+.message-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.message-content {
+  background-color: #f0e6da;
+  border: 1px solid #d0b557;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  line-height: 1.4;
+  font-family: "Domine", serif;
+}
+
+.message.user .message-content {
+  background-color: #2b2357;
+  color: white;
+  border: none;
+}
+
+/* Input area */
+.input-area {
+  position: fixed;
+  bottom: 0;
+  left: 300px;
+  right: 0;
+  padding: 1.5rem;
+  border-top: 1px solid #d0b557;
+  background-color: #f0e6da;
+  z-index: 20;
+}
+
+.input-container {
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.suggestions-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.suggestions {
+  display: flex;
+  overflow-x: auto;
+  padding: 0.5rem 2rem;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+.suggestion-button {
+  background-color: #f0e6da;
+  border: 1px solid #d0b557;
+  color: #2b2357;
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+  font-family: "Domine", serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.suggestion-button:hover {
+  background-color: white;
+  color: #76070d;
+}
+
+.scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: #f0e6da;
+  border: 1px solid #d0b557;
+  color: #2b2357;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.scroll-button:hover {
+  color: #76070d;
+}
+
+.scroll-left {
+  left: 0;
+}
+
+.scroll-right {
+  right: 0;
+}
+
+.input-form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.input-field {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d0b557;
+  border-radius: 0.25rem;
+  background-color: #f0e6da;
+  font-family: "Domine", serif;
+  font-size: 1rem;
+  color: #2b2357;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #2b2357;
+}
+
+.send-button {
+  background-color: #76070d;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.75rem 1.25rem;
+  font-family: "Cinzel", serif;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.send-button:hover {
+  background-color: rgba(118, 7, 13, 0.8);
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.send-icon {
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  body.sidebar-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
   }
 
-  // Helper function to shuffle an array (for randomizing suggestions)
-  const shuffleArray = (array: string[]) => {
-    const newArray = [...array]
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
-    }
-    return newArray
+  .sidebar {
+    display: none;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
-    initialMessages: [
-      {
-        id: "welcome-message",
-        role: "assistant",
-        content: `Peace be with you, my child. I am ${saintInfo.name}. How may I share my wisdom with you today?`,
-      },
-    ],
-    api: "/api/chat",
-    body: {
-      saintName: selectedSaint,
-    },
-    onFinish: (message) => {
-      console.log("onFinish triggered with message:", message)
-
-      // Force update suggestions with a slight delay to ensure the message is processed
-      setTimeout(() => {
-        const newSuggestions = generateContextualSuggestions()
-        console.log("Generated new suggestions:", newSuggestions)
-        setDynamicSuggestions(newSuggestions)
-        setShowSuggestions(true)
-
-        // Force scroll to bottom
-        if (messagesEndRef.current) {
-          messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-        }
-      }, 300)
-    },
-  })
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
-
-  // Add this useEffect to ensure suggestions are updated when messages change
-  useEffect(() => {
-    // Skip the initial render
-    if (messages.length > 1) {
-      console.log("Messages changed, updating suggestions")
-      const newSuggestions = generateContextualSuggestions()
-      setDynamicSuggestions(newSuggestions)
-    }
-  }, [messages])
-
-  // List of all saints with their alternative names for search
-  const saintsWithAlternatives = [
-    { display: "St. Francis of Assisi", alternatives: ["saint francis", "francis of assisi", "francis assisi"] },
-    { display: "St. Thomas Aquinas", alternatives: ["saint thomas", "thomas aquinas", "aquinas"] },
-    {
-      display: "St. Teresa of Ávila",
-      alternatives: ["saint teresa", "teresa of avila", "teresa avila", "st teresa", "st. teresa"],
-    },
-    { display: "St. Augustine", alternatives: ["saint augustine", "augustine of hippo"] },
-    {
-      display: "St. Thérèse of Lisieux",
-      alternatives: [
-        "saint therese",
-        "therese of lisieux",
-        "therese lisieux",
-        "little flower",
-        "st therese",
-        "st. therese",
-      ],
-    },
-    { display: "St. Peter", alternatives: ["saint peter", "peter the apostle"] },
-    { display: "St. Paul", alternatives: ["saint paul", "paul the apostle", "saul of tarsus"] },
-    { display: "St. John the Evangelist", alternatives: ["saint john", "john evangelist", "beloved disciple"] },
-    { display: "St. Athanasius", alternatives: ["saint athanasius", "athanasius of alexandria"] },
-    { display: "St. Jerome", alternatives: ["saint jerome"] },
-    { display: "St. Benedict of Nursia", alternatives: ["saint benedict", "benedict nursia", "benedict of nursia"] },
-    { display: "St. Gregory the Great", alternatives: ["saint gregory", "gregory great", "pope gregory"] },
-    { display: "St. Clare of Assisi", alternatives: ["saint clare", "clare assisi", "clare of assisi"] },
-    { display: "St. Dominic", alternatives: ["saint dominic", "dominic de guzman"] },
-    { display: "St. Catherine of Siena", alternatives: ["saint catherine", "catherine siena", "catherine of siena"] },
-    { display: "St. John of the Cross", alternatives: ["saint john of the cross", "john cross", "juan de la cruz"] },
-    { display: "St. Ignatius of Loyola", alternatives: ["saint ignatius", "ignatius loyola"] },
-    { display: "St. Francis Xavier", alternatives: ["saint francis xavier", "francis xavier"] },
-    { display: "St. Joan of Arc", alternatives: ["saint joan", "joan arc", "maid of orleans"] },
-    {
-      display: "St. Mother Teresa of Calcutta",
-      alternatives: ["saint teresa", "mother teresa", "teresa calcutta", "teresa of calcutta"],
-    },
-  ]
-
-  // Helper function to normalize text for searching (remove accents, lowercase, etc.)
-  const normalizeText = (text: string) => {
-    return text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "") // Remove accents
-      .replace(/[^\w\s]/g, "") // Remove punctuation
-      .trim()
+  .sidebar.open {
+    display: block;
   }
 
-  // Filter saints based on search query
-  const filteredSaints = saintsWithAlternatives
-    .filter((saint) => {
-      const normalizedQuery = normalizeText(searchQuery)
-      if (!normalizedQuery) return true
-
-      // Check the display name
-      if (normalizeText(saint.display).includes(normalizedQuery)) return true
-
-      // Check alternative names
-      return saint.alternatives.some((alt) => normalizeText(alt).includes(normalizedQuery))
-    })
-    .map((saint) => saint.display)
-
-  // Update chat when saint changes
-  useEffect(() => {
-    const saintsData = {
-      // Original saints
-      "St. Francis of Assisi": {
-        name: "St. Francis of Assisi",
-        years: "1181-1226",
-        description: "Founder of the Franciscan Order, known for my love of nature and animals.",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/assissi-xsrYL2QtPtrEYH4rNJYmlDIPqYzdw0.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-francis-of-assisi-biography-miracles-and-wisdom",
-      },
-      "St. Thomas Aquinas": {
-        name: "St. Thomas Aquinas",
-        years: "1225-1274",
-        description: "Dominican friar and Doctor of the Church, known for my theological writings.",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/thomas-9Kv24UV6iR1gEISzY3XtHAr1G57l4j.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-thomas-aquinas-biography-miracles-and-wisdom",
-      },
-      "St. Teresa of Ávila": {
-        name: "St. Teresa of Ávila",
-        years: "1515-1582",
-        description: "Spanish mystic, Carmelite nun, and reformer of the Carmelite Order.",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avila-zcNzree2r4Y7mMecpkqr7lvi1IHEtN.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-teresa-of-avila-biography-miracles-and-wisdom",
-      },
-      "St. Augustine": {
-        name: "St. Augustine",
-        years: "354-430",
-        description: "Bishop of Hippo and Doctor of the Church, known for my theological writings.",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/augistine-cl5Y961nWwBEBoAmBuuXZ41Sn3vjsb.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-augustine-of-hippo-biography-miracles-and-wisdom",
-      },
-      "St. Thérèse of Lisieux": {
-        name: "St. Thérèse of Lisieux",
-        years: "1873-1897",
-        description: 'Carmelite nun known as "The Little Flower" and Doctor of the Church.',
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lisieux-d4NxJJC52xSrbWtRRCfpWKOksK3XYV.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-therese-of-lisieux-biography-miracles-and-wisdom",
-      },
-
-      // New saints with their images
-      "St. Peter": {
-        name: "St. Peter",
-        years: "1-64",
-        description: "One of the Twelve Apostles of Jesus Christ, first Pope of the Catholic Church, and martyr.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/saint_peter_1960.6.32%20%281%29.jpg-Z5DNPucHrg52Wehgg1dJds6VXMCcSa.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-peter-biography-miracles-and-wisdom",
-      },
-      "St. Paul": {
-        name: "St. Paul",
-        years: "5-67",
-        description: "Apostle to the Gentiles, missionary, theologian, and author of many New Testament epistles.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/saint%20paul.jpg-wfs4TRIu5ex9kGvkye6vkM4E7QWpn1.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-paul-biography-miracles-and-wisdom",
-      },
-      "St. John the Evangelist": {
-        name: "St. John the Evangelist",
-        years: "6-100",
-        description:
-          "One of the Twelve Apostles of Jesus, author of the Gospel of John, three Epistles, and the Book of Revelation.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20the%20Evangelist-lr94ux9DDVRyRmkwCkGnp2EoFKXnI9.webp", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-the-evangelist-biography-miracles-and-wisdom",
-      },
-      "St. Athanasius": {
-        name: "St. Athanasius",
-        years: "296-373",
-        description:
-          "Bishop of Alexandria, Doctor of the Church, and defender of the divinity of Christ against Arianism.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Athanasius-UbK6Ktil0tdlVwlPJXugIw4ILZaGs0.png", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-athanasius-biography-miracles-and-wisdom",
-      },
-      "St. Jerome": {
-        name: "St. Jerome",
-        years: "347-420",
-        description: "Doctor of the Church, theologian, and translator of the Bible into Latin (the Vulgate).",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Jerome.jpg-s2peOmZ743ayIs7GPPF9ram0adu9qE.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-jerome-biography-miracles-and-wisdom",
-      },
-      "St. Benedict of Nursia": {
-        name: "St. Benedict of Nursia",
-        years: "480-547",
-        description: "Founder of Western monasticism and author of the Rule of Saint Benedict.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Benedict%20of%20Nursia.jpg-JCRJgGs7H6W5SBji3BTKWcm70YifUr.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-benedict-of-nursia-biography-miracles-and-wisdom",
-      },
-      "St. Gregory the Great": {
-        name: "St. Gregory the Great",
-        years: "540-604",
-        description: "Pope, Doctor of the Church, and reformer who significantly influenced the medieval Church.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Gregory%20the%20Great.jpg-CX6ws3DvvL4RM7TfilfPhJHmN0Zl2u.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-gregory-the-great-biography-miracles-and-wisdom",
-      },
-      "St. Clare of Assisi": {
-        name: "St. Clare of Assisi",
-        years: "1194-1253",
-        description: "Founder of the Order of Poor Ladies (Poor Clares) and close associate of St. Francis of Assisi.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Clare%20of%20Assisi-5HSeYGy7w8pLChdnhualb0xcvTZGrD.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-clare-of-assisi-biography-miracles-and-wisdom",
-      },
-      "St. Dominic": {
-        name: "St. Dominic",
-        years: "1170-1221",
-        description: "Founder of the Dominican Order, preacher, and champion of orthodox Catholic belief.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Dominic.jpg-5gMF4a0a5ttx201eMbnXI0CBb1kYoN.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-dominic-biography-miracles-and-wisdom",
-      },
-      "St. Catherine of Siena": {
-        name: "St. Catherine of Siena",
-        years: "1347-1380",
-        description: "Dominican tertiary, mystic, Doctor of the Church, and counselor to popes and rulers.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Catherine%20of%20Siena.jpg-hO1wgdMaejMvfu9OaS2EAhXC4ucxjq.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-catherine-of-siena-biography-miracles-and-wisdom",
-      },
-      "St. John of the Cross": {
-        name: "St. John of the Cross",
-        years: "1542-1591",
-        description:
-          "Spanish Carmelite friar, mystic, Doctor of the Church, and co-founder of the Discalced Carmelites.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20of%20the%20Cross.jpg-GiNBBx5qSI7arRfDwWlPtHv933qgB5.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-of-the-cross-biography-miracles-and-wisdom",
-      },
-      "St. Ignatius of Loyola": {
-        name: "St. Ignatius of Loyola",
-        years: "1491-1556",
-        description: "Founder of the Society of Jesus (Jesuits) and author of the Spiritual Exercises.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Ignatius%20of%20Loyola-ECzeGZM2uLsmyOTx82P8ssemObWgZY.webp", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-ignatius-of-loyola-biography-miracles-and-wisdom",
-      },
-      "St. Francis Xavier": {
-        name: "St. Francis Xavier",
-        years: "1506-1552",
-        description: "Co-founder of the Society of Jesus and pioneering missionary to Asia.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Francis%20Xavier.jpg-rFrq6g2TLReuMHL0U06e9kjQD4trvf.jpeg", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-francis-xavier-biography-miracles-and-wisdom",
-      },
-      "St. Joan of Arc": {
-        name: "St. Joan of Arc",
-        years: "1412-1431",
-        description:
-          "French military leader, mystic, and martyr who led the French army to victory during the Hundred Years' War.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Joan%20of%20Arc-lAVAUp8KjvuzTk7hmFyCE1uaOczlLz.webp", // Updated with provided image
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-joan-of-arc-biography-miracles-and-wisdom",
-      },
-      "St. Mother Teresa of Calcutta": {
-        name: "St. Mother Teresa of Calcutta",
-        years: "1910-1997",
-        description:
-          "Founder of the Missionaries of Charity and Nobel Peace Prize recipient known for her work with the poor.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Mother%20Teresa%20of%20Calcutta.jpg-VvPTNunrwxVfQmh3RlgUBFuvM47F6N.jpeg", // Updated with provided image
-        articleLink:
-          "https://www.thecatholicvoice.com/saints/saint-mother-teresa-of-calcutta-biography-miracles-and-wisdom",
-      },
-    }
-
-    setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
-
-    // Reset chat with new welcome message
-    setMessages([
-      {
-        id: "welcome-message",
-        role: "assistant",
-        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
-      },
-    ])
-
-    // Reset to default suggestions when changing saints
-    setDynamicSuggestions(defaultSuggestedQuestions)
-
-    // Show suggestions when changing saints
-    setShowSuggestions(true)
-
-    // Clear search when saint is selected
-    setSearchQuery("")
-  }, [selectedSaint, setMessages])
-
-  // Add this useEffect to ensure scrolling works
-  useEffect(() => {
-    // Force scroll to bottom whenever messages change
-    if (messagesEndRef.current) {
-      console.log("Scrolling to bottom due to message change")
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-    }
-  }, [messages])
-
-  // Scroll suggestions
-  const scrollSuggestions = (direction: "left" | "right") => {
-    if (suggestionsRef.current) {
-      const scrollAmount = 200
-      if (direction === "left") {
-        suggestionsRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" })
-      } else {
-        suggestionsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" })
-      }
-    }
+  .close-button {
+    display: block; /* Show only on mobile */
   }
 
-  // Fix the handleSaintSelect function to ensure it properly updates the state
-  const handleSaintSelect = (saint: string) => {
-    // Set the selected saint
-    setSelectedSaint(saint)
-    // Close the search results
-    setShowSearchResults(false)
-    // Close the mobile menu if it's open
-    setIsMobileMenuOpen(false)
-
-    // Update the URL with the selected saint
-    router.push(`/?saint=${encodeURIComponent(saint)}`, { scroll: false })
+  .main-content {
+    margin-left: 0;
+    width: 100%;
   }
 
-  // Handle search input change
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
-    setShowSearchResults(true)
+  .header {
+    left: 0;
+    width: 100%;
+    padding: 0.75rem 1rem;
   }
 
-  // Close search results when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        desktopSearchRef.current &&
-        !desktopSearchRef.current.contains(event.target as Node) &&
-        mobileSearchRef.current &&
-        !mobileSearchRef.current.contains(event.target as Node)
-      ) {
-        setShowSearchResults(false)
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [])
-
-  // Function to handle image loading errors
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    e.currentTarget.src = "/placeholder.svg?height=200&width=200"
+  .input-area {
+    left: 0;
+    bottom: 0;
+    width: 100%;
   }
 
-  // Function to handle suggestion click
-  const handleSuggestionClick = (question: string) => {
-    // First update the UI to show the question was selected
-    append({
-      role: "user",
-      content: question,
-    })
-
-    // Force scroll to bottom immediately
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-      }
-    }, 100)
+  /* Completely reworked mobile header layout */
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between title and menu button */
   }
 
-  // Custom submit handler to ensure suggestions update
-  const customSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
-
-    // Call the original submit handler
-    handleSubmit(e)
-
-    // Force scroll to bottom immediately after submitting
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-      }
-    }, 100)
+  .header-left {
+    display: flex;
+    align-items: center;
   }
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
-
-    // Call the original submit handler
-    handleSubmit(e)
-
-    // Force scroll to bottom immediately after submitting
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-      }
-    }, 100)
+  .header-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0;
+    text-align: left;
+    line-height: 1.2;
+    white-space: normal; /* Allow text to wrap */
+    max-width: calc(100% - 50px); /* Give space for the menu button */
   }
 
-  return (
-    <div className="app-container">
-      {/* Sidebar */}
-      <div className={`sidebar ${isMobileMenuOpen ? "open" : ""}`}>
-        <div className="sidebar-header">
-          <h2 className="sidebar-title">Choose Your Saint</h2>
-          <button className="close-button" onClick={() => setIsMobileMenuOpen(false)}>
-            <X size={20} />
-          </button>
-        </div>
+  .menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    margin: 0;
+    color: #76070d;
+  }
 
-        {/* Search input instead of dropdown */}
-        <div className="search-container" ref={desktopSearchRef}>
-          <div className="search-input-wrapper">
-            <Search size={18} className="search-icon" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search for a saint..."
-              className="search-input"
-              onFocus={() => setShowSearchResults(true)}
-            />
-          </div>
+  .mobile-selector {
+    display: block;
+    margin-top: 0.75rem;
+    text-align: left; /* Align to the left */
+  }
 
-          {showSearchResults && (
-            <div className="search-results">
-              {filteredSaints.length > 0 ? (
-                filteredSaints.map((saint) => (
-                  <div
-                    key={saint}
-                    className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
-                    onClick={() => handleSaintSelect(saint)}
-                  >
-                    {saint}
-                  </div>
-                ))
-              ) : (
-                <div className="search-no-results">No saints found</div>
-              )}
-            </div>
-          )}
-        </div>
+  .send-text {
+    display: none;
+  }
 
-        <div className="saint-profile">
-          <div className="saint-image-container">
-            <img
-              src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
-              alt={saintInfo.name}
-              className="saint-image"
-              onError={handleImageError}
-            />
-          </div>
-          <h3 className="saint-name">{saintInfo.name}</h3>
-          <p className="saint-years">{saintInfo.years}</p>
-          <p className="saint-description">{saintInfo.description}</p>
-          <a href={saintInfo.articleLink} target="_blank" rel="noopener noreferrer" className="read-more">
-            Read More
-          </a>
-        </div>
-      </div>
+  .send-button {
+    padding: 0.75rem;
+  }
 
-      {/* Main content */}
-      <div className="main-content">
-        {/* Header */}
-        <header className="header">
-          <div className="header-content">
-            <div className="header-left">
-              <h2 className="header-title">Dialogue with {selectedSaint}</h2>
-            </div>
-            <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
-              <Menu size={24} />
-            </button>
-          </div>
+  .send-icon {
+    margin-right: 0;
+  }
 
-          <div className="mobile-selector">
-            {/* Mobile search input */}
-            <div className="search-container mobile-search" ref={mobileSearchRef}>
-              <div className="search-input-wrapper">
-                <Search size={16} className="search-icon" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  placeholder="Search for a saint..."
-                  className="search-input"
-                  onFocus={() => setShowSearchResults(true)}
-                />
-              </div>
+  /* Fix chat alignment - reduce the space between search and first message */
+  .chat-area {
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 170px);
+  }
 
-              {/* Fix the mobile search results to ensure they're properly clickable */}
+  .chat-container {
+    width: 100%;
+    padding: 0 0.5rem;
+  }
 
-              {showSearchResults && (
-                <div className="search-results mobile-search-results">
-                  {filteredSaints.length > 0 ? (
-                    filteredSaints.map((saint) => (
-                      <div
-                        key={saint}
-                        className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
-                        onClick={() => {
-                          handleSaintSelect(saint)
-                          // Force close the search results
-                          setShowSearchResults(false)
-                        }}
-                      >
-                        {saint}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="search-no-results">No saints found</div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </header>
+  /* Mobile search styles */
+  .mobile-search {
+    max-width: 100%;
+    margin: 0.75rem 0 0;
+    text-align: left;
+  }
 
-        {/* Chat area */}
-        <div className="chat-area" ref={chatAreaRef}>
-          <div className="chat-container">
-            {messages.map((message) => (
-              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
-                {message.role !== "user" && (
-                  <div className="message-avatar">
-                    <img
-                      src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
-                      alt={selectedSaint}
-                      onError={handleImageError}
-                    />
-                  </div>
-                )}
+  .mobile-search .search-input {
+    padding: 0.5rem 1rem 0.5rem 2rem;
+    font-size: 0.9rem;
+  }
 
-                <div className="message-content">
-                  <p>{message.content}</p>
-                </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} style={{ height: "1px", width: "100%" }}></div>
-          </div>
-        </div>
+  .mobile-search .search-icon {
+    left: 0.5rem;
+  }
 
-        {/* Input area */}
-        <div className="input-area">
-          <div className="input-container">
-            {showSuggestions && (
-              <div className="suggestions-container">
-                <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
-                  <ChevronLeft size={16} />
-                </button>
+  .mobile-search-results {
+    position: absolute;
+    max-height: 200px;
+    z-index: 50;
+    width: 100%;
+  }
 
-                <div ref={suggestionsRef} className="suggestions hide-scrollbar">
-                  {dynamicSuggestions.map((question) => (
-                    <button
-                      key={question}
-                      className="suggestion-button"
-                      onClick={() => handleSuggestionClick(question)}
-                    >
-                      {question}
-                    </button>
-                  ))}
-                </div>
+  .message {
+    max-width: 90%;
+  }
+}
 
-                <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            )}
+/* Hide scrollbar but allow scrolling */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
-            <form onSubmit={handleFormSubmit} className="input-form">
-              <input
-                type="text"
-                value={input}
-                onChange={handleInputChange}
-                placeholder="Ask for wisdom..."
-                className="input-field"
-                disabled={isLoading}
-              />
-              <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
-                <span className="send-icon">
-                  <Send size={16} />
-                </span>
-                <span className="send-text">Send</span>
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-with-saint-button {
+  display: inline-block;
+  background-color: #76070d;
+  color: white;
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.25rem;
+  font-family: "Cinzel", serif;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.chat-with-saint-button:hover {
+  background-color: rgba(118, 7, 13, 0.8);
 }
 
