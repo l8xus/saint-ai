@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const { content } = await req.json()
 
     // Extract suggestions from the message content
-    // Using a more compatible regex pattern without the 's' flag
+    // Using a compatible regex pattern without the 's' flag
     const suggestionsMatch = content.match(/\[([\s\S]*?)\]/)
 
     if (suggestionsMatch && suggestionsMatch[0]) {
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         {
           role: "system",
           content:
-            "You are a helpful assistant that generates follow-up questions based on a conversation with a Catholic saint. Generate 3-5 thoughtful questions that would help the user learn more about the saint's life, teachings, or spiritual insights.",
+            "You are a helpful assistant that generates follow-up questions based on a conversation with a Catholic saint. Generate 3-5 thoughtful questions that would help the user learn more about the saint's life, teachings, or spiritual insights. The questions should be directly related to the context of the previous message.",
         },
         {
           role: "user",
