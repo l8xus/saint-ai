@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef, useEffect, useCallback } from "react"
-import { useChat, type Message } from "ai/react"
+import { useState, useRef, useEffect } from "react"
+import { useChat } from "ai/react"
 import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -12,10 +12,6 @@ export default function Home() {
 
   // Get the saint from URL parameters or default to St. Francis
   const saintParam = searchParams.get("saint")
-
-  // Use refs to store state that shouldn't trigger re-renders
-  const initialRenderRef = useRef(true)
-  const currentSaintRef = useRef(saintParam || "St. Francis of Assisi")
 
   const [selectedSaint, setSelectedSaint] = useState(saintParam || "St. Francis of Assisi")
   const [saintInfo, setSaintInfo] = useState({
@@ -28,7 +24,8 @@ export default function Home() {
   const [showSuggestions, setShowSuggestions] = useState(true)
   const suggestionsRef = useRef<HTMLDivElement>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([])
+
+  // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
   const [showSearchResults, setShowSearchResults] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -37,39 +34,12 @@ export default function Home() {
   const desktopSearchRef = useRef<HTMLDivElement>(null)
   const mobileSearchRef = useRef<HTMLDivElement>(null)
 
-  // Chat area ref for scrolling
-  const chatAreaRef = useRef<HTMLDivElement>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  // Store the initial welcome message in a ref to avoid recreating it
-  const welcomeMessageRef = useRef({
-    id: "welcome-message",
-    role: "assistant" as const,
-    content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
-  })
-
-  // Default suggested questions
-  const defaultSuggestedQuestions = [
-    "What is your greatest teaching?",
-    "How did you find your calling?",
-    "What challenges did you face?",
-    "What advice would you give me?",
-    "Tell me about your spiritual journey",
-    "How did you pray?",
-    "What is your view on suffering?",
-  ]
-
-  // Initialize with the saint from URL if available - only on first render
+  // Initialize with the saint from URL if available
   useEffect(() => {
-    if (initialRenderRef.current && saintParam) {
-      currentSaintRef.current = saintParam
+    if (saintParam) {
       setSelectedSaint(saintParam)
-      initialRenderRef.current = false
     }
-
-    // Initialize dynamic suggestions with default questions
-    setDynamicSuggestions(defaultSuggestedQuestions)
-  }, [saintParam, defaultSuggestedQuestions])
+  }, [saintParam])
 
   // Add/remove body class when sidebar is open on mobile
   useEffect(() => {
@@ -84,141 +54,38 @@ export default function Home() {
     }
   }, [isMobileMenuOpen])
 
-  // Helper function to shuffle an array (for randomizing suggestions)
-  const shuffleArray = (array: string[]) => {
-    const newArray = [...array]
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
-    }
-    return newArray
-  }
-
-  // Function to extract suggestions from message content
-  const extractSuggestions = useCallback(
-    (content: string): { cleanedContent: string; suggestions: string[] | null } => {
-      // Using a more compatible regex pattern without the 's' flag
-      const suggestionsMatch = content.match(/__SUGGESTIONS__([\s\S]*?)__END_SUGGESTIONS__/)
-
-      let cleanedContent = content
-      let extractedSuggestions: string[] | null = null
-
-      if (suggestionsMatch && suggestionsMatch[1]) {
-        try {
-          // Parse the suggestions JSON
-          const suggestionsJson = suggestionsMatch[1].trim()
-          const suggestions = JSON.parse(suggestionsJson)
-
-          // Remove the suggestions block from the content
-          cleanedContent = cleanedContent.replace(/__SUGGESTIONS__[\s\S]*?__END_SUGGESTIONS__/, "")
-
-          if (Array.isArray(suggestions) && suggestions.length > 0) {
-            extractedSuggestions = suggestions
-          }
-        } catch (error) {
-          console.error("Error extracting suggestions:", error)
-        }
-      }
-
-      // Trim any extra whitespace
-      cleanedContent = cleanedContent.trim()
-
-      return {
-        cleanedContent,
-        suggestions: extractedSuggestions,
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
+    initialMessages: [
+      {
+        id: "welcome-message",
+        role: "assistant",
+        content: `Peace be with you, my child. I am ${saintInfo.name}. How may I share my wisdom with you today?`,
+      },
+    ],
+    api: "/api/chat",
+    body: {
+      saintName: selectedSaint,
+    },
+    onFinish: () => {
+      // Check if there are user messages and hide suggestions if there are
+      const userMessages = messages.filter((msg) => msg.role === "user")
+      if (userMessages.length > 0) {
+        setShowSuggestions(false)
       }
     },
-    [],
-  )
+  })
 
-  // Initialize the chat with a stable configuration
-  const chatConfig = useCallback(
-    () => ({
-      initialMessages: [
-        {
-          id: "welcome-message",
-          role: "assistant" as const,
-          content: `Peace be with you, my child. I am ${currentSaintRef.current}. How may I share my wisdom with you today?`,
-        },
-      ],
-      api: "/api/chat",
-      body: {
-        saintName: currentSaintRef.current,
-      },
-      onFinish: (message: Message) => {
-        console.log("onFinish triggered with message:", message.id)
-
-        // Process the message content to extract suggestions
-        const { cleanedContent, suggestions } = extractSuggestions(message.content)
-
-        // If suggestions were found, update the state
-        if (suggestions) {
-          console.log("Setting dynamic suggestions from onFinish:", suggestions)
-          setDynamicSuggestions(suggestions)
-          setShowSuggestions(true)
-        }
-
-        // If the content was modified, update the message
-        if (cleanedContent !== message.content) {
-          console.log("Updating message with cleaned content")
-
-          // Create a new array with the updated message
-          const updatedMessages = messages.map((msg) =>
-            msg.id === message.id ? { ...msg, content: cleanedContent } : msg,
-          )
-
-          // Set the messages directly with the new array
-          setMessages(updatedMessages)
-        }
-
-        // Force scroll to bottom
-        setTimeout(() => {
-          if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-          }
-        }, 100)
-      },
-    }),
-    [extractSuggestions, currentSaintRef],
-  )
-
-  // Initialize the chat and get the chat helpers
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat(chatConfig())
-
-  // Process each new message as it's added to the messages array
-  useEffect(() => {
-    if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1]
-      if (lastMessage.role === "assistant") {
-        console.log("Processing new assistant message:", lastMessage.id)
-
-        // Process the message content to extract suggestions
-        const { cleanedContent, suggestions } = extractSuggestions(lastMessage.content)
-
-        // If suggestions were found, update the state
-        if (suggestions) {
-          console.log("Setting dynamic suggestions from new message:", suggestions)
-          setDynamicSuggestions(suggestions)
-          setShowSuggestions(true)
-        }
-
-        // If the content was modified, update the message
-        if (cleanedContent !== lastMessage.content) {
-          // Create a new array with the updated message
-          const updatedMessages = messages.map((msg) =>
-            msg.id === lastMessage.id ? { ...msg, content: cleanedContent } : msg,
-          )
-
-          // Set the messages directly with the new array
-          setMessages(updatedMessages)
-        }
-      }
-    }
-  }, [messages, extractSuggestions, setMessages])
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  // Check if there are user messages and update showSuggestions
+  useEffect(() => {
+    const userMessages = messages.filter((msg) => msg.role === "user")
+    setShowSuggestions(userMessages.length === 0)
   }, [messages])
 
   // List of all saints with their alternative names for search
@@ -454,49 +321,23 @@ export default function Home() {
       },
     }
 
-    // Update the saint info
     setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
 
-    // Only update the currentSaintRef if the saint has actually changed
-    if (currentSaintRef.current !== selectedSaint) {
-      currentSaintRef.current = selectedSaint
-
-      // Reset chat with new welcome message only when the saint actually changes
-      const welcomeMessage: Message = {
+    // Reset chat with new welcome message
+    setMessages([
+      {
         id: "welcome-message",
         role: "assistant",
         content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
-      }
+      },
+    ])
 
-      // Check if we need to reset the chat (only if there's no messages or the first message is for a different saint)
-      const shouldResetChat =
-        messages.length === 0 || (messages[0].role === "assistant" && !messages[0].content.includes(selectedSaint))
-
-      if (shouldResetChat) {
-        console.log("Resetting chat for new saint:", selectedSaint)
-        // Important: Use a direct array instead of a callback function
-        setMessages([welcomeMessage])
-
-        // Reset to default suggestions when changing saints
-        setDynamicSuggestions(defaultSuggestedQuestions)
-
-        // Show suggestions when changing saints
-        setShowSuggestions(true)
-      }
-    }
+    // Show suggestions when changing saints
+    setShowSuggestions(true)
 
     // Clear search when saint is selected
     setSearchQuery("")
-  }, [selectedSaint, setMessages, messages, defaultSuggestedQuestions])
-
-  // Add this useEffect to ensure scrolling works
-  useEffect(() => {
-    // Force scroll to bottom whenever messages change
-    if (messagesEndRef.current) {
-      console.log("Scrolling to bottom due to message change")
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-    }
-  }, [messages])
+  }, [selectedSaint, setMessages])
 
   // Scroll suggestions
   const scrollSuggestions = (direction: "left" | "right") => {
@@ -510,7 +351,18 @@ export default function Home() {
     }
   }
 
+  const suggestedQuestions = [
+    "What is your greatest teaching?",
+    "How did you find your calling?",
+    "What challenges did you face?",
+    "What advice would you give me?",
+    "Tell me about your spiritual journey",
+    "How did you pray?",
+    "What is your view on suffering?",
+  ]
+
   // Fix the handleSaintSelect function to ensure it properly updates the state
+
   const handleSaintSelect = (saint: string) => {
     // Set the selected saint
     setSelectedSaint(saint)
@@ -555,49 +407,10 @@ export default function Home() {
 
   // Function to handle suggestion click
   const handleSuggestionClick = (question: string) => {
-    // First update the UI to show the question was selected
     append({
       role: "user",
       content: question,
     })
-
-    // Force scroll to bottom immediately
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-      }
-    }, 100)
-  }
-
-  // Custom submit handler to ensure suggestions update
-  const customSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
-
-    // Call the original submit handler
-    handleSubmit(e)
-
-    // Force scroll to bottom immediately after submitting
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-      }
-    }, 100)
-  }
-
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
-
-    // Call the original submit handler
-    handleSubmit(e)
-
-    // Force scroll to bottom immediately after submitting
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-      }
-    }, 100)
   }
 
   return (
@@ -691,6 +504,7 @@ export default function Home() {
               </div>
 
               {/* Fix the mobile search results to ensure they're properly clickable */}
+
               {showSearchResults && (
                 <div className="search-results mobile-search-results">
                   {filteredSaints.length > 0 ? (
@@ -717,7 +531,7 @@ export default function Home() {
         </header>
 
         {/* Chat area */}
-        <div className="chat-area" ref={chatAreaRef}>
+        <div className="chat-area">
           <div className="chat-container">
             {messages.map((message) => (
               <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
@@ -736,21 +550,21 @@ export default function Home() {
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef} style={{ height: "1px", width: "100%" }}></div>
+            <div ref={messagesEndRef}></div>
           </div>
         </div>
 
         {/* Input area */}
         <div className="input-area">
           <div className="input-container">
-            {showSuggestions && dynamicSuggestions.length > 0 && (
+            {showSuggestions && (
               <div className="suggestions-container">
                 <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
                   <ChevronLeft size={16} />
                 </button>
 
                 <div ref={suggestionsRef} className="suggestions hide-scrollbar">
-                  {dynamicSuggestions.map((question) => (
+                  {suggestedQuestions.map((question) => (
                     <button
                       key={question}
                       className="suggestion-button"
@@ -767,7 +581,7 @@ export default function Home() {
               </div>
             )}
 
-            <form onSubmit={handleFormSubmit} className="input-form">
+            <form onSubmit={handleSubmit} className="input-form">
               <input
                 type="text"
                 value={input}
