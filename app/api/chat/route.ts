@@ -257,8 +257,13 @@ ${
     : ""
 }
 
-Additionally, after each response, analyze the conversation to identify key themes and topics that have been discussed. 
-This will help generate contextually relevant follow-up questions for the user.
+After you provide your response, I want you to analyze the conversation and generate 5 contextually relevant follow-up questions that the user might want to ask next. These questions should be directly related to the themes and topics discussed in the conversation so far. Format these questions as a JSON array at the very end of your response, like this:
+
+[SUGGESTIONS]
+["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"]
+[/SUGGESTIONS]
+
+This JSON array will be parsed and removed from the visible response, so make sure your main response is complete before adding this section.
 `
 
   // Prepare the messages array with the system message
@@ -283,14 +288,58 @@ This will help generate contextually relevant follow-up questions for the user.
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder()
+        let suggestionBuffer = ""
+        let inSuggestionBlock = false
+        let responseText = ""
 
         // Process each chunk from the OpenAI stream
         for await (const chunk of response) {
           // Extract the content delta if it exists
           const content = chunk.choices[0]?.delta?.content || ""
           if (content) {
-            // Send the content to the stream
-            controller.enqueue(encoder.encode(content))
+            responseText += content
+
+            // Check if we're entering the suggestion block
+            if (content.includes("[SUGGESTIONS]")) {
+              inSuggestionBlock = true
+              suggestionBuffer = ""
+              // Don't send the [SUGGESTIONS] marker to the client
+              const visibleContent = content.split("[SUGGESTIONS]")[0]
+              if (visibleContent) {
+                controller.enqueue(encoder.encode(visibleContent))
+              }
+            }
+            // Check if we're exiting the suggestion block
+            else if (inSuggestionBlock && content.includes("[/SUGGESTIONS]")) {
+              inSuggestionBlock = false
+              // Don't send the [/SUGGESTIONS] marker to the client
+              const visibleContent = content.split("[/SUGGESTIONS]")[1]
+              if (visibleContent) {
+                controller.enqueue(encoder.encode(visibleContent))
+              }
+
+              // Process the suggestions
+              try {
+                const suggestionsMatch = responseText.match(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/)
+                if (suggestionsMatch && suggestionsMatch[1]) {
+                  const suggestionsJson = suggestionsMatch[1].trim()
+                  // Send the suggestions as a special message
+                  controller.enqueue(
+                    encoder.encode(`\n\n[DYNAMIC_SUGGESTIONS]${suggestionsJson}[/DYNAMIC_SUGGESTIONS]`),
+                  )
+                }
+              } catch (error) {
+                console.error("Error parsing suggestions:", error)
+              }
+            }
+            // If we're inside the suggestion block, accumulate the content
+            else if (inSuggestionBlock) {
+              suggestionBuffer += content
+            }
+            // Otherwise, send the content to the stream
+            else {
+              controller.enqueue(encoder.encode(content))
+            }
           }
         }
 
