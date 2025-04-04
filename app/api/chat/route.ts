@@ -15,14 +15,17 @@ Share wisdom, stories from your life, and spiritual guidance in a way that refle
 Your responses should be warm, wise, and reflect Catholic theology and spirituality.
 If asked about matters beyond your lifetime, you can respond with timeless spiritual wisdom while acknowledging your historical context.
 
-After each response, you MUST generate 3-5 follow-up questions that the user might want to ask next. Format them as a JSON array of strings inside [SUGGESTIONS][/SUGGESTIONS] tags.
+IMPORTANT: After each response, you MUST generate 3-5 follow-up questions that the user might want to ask next based on the context of the conversation. These should be thoughtful questions that would help the user learn more about your life, teachings, or spiritual insights.
+
+Format your response as follows:
+1. Your normal response text
+2. A blank line
+3. The JSON array of suggested questions in the format: ["Question 1?", "Question 2?", "Question 3?"]
 
 Example format:
 Your response text here...
 
-[SUGGESTIONS]
-["Question 1?", "Question 2?", "Question 3?"]
-[/SUGGESTIONS]
+["What was your greatest spiritual challenge?", "How did you overcome temptation?", "What advice would you give to someone struggling with faith?"]
 
 Here are some specific details about your life and teachings to incorporate:
 
@@ -289,9 +292,9 @@ ${
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder()
-        let suggestionBuffer = ""
-        let inSuggestionBlock = false
         let responseText = ""
+        let jsonStarted = false
+        let jsonBuffer = ""
 
         // Process each chunk from the OpenAI stream
         for await (const chunk of response) {
@@ -300,69 +303,59 @@ ${
           if (content) {
             responseText += content
 
-            // Check if we're entering the suggestion block
-            if (content.includes("[SUGGESTIONS]")) {
-              inSuggestionBlock = true
-              suggestionBuffer = ""
-              // Don't send the [SUGGESTIONS] marker to the client
-              const visibleContent = content.split("[SUGGESTIONS]")[0]
-              if (visibleContent) {
+            // Check if we're starting to receive JSON
+            if (!jsonStarted && content.includes("[")) {
+              const parts = responseText.split("\n\n")
+              // If we have at least two parts and the last part starts with [
+              if (parts.length >= 2 && parts[parts.length - 1].trim().startsWith("[")) {
+                jsonStarted = true
+                // Extract everything before the JSON as the visible content
+                const visibleContent = parts.slice(0, -1).join("\n\n")
+                // Send the visible content
                 controller.enqueue(encoder.encode(visibleContent))
+                // Start collecting JSON
+                jsonBuffer = parts[parts.length - 1]
+                continue
               }
-              continue
             }
 
-            // Check if we're exiting the suggestion block
-            if (inSuggestionBlock && content.includes("[/SUGGESTIONS]")) {
-              inSuggestionBlock = false
-              suggestionBuffer += content.split("[/SUGGESTIONS]")[0]
-
-              // Process the suggestions
+            // If we're collecting JSON, add to buffer instead of sending
+            if (jsonStarted) {
+              jsonBuffer += content
+              // Try to parse the JSON to see if it's complete
               try {
-                // Clean up the suggestion buffer
-                const cleanedBuffer = suggestionBuffer.trim()
-                console.log("Raw suggestion buffer:", cleanedBuffer)
-
-                let suggestions = []
-                try {
-                  // Try to parse as JSON
-                  suggestions = JSON.parse(cleanedBuffer)
-                } catch (e) {
-                  console.error("JSON parse error:", e)
-                  // Try to extract strings if JSON parsing fails
-                  const extractedSuggestions = cleanedBuffer.match(/"([^"]+)"/g)
-                  if (extractedSuggestions) {
-                    suggestions = extractedSuggestions.map((s) => s.replace(/"/g, ""))
+                // If the buffer ends with ] and we can parse it, it's complete
+                if (jsonBuffer.trim().endsWith("]")) {
+                  const suggestions = JSON.parse(jsonBuffer.trim())
+                  if (Array.isArray(suggestions)) {
+                    // Send suggestions as a special message
+                    controller.enqueue(
+                      encoder.encode(`\n\n__SUGGESTIONS__${JSON.stringify(suggestions)}__END_SUGGESTIONS__`),
+                    )
+                    jsonBuffer = ""
+                    jsonStarted = false
                   }
                 }
-
-                if (Array.isArray(suggestions) && suggestions.length > 0) {
-                  console.log("Sending suggestions:", suggestions)
-                  // Send the suggestions as a special message with a clear delimiter
-                  controller.enqueue(
-                    encoder.encode(`\n\n[SUGGESTIONS_START]${JSON.stringify(suggestions)}[SUGGESTIONS_END]`),
-                  )
-                }
-              } catch (error) {
-                console.error("Error processing suggestions:", error)
+              } catch (e) {
+                // JSON is not complete yet, continue collecting
               }
-
-              // Send the content after [/SUGGESTIONS]
-              const visibleContent = content.split("[/SUGGESTIONS]")[1]
-              if (visibleContent) {
-                controller.enqueue(encoder.encode(visibleContent))
-              }
-              continue
+            } else {
+              // If we're not collecting JSON, send the content directly
+              controller.enqueue(encoder.encode(content))
             }
+          }
+        }
 
-            // If we're inside the suggestion block, accumulate the content
-            if (inSuggestionBlock) {
-              suggestionBuffer += content
-              continue
+        // If we have any remaining JSON buffer, try to parse it
+        if (jsonStarted && jsonBuffer) {
+          try {
+            const suggestions = JSON.parse(jsonBuffer.trim())
+            if (Array.isArray(suggestions)) {
+              controller.enqueue(encoder.encode(`\n\n__SUGGESTIONS__${JSON.stringify(suggestions)}__END_SUGGESTIONS__`))
             }
-
-            // Otherwise, send the content to the stream
-            controller.enqueue(encoder.encode(content))
+          } catch (e) {
+            // If we can't parse it, just send it as regular text
+            controller.enqueue(encoder.encode(jsonBuffer))
           }
         }
 
