@@ -481,11 +481,11 @@ export default function Home() {
         <header className="header">
           <div className="header-content">
             <div className="header-left">
-              <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
-                <Menu size={24} />
-              </button>
+              <h2 className="header-title">Dialogue with {selectedSaint}</h2>
             </div>
-            <h2 className="header-title">Dialogue with {selectedSaint}</h2>
+            <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu size={24} />
+            </button>
           </div>
 
           <div className="mobile-selector">
