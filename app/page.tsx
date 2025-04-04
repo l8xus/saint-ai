@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useRef, useEffect, useCallback } from "react"
-import { useChat } from "ai/react"
+import { useChat, type Message } from "ai/react"
 import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -93,6 +93,9 @@ export default function Home() {
     }
     return newArray
   }
+
+  // Initialize the chat and get the chat helpers
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat(chatConfig())
 
   // Create a memoized version of processMessageContent to avoid recreating it on every render
   const processMessageContent = useCallback(
@@ -193,7 +196,7 @@ export default function Home() {
       initialMessages: [
         {
           id: "welcome-message",
-          role: "assistant",
+          role: "assistant" as const, // Explicitly type as 'assistant'
           content: `Peace be with you, my child. I am ${currentSaintRef.current}. How may I share my wisdom with you today?`,
         },
       ],
@@ -201,7 +204,7 @@ export default function Home() {
       body: {
         saintName: currentSaintRef.current,
       },
-      onFinish: (message: any) => {
+      onFinish: (message: Message) => {
         console.log("onFinish triggered with message:", message.id)
 
         // Process the message content to extract dynamic suggestions and clean it
@@ -235,10 +238,8 @@ export default function Home() {
         }, 100)
       },
     }),
-    [processMessageContent],
+    [processMessageContent, currentSaintRef, messages, setMessages],
   )
-
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat(chatConfig())
 
   // Process each new message as it's added to the messages array
   useEffect(() => {
@@ -517,9 +518,9 @@ export default function Home() {
       currentSaintRef.current = selectedSaint
 
       // Reset chat with new welcome message only when the saint actually changes
-      const welcomeMessage = {
+      const welcomeMessage: Message = {
         id: "welcome-message",
-        role: "assistant" as const,
+        role: "assistant",
         content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
       }
 
@@ -569,6 +570,12 @@ export default function Home() {
   const handleSaintSelect = (saint: string) => {
     // Set the selected saint
     setSelectedSaint(saint)
+    // Close the search results
+    setShowSearchResults(false)
+    // Close the mobile menu if it's open
+    setIsMobileMenuOpen(false)
+
+    // Update the URL
     // Close the search results
     setShowSearchResults(false)
     // Close the mobile menu if it's open
