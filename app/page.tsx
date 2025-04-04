@@ -673,16 +673,6 @@ export default function Home() {
             />
           </div>
 
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search for a saint..."
-              className="search-input"
-              onFocus={() => setShowSearchResults(true)}
-            />
-          </div>
-
           {showSearchResults && (
             <div className="search-results">
               {filteredSaints.length > 0 ? (
@@ -719,128 +709,132 @@ export default function Home() {
           </a>
         </div>
       </div>
-  \
-  ;<div className="main-content">
-    {/* Header */}
-    <header className="header">
-      <div className="header-content">
-        <div className="header-left">
-          <h2 className="header-title">Dialogue with {selectedSaint}</h2>
-        </div>
-        <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
-          <Menu size={24} />
-        </button>
-      </div>
 
-      <div className="mobile-selector">
-        {/* Mobile search input */}
-        <div className="search-container mobile-search" ref={mobileSearchRef}>
-          <div className="search-input-wrapper">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search for a saint..."
-              className="search-input"
-              onFocus={() => setShowSearchResults(true)}
-            />
+      {/* Main content */}
+      <div className="main-content">
+        {/* Header */}
+        <header className="header">
+          <div className="header-content">
+            <div className="header-left">
+              <h2 className="header-title">Dialogue with {selectedSaint}</h2>
+            </div>
+            <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu size={24} />
+            </button>
           </div>
 
-          {/* Fix the mobile search results to ensure they're properly clickable */}
+          <div className="mobile-selector">
+            {/* Mobile search input */}
+            <div className="search-container mobile-search" ref={mobileSearchRef}>
+              <div className="search-input-wrapper">
+                <Search size={16} className="search-icon" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search for a saint..."
+                  className="search-input"
+                  onFocus={() => setShowSearchResults(true)}
+                />
+              </div>
 
-          {showSearchResults && (
-            <div className="search-results mobile-search-results">
-              {filteredSaints.length > 0 ? (
-                filteredSaints.map((saint) => (
-                  <div
-                    key={saint}
-                    className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
-                    onClick={() => {
-                      handleSaintSelect(saint)
-                      // Force close the search results
-                      setShowSearchResults(false)
-                    }}
-                  >
-                    {saint}
-                  </div>
-                ))
-              ) : (
-                <div className="search-no-results">No saints found</div>
+              {/* Fix the mobile search results to ensure they're properly clickable */}
+              {showSearchResults && (
+                <div className="search-results mobile-search-results">
+                  {filteredSaints.length > 0 ? (
+                    filteredSaints.map((saint) => (
+                      <div
+                        key={saint}
+                        className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
+                        onClick={() => {
+                          handleSaintSelect(saint)
+                          // Force close the search results
+                          setShowSearchResults(false)
+                        }}
+                      >
+                        {saint}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="search-no-results">No saints found</div>
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-      </div>
-    </header>
+          </div>
+        </header>
 
-    {/* Chat area */}
-    <div className="chat-area" ref={chatAreaRef}>
-      <div className="chat-container">
-        {messages.map((message) => (
-          <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
-            {message.role !== "user" && (
-              <div className="message-avatar">
-                <img
-                  src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
-                  alt={selectedSaint}
-                  onError={handleImageError}
-                />
+        {/* Chat area */}
+        <div className="chat-area" ref={chatAreaRef}>
+          <div className="chat-container">
+            {messages.map((message) => (
+              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
+                {message.role !== "user" && (
+                  <div className="message-avatar">
+                    <img
+                      src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
+                      alt={selectedSaint}
+                      onError={handleImageError}
+                    />
+                  </div>
+                )}
+
+                <div className="message-content">
+                  <p>{message.content}</p>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} style={{ height: "1px", width: "100%" }}></div>
+          </div>
+        </div>
+
+        {/* Input area */}
+        <div className="input-area">
+          <div className="input-container">
+            {showSuggestions && (
+              <div className="suggestions-container">
+                <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+                  <ChevronLeft size={16} />
+                </button>
+
+                <div ref={suggestionsRef} className="suggestions hide-scrollbar">
+                  {dynamicSuggestions.map((question) => (
+                    <button
+                      key={question}
+                      className="suggestion-button"
+                      onClick={() => handleSuggestionClick(question)}
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+
+                <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+                  <ChevronRight size={16} />
+                </button>
               </div>
             )}
 
-            <div className="message-content">
-              <p>{message.content}</p>
-            </div>
+            <form onSubmit={handleFormSubmit} className="input-form">
+              <input
+                type="text"
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Ask for wisdom..."
+                className="input-field"
+                disabled={isLoading}
+              />
+              <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
+                <span className="send-icon">
+                  <Send size={16} />
+                </span>
+                <span className="send-text">Send</span>
+              </button>
+            </form>
           </div>
-        ))}
-        <div ref={messagesEndRef} style={{ height: "1px", width: "100%" }}></div>
+        </div>
       </div>
     </div>
-
-    {/* Input area */}
-    <div className="input-area">
-      <div className="input-container">
-        {showSuggestions && (
-          <div className="suggestions-container">
-            <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
-              <ChevronLeft size={16} />
-            </button>
-
-            <div ref={suggestionsRef} className="suggestions hide-scrollbar">
-              {dynamicSuggestions.map((question) => (
-                <button key={question} className="suggestion-button" onClick={() => handleSuggestionClick(question)}>
-                  {question}
-                </button>
-              ))}
-            </div>
-
-            <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        )}
-
-        <form onSubmit={handleFormSubmit} className="input-form">
-          <input
-            type="text"
-            value={input}
-            onChange={handleInputChange}
-            placeholder="Ask for wisdom..."
-            className="input-field"
-            disabled={isLoading}
-          />
-          <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
-            <span className="send-icon">
-              <Send size={16} />
-            </span>
-            <span className="send-text">Send</span>
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-  </div>
   )
 }
 
