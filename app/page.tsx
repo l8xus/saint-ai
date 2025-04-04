@@ -5,7 +5,6 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { useChat } from "ai/react"
 import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
-import type { Message } from "ai"
 
 export default function Home() {
   const router = useRouter()
@@ -233,25 +232,41 @@ export default function Home() {
         }
       }, 100)
     },
-    onMessage: (message: Message) => {
-      // Process each incoming message for suggestions
-      console.log("onMessage triggered:", message.id)
-
-      // Process the message content
-      const result = processMessageContent(message.content)
-
-      // If suggestions were found, update the state immediately
-      if (result.suggestions) {
-        console.log("Setting dynamic suggestions from onMessage:", result.suggestions)
-        setDynamicSuggestions(result.suggestions)
-        setShowSuggestions(true)
-      }
-    },
     experimental_onFunctionCall: async () => {
       // This is just to enable streaming
       return Promise.resolve()
     },
   })
+
+  // Process each new message as it's added to the messages array
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1]
+      if (lastMessage.role === "assistant") {
+        console.log("Processing new assistant message:", lastMessage.id)
+
+        // Process the message content
+        const result = processMessageContent(lastMessage.content)
+
+        // If suggestions were found, update the state immediately
+        if (result.suggestions) {
+          console.log("Setting dynamic suggestions from new message:", result.suggestions)
+          setDynamicSuggestions(result.suggestions)
+          setShowSuggestions(true)
+        }
+
+        // If the content was modified, update the message
+        if (result.cleanedContent !== lastMessage.content) {
+          const updatedMessages = [...messages]
+          updatedMessages[messages.length - 1] = {
+            ...lastMessage,
+            content: result.cleanedContent,
+          }
+          setMessages(updatedMessages)
+        }
+      }
+    }
+  }, [messages, processMessageContent, setMessages])
 
   // Scroll to bottom when messages change
   useEffect(() => {
