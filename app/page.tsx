@@ -218,12 +218,13 @@ export default function Home() {
         if (result.cleanedContent !== message.content) {
           console.log("Updating message with cleaned content")
 
-          // Use the stable message update approach
-          setMessages((currentMessages) => {
-            return currentMessages.map((msg) =>
-              msg.id === message.id ? { ...msg, content: result.cleanedContent } : msg,
-            )
-          })
+          // Create a new array with the updated message
+          const updatedMessages = messages.map((msg) =>
+            msg.id === message.id ? { ...msg, content: result.cleanedContent } : msg,
+          )
+
+          // Set the messages directly with the new array
+          setMessages(updatedMessages)
         }
 
         // Force scroll to bottom
@@ -258,12 +259,13 @@ export default function Home() {
 
         // If the content was modified, update the message
         if (result.cleanedContent !== lastMessage.content) {
-          // Use the stable message update approach
-          setMessages((currentMessages) => {
-            return currentMessages.map((msg) =>
-              msg.id === lastMessage.id ? { ...msg, content: result.cleanedContent } : msg,
-            )
-          })
+          // Create a new array with the updated message
+          const updatedMessages = messages.map((msg) =>
+            msg.id === lastMessage.id ? { ...msg, content: result.cleanedContent } : msg,
+          )
+
+          // Set the messages directly with the new array
+          setMessages(updatedMessages)
         }
       }
     }
