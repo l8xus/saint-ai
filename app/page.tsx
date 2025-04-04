@@ -25,7 +25,7 @@ export default function Home() {
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/assissi-xsrYL2QtPtrEYH4rNJYmlDIPqYzdw0.jpeg",
     articleLink: "https://www.thecatholicvoice.com/saints/saint-francis-of-assisi-biography-miracles-and-wisdom",
   })
-  const [showSuggestions, setShowSuggestions] = useState(showSuggestions)
+  const [showSuggestions, setShowSuggestions] = useState(true)
   const suggestionsRef = useRef<HTMLDivElement>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([])
