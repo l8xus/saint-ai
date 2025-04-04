@@ -3,10 +3,8 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
-import { experimental_useObject as useObject } from "ai/react"
 import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { z } from "zod"
 import { useScrollToBottom } from "@/hooks/useScrollToBottom"
 
 export default function Home() {
@@ -26,6 +24,13 @@ export default function Home() {
   })
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const suggestionsRef = useRef<HTMLDivElement>(null)
+  const [suggestions, setSuggestions] = useState<string[]>([
+    "What is your greatest teaching?",
+    "How did you find your calling?",
+    "What challenges did you face?",
+    "What advice would you give me?",
+    "Tell me about your spiritual journey",
+  ])
 
   // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
@@ -55,11 +60,37 @@ export default function Home() {
     }
   }, [isMobileMenuOpen])
 
-  // Use the suggestions API with useObject
-  const { object: suggestionsObject, submit: submitForSuggestions } = useObject({
-    api: "/api/suggestions",
-    schema: z.object({ suggestions: z.array(z.string()) }),
-  })
+  // Function to fetch suggestions
+  const fetchSuggestions = async (content: string) => {
+    try {
+      const response = await fetch("/api/suggestions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`)
+      }
+
+      const data = await response.json()
+      if (data.suggestions && Array.isArray(data.suggestions)) {
+        setSuggestions(data.suggestions)
+      }
+    } catch (error) {
+      console.error("Error fetching suggestions:", error)
+      // If there's an error, use default suggestions
+      setSuggestions([
+        "What is your greatest teaching?",
+        "How did you find your calling?",
+        "What challenges did you face?",
+        "What advice would you give me?",
+        "Tell me about your spiritual journey",
+      ])
+    }
+  }
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
     initialMessages: [
@@ -74,8 +105,8 @@ export default function Home() {
       saintName: selectedSaint,
     },
     onFinish: (message) => {
-      // Submit the message content to get suggestions
-      submitForSuggestions(message.content)
+      // Fetch suggestions based on the assistant's response
+      fetchSuggestions(message.content)
     },
   })
 
@@ -327,6 +358,15 @@ export default function Home() {
       },
     ])
 
+    // Reset suggestions to default
+    setSuggestions([
+      "What is your greatest teaching?",
+      "How did you find your calling?",
+      "What challenges did you face?",
+      "What advice would you give me?",
+      "Tell me about your spiritual journey",
+    ])
+
     // Clear search when saint is selected
     setSearchQuery("")
   }, [selectedSaint, setMessages])
@@ -393,20 +433,6 @@ export default function Home() {
       content: question,
     })
   }
-
-  // Default suggested questions
-  const defaultSuggestedQuestions = [
-    "What is your greatest teaching?",
-    "How did you find your calling?",
-    "What challenges did you face?",
-    "What advice would you give me?",
-    "Tell me about your spiritual journey",
-    "How did you pray?",
-    "What is your view on suffering?",
-  ]
-
-  // Get suggestions from the API response or use defaults
-  const suggestions = suggestionsObject?.suggestions || defaultSuggestedQuestions
 
   return (
     <div className="app-container">
