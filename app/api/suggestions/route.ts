@@ -1,80 +1,22 @@
-import { NextResponse } from "next/server"
-import OpenAI from "openai"
+import { openai } from "@ai-sdk/openai"
+import { streamObject } from "ai"
+import { z } from "zod"
 
-// Create an OpenAI API client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30
 
 export async function POST(req: Request) {
-  try {
-    const { content } = await req.json()
+  const { content } = await req.json()
 
-    // Extract suggestions from the message content
-    // Using a compatible regex pattern without the 's' flag
-    const suggestionsMatch = content.match(/\[([\s\S]*?)\]/)
+  const result = await streamObject({
+    model: openai("gpt-4o"),
+    schema: z.object({ suggestions: z.array(z.string()) }),
+    prompt: `Generate 3-5 thoughtful follow-up questions that a user might want to ask a Catholic saint based on the saint's previous response. The questions should be directly related to the context of the previous message and help the user learn more about the saint's life, teachings, or spiritual insights. Keep questions concise (under 10 words if possible) and focused on spiritual or historical aspects of the saint's life.
 
-    if (suggestionsMatch && suggestionsMatch[0]) {
-      try {
-        // Try to parse the suggestions as JSON
-        const suggestionsJson = suggestionsMatch[0]
-        const suggestions = JSON.parse(suggestionsJson)
+Previous message from the saint:
+${content}`,
+  })
 
-        if (Array.isArray(suggestions) && suggestions.length > 0) {
-          return NextResponse.json({ suggestions })
-        }
-      } catch (error) {
-        console.error("Error parsing suggestions:", error)
-      }
-    }
-
-    // If no suggestions were found or parsing failed, generate new ones
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a helpful assistant that generates follow-up questions based on a conversation with a Catholic saint. Generate 3-5 thoughtful questions that would help the user learn more about the saint's life, teachings, or spiritual insights. The questions should be directly related to the context of the previous message.",
-        },
-        {
-          role: "user",
-          content: `Based on this message from a saint, generate 3-5 follow-up questions that a user might want to ask: "${content}"`,
-        },
-      ],
-      temperature: 0.7,
-    })
-
-    // Extract the suggestions from the response
-    const generatedContent = response.choices[0]?.message?.content || ""
-    const generatedSuggestionsMatch = generatedContent.match(/\[([\s\S]*?)\]/)
-
-    if (generatedSuggestionsMatch && generatedSuggestionsMatch[0]) {
-      try {
-        const suggestionsJson = generatedSuggestionsMatch[0]
-        const suggestions = JSON.parse(suggestionsJson)
-
-        if (Array.isArray(suggestions) && suggestions.length > 0) {
-          return NextResponse.json({ suggestions })
-        }
-      } catch (error) {
-        console.error("Error parsing generated suggestions:", error)
-      }
-    }
-
-    // If all else fails, return default suggestions
-    return NextResponse.json({
-      suggestions: [
-        "What is your greatest teaching?",
-        "How did you find your calling?",
-        "What challenges did you face?",
-        "What advice would you give me?",
-        "Tell me about your spiritual journey",
-      ],
-    })
-  } catch (error) {
-    console.error("Error in suggestions API:", error)
-    return NextResponse.json({ error: "Failed to generate suggestions" }, { status: 500 })
-  }
+  return result.toTextStreamResponse()
 }
 
