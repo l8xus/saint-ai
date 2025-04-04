@@ -15,6 +15,15 @@ Share wisdom, stories from your life, and spiritual guidance in a way that refle
 Your responses should be warm, wise, and reflect Catholic theology and spirituality.
 If asked about matters beyond your lifetime, you can respond with timeless spiritual wisdom while acknowledging your historical context.
 
+After each response, you MUST generate 3-5 follow-up questions that the user might want to ask next. Format them as a JSON array of strings inside [SUGGESTIONS][/SUGGESTIONS] tags.
+
+Example format:
+Your response text here...
+
+[SUGGESTIONS]
+["Question 1?", "Question 2?", "Question 3?"]
+[/SUGGESTIONS]
+
 Here are some specific details about your life and teachings to incorporate:
 
 ${
@@ -300,56 +309,60 @@ ${
               if (visibleContent) {
                 controller.enqueue(encoder.encode(visibleContent))
               }
+              continue
             }
+
             // Check if we're exiting the suggestion block
-            else if (inSuggestionBlock && content.includes("[/SUGGESTIONS]")) {
+            if (inSuggestionBlock && content.includes("[/SUGGESTIONS]")) {
               inSuggestionBlock = false
-              // Don't send the [/SUGGESTIONS] marker to the client
+              suggestionBuffer += content.split("[/SUGGESTIONS]")[0]
+
+              // Process the suggestions
+              try {
+                // Clean up the suggestion buffer
+                const cleanedBuffer = suggestionBuffer.trim()
+                console.log("Raw suggestion buffer:", cleanedBuffer)
+
+                let suggestions = []
+                try {
+                  // Try to parse as JSON
+                  suggestions = JSON.parse(cleanedBuffer)
+                } catch (e) {
+                  console.error("JSON parse error:", e)
+                  // Try to extract strings if JSON parsing fails
+                  const extractedSuggestions = cleanedBuffer.match(/"([^"]+)"/g)
+                  if (extractedSuggestions) {
+                    suggestions = extractedSuggestions.map((s) => s.replace(/"/g, ""))
+                  }
+                }
+
+                if (Array.isArray(suggestions) && suggestions.length > 0) {
+                  console.log("Sending suggestions:", suggestions)
+                  // Send the suggestions as a special message with a clear delimiter
+                  controller.enqueue(
+                    encoder.encode(`\n\n[SUGGESTIONS_START]${JSON.stringify(suggestions)}[SUGGESTIONS_END]`),
+                  )
+                }
+              } catch (error) {
+                console.error("Error processing suggestions:", error)
+              }
+
+              // Send the content after [/SUGGESTIONS]
               const visibleContent = content.split("[/SUGGESTIONS]")[1]
               if (visibleContent) {
                 controller.enqueue(encoder.encode(visibleContent))
               }
-
-              // Process the suggestions
-              try {
-                const suggestionsMatch = responseText.match(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/)
-                if (suggestionsMatch && suggestionsMatch[1]) {
-                  const suggestionsText = suggestionsMatch[1].trim()
-                  console.log("Extracted suggestions text:", suggestionsText)
-
-                  // Format as a simple array of strings to avoid parsing issues
-                  let suggestions = []
-                  try {
-                    // Try to parse as JSON first
-                    suggestions = JSON.parse(suggestionsText)
-                  } catch (e) {
-                    // If that fails, try to extract from the text directly
-                    const extractedSuggestions = suggestionsText.match(/"([^"]+)"/g)
-                    if (extractedSuggestions) {
-                      suggestions = extractedSuggestions.map((s) => s.replace(/"/g, ""))
-                    }
-                  }
-
-                  if (Array.isArray(suggestions) && suggestions.length > 0) {
-                    // Send the suggestions as a special message with a clear delimiter and a simple format
-                    controller.enqueue(
-                      encoder.encode(`\n\n[SUGGESTIONS_START]${JSON.stringify(suggestions)}[SUGGESTIONS_END]`),
-                    )
-                  }
-                }
-              } catch (error) {
-                console.error("Error parsing suggestions:", error)
-              }
+              continue
             }
-            // If we're inside the suggestion block, accumulate the content but don't send it
-            else if (inSuggestionBlock) {
+
+            // If we're inside the suggestion block, accumulate the content
+            if (inSuggestionBlock) {
               suggestionBuffer += content
-              // Don't send anything to the client while in suggestion block
+              continue
             }
+
             // Otherwise, send the content to the stream
-            else {
-              controller.enqueue(encoder.encode(content))
-            }
+            controller.enqueue(encoder.encode(content))
           }
         }
 
