@@ -26,6 +26,7 @@ export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([])
   const [lastMessageId, setLastMessageId] = useState<string | null>(null)
+  const [pendingSuggestions, setPendingSuggestions] = useState<string[] | null>(null)
 
   // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
@@ -84,9 +85,16 @@ export default function Home() {
     return newArray
   }
 
-  // Improve the message content processing function to ensure all suggestion markers are removed
+  // Effect to update suggestions when pendingSuggestions changes
+  useEffect(() => {
+    if (pendingSuggestions && pendingSuggestions.length > 0) {
+      console.log("Updating dynamic suggestions with:", pendingSuggestions)
+      setDynamicSuggestions(pendingSuggestions)
+      setPendingSuggestions(null)
+    }
+  }, [pendingSuggestions])
 
-  // Replace the existing processMessageContent function with this improved version:
+  // Improve the message content processing function to ensure all suggestion markers are removed
   const processMessageContent = (content: string) => {
     // First, check if the message contains dynamic suggestions
     const suggestionsMatch = content.match(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/)
@@ -103,6 +111,7 @@ export default function Home() {
           suggestions = JSON.parse(suggestionsText)
           console.log("Parsed suggestions as JSON:", suggestions)
         } catch (e) {
+          console.error("JSON parse error:", e)
           // If JSON parsing fails, try to extract from the text directly
           const extractedSuggestions = suggestionsText.match(
             /\["([^"]+)",\s*"([^"]+)",\s*"([^"]+)",\s*"([^"]+)",\s*"([^"]+)"\]/,
@@ -120,10 +129,9 @@ export default function Home() {
         }
 
         if (suggestions && Array.isArray(suggestions)) {
-          // Update the dynamic suggestions immediately
-          console.log("Setting dynamic suggestions to:", suggestions)
-          setDynamicSuggestions(suggestions)
-          setShowSuggestions(true)
+          // Set pending suggestions to be applied after the current render cycle
+          console.log("Setting pending suggestions:", suggestions)
+          setPendingSuggestions(suggestions)
         }
 
         // Remove the dynamic suggestions block from the content
@@ -152,7 +160,6 @@ export default function Home() {
     body: {
       saintName: selectedSaint,
     },
-    // Also update the onFinish callback to ensure it properly cleans the message:
     onFinish: (message) => {
       console.log("onFinish triggered with message:", message)
 
