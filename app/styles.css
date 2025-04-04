@@ -417,6 +417,11 @@ h6 {
   .header-title {
     font-size: 1.25rem;
   }
+
+  body.sidebar-open .main-content {
+    overflow: hidden;
+    position: fixed;
+  }
 }
 
 /* Hide scrollbar but allow scrolling */
@@ -427,5 +432,48 @@ h6 {
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Additional styles for specific components */
+
+/* Font settings */
+body {
+  font-family: "FuturaBT", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Cinzel", serif;
+  color: #2b2357;
+}
+
+/* Ensure the sidebar doesn't scroll on desktop */
+@media (min-width: 769px) {
+  .sidebar {
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+  }
+}
+
+/* Ensure the chat area scrolls properly */
+.chat-area {
+  scrollbar-width: thin;
+  scrollbar-color: #d0b557 #f0e6da;
+}
+
+/* Ensure the input stays fixed at the bottom */
+.input-area {
+  background-color: #f0e6da;
+  border-top: 1px solid #d0b557;
+}
+
+/* Ensure suggestions scroll horizontally */
+.suggestions {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
