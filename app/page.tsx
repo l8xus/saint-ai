@@ -195,8 +195,6 @@ export default function Home() {
             Read More
           </a>
         </div>
-
-        <hr className="separator" />
       </div>
 
       {/* Main content */}
@@ -213,88 +211,84 @@ export default function Home() {
             <div className="header-right">
               <h2 className="header-title">Dialogue with {selectedSaint}</h2>
             </div>
-            <div className="mobile-selector">
-              <select
-                className="saint-selector"
-                value={selectedSaint}
-                onChange={handleSaintChange}
-                style={{ padding: "0.5rem", fontSize: "0.875rem" }}
-              >
-                <option value="St. Francis of Assisi">St. Francis of Assisi</option>
-                <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
-                <option value="St. Teresa of Ávila">St. Teresa of Ávila</option>
-                <option value="St. Augustine">St. Augustine</option>
-                <option value="St. Thérèse of Lisieux">St. Thérèse of Lisieux</option>
-              </select>
-            </div>
           </div>
 
-          {/* Chat area */}
-          <div className="chat-area">
-            <div className="chat-container">
-              {messages.map((message) => (
-                <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
-                  {message.role !== "user" && (
-                    <div className="message-avatar">
-                      <img src={saintInfo.image || "/placeholder.svg"} alt={selectedSaint} onError={handleImageError} />
-                    </div>
-                  )}
-
-                  <div className="message-content">
-                    <p>{message.content}</p>
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef}></div>
-            </div>
-          </div>
-
-          {/* Input area */}
-          <div className="input-area">
-            <div className="input-container">
-              {showSuggestions && (
-                <div className="suggestions-container">
-                  <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
-                    <ChevronLeft size={16} />
-                  </button>
-
-                  <div ref={suggestionsRef} className="suggestions hide-scrollbar">
-                    {suggestedQuestions.map((question) => (
-                      <button
-                        key={question}
-                        className="suggestion-button"
-                        onClick={() => handleSuggestionClick(question)}
-                      >
-                        {question}
-                      </button>
-                    ))}
-                  </div>
-
-                  <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="input-form">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={handleInputChange}
-                  placeholder="Ask for wisdom..."
-                  className="input-field"
-                  disabled={isLoading}
-                />
-                <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
-                  <span className="send-icon">
-                    <Send size={16} />
-                  </span>
-                  Send
-                </button>
-              </form>
-            </div>
+          <div className="mobile-selector">
+            <select className="saint-selector" value={selectedSaint} onChange={handleSaintChange}>
+              <option value="St. Francis of Assisi">St. Francis of Assisi</option>
+              <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
+              <option value="St. Teresa of Ávila">St. Teresa of Ávila</option>
+              <option value="St. Augustine">St. Augustine</option>
+              <option value="St. Thérèse of Lisieux">St. Thérèse of Lisieux</option>
+            </select>
           </div>
         </header>
+
+        {/* Chat area */}
+        <div className="chat-area">
+          <div className="chat-container">
+            {messages.map((message) => (
+              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
+                {message.role !== "user" && (
+                  <div className="message-avatar">
+                    <img src={saintInfo.image || "/placeholder.svg"} alt={selectedSaint} onError={handleImageError} />
+                  </div>
+                )}
+
+                <div className="message-content">
+                  <p>{message.content}</p>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef}></div>
+          </div>
+        </div>
+
+        {/* Input area */}
+        <div className="input-area">
+          <div className="input-container">
+            {showSuggestions && (
+              <div className="suggestions-container">
+                <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+                  <ChevronLeft size={16} />
+                </button>
+
+                <div ref={suggestionsRef} className="suggestions hide-scrollbar">
+                  {suggestedQuestions.map((question) => (
+                    <button
+                      key={question}
+                      className="suggestion-button"
+                      onClick={() => handleSuggestionClick(question)}
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+
+                <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="input-form">
+              <input
+                type="text"
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Ask for wisdom..."
+                className="input-field"
+                disabled={isLoading}
+              />
+              <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
+                <span className="send-icon">
+                  <Send size={16} />
+                </span>
+                <span className="send-text">Send</span>
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   )
