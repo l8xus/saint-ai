@@ -13,6 +13,10 @@ export default function Home() {
   // Get the saint from URL parameters or default to St. Francis
   const saintParam = searchParams.get("saint")
 
+  // Use refs to store state that shouldn't trigger re-renders
+  const initialRenderRef = useRef(true)
+  const currentSaintRef = useRef(saintParam || "St. Francis of Assisi")
+
   const [selectedSaint, setSelectedSaint] = useState(saintParam || "St. Francis of Assisi")
   const [saintInfo, setSaintInfo] = useState({
     name: "St. Francis of Assisi",
@@ -37,6 +41,13 @@ export default function Home() {
   const chatAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+  // Store the initial welcome message in a ref to avoid recreating it
+  const welcomeMessageRef = useRef({
+    id: "welcome-message",
+    role: "assistant" as const,
+    content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
+  })
+
   // Default suggested questions
   const defaultSuggestedQuestions = [
     "What is your greatest teaching?",
@@ -48,15 +59,17 @@ export default function Home() {
     "What is your view on suffering?",
   ]
 
-  // Initialize with the saint from URL if available
+  // Initialize with the saint from URL if available - only on first render
   useEffect(() => {
-    if (saintParam) {
+    if (initialRenderRef.current && saintParam) {
+      currentSaintRef.current = saintParam
       setSelectedSaint(saintParam)
+      initialRenderRef.current = false
     }
 
     // Initialize dynamic suggestions with default questions
     setDynamicSuggestions(defaultSuggestedQuestions)
-  }, [saintParam])
+  }, [saintParam, defaultSuggestedQuestions])
 
   // Add/remove body class when sidebar is open on mobile
   useEffect(() => {
@@ -174,76 +187,57 @@ export default function Home() {
     [],
   )
 
-  // Create a custom streaming handler to process suggestions in real-time
-  const handleStream = useCallback(
-    (chunk: string) => {
-      console.log("Stream chunk received:", chunk.substring(0, 50) + "...")
+  // Initialize the chat with a stable configuration
+  const chatConfig = useCallback(
+    () => ({
+      initialMessages: [
+        {
+          id: "welcome-message",
+          role: "assistant",
+          content: `Peace be with you, my child. I am ${currentSaintRef.current}. How may I share my wisdom with you today?`,
+        },
+      ],
+      api: "/api/chat",
+      body: {
+        saintName: currentSaintRef.current,
+      },
+      onFinish: (message: any) => {
+        console.log("onFinish triggered with message:", message.id)
 
-      // Check for suggestions in the chunk
-      const result = processMessageContent(chunk)
+        // Process the message content to extract dynamic suggestions and clean it
+        const result = processMessageContent(message.content)
 
-      if (result.suggestions) {
-        console.log("Setting dynamic suggestions from stream:", result.suggestions)
-        setDynamicSuggestions(result.suggestions)
-        setShowSuggestions(true)
-        return result.cleanedContent
-      }
+        // If suggestions were found, update the state
+        if (result.suggestions) {
+          console.log("Setting dynamic suggestions from onFinish:", result.suggestions)
+          setDynamicSuggestions(result.suggestions)
+          setShowSuggestions(true)
+        }
 
-      return chunk
-    },
+        // If the content was modified, update the message
+        if (result.cleanedContent !== message.content) {
+          console.log("Updating message with cleaned content")
+
+          // Use the stable message update approach
+          setMessages((currentMessages) => {
+            return currentMessages.map((msg) =>
+              msg.id === message.id ? { ...msg, content: result.cleanedContent } : msg,
+            )
+          })
+        }
+
+        // Force scroll to bottom
+        setTimeout(() => {
+          if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+          }
+        }, 100)
+      },
+    }),
     [processMessageContent],
   )
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
-    initialMessages: [
-      {
-        id: "welcome-message",
-        role: "assistant",
-        content: `Peace be with you, my child. I am ${saintInfo.name}. How may I share my wisdom with you today?`,
-      },
-    ],
-    api: "/api/chat",
-    body: {
-      saintName: selectedSaint,
-    },
-    onFinish: (message) => {
-      console.log("onFinish triggered with message:", message.id)
-
-      // Process the message content to extract dynamic suggestions and clean it
-      const result = processMessageContent(message.content)
-
-      // If suggestions were found, update the state
-      if (result.suggestions) {
-        console.log("Setting dynamic suggestions from onFinish:", result.suggestions)
-        setDynamicSuggestions(result.suggestions)
-        setShowSuggestions(true)
-      }
-
-      // If the content was modified, update the message
-      if (result.cleanedContent !== message.content) {
-        console.log("Updating message with cleaned content")
-
-        // Create a new array with the updated message
-        const updatedMessages = messages.map((msg) =>
-          msg.id === message.id ? { ...msg, content: result.cleanedContent } : msg,
-        )
-
-        // Important: Use a direct array instead of a callback function
-        setMessages(updatedMessages)
-      }
-
-      // Force scroll to bottom
-      setTimeout(() => {
-        if (messagesEndRef.current) {
-          messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-        }
-      }, 100)
-    },
-    experimental_onFunctionCall: async () => {
-      // This is just to enable streaming
-      return Promise.resolve()
-    },
-  })
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat(chatConfig())
 
   // Process each new message as it's added to the messages array
   useEffect(() => {
@@ -264,19 +258,12 @@ export default function Home() {
 
         // If the content was modified, update the message
         if (result.cleanedContent !== lastMessage.content) {
-          // Create a new array with the updated message
-          const updatedMessages = [...messages]
-          const messageIndex = updatedMessages.findIndex((msg) => msg.id === lastMessage.id)
-
-          if (messageIndex !== -1) {
-            updatedMessages[messageIndex] = {
-              ...lastMessage,
-              content: result.cleanedContent,
-            }
-
-            // Important: Use a direct array instead of a callback function
-            setMessages(updatedMessages)
-          }
+          // Use the stable message update approach
+          setMessages((currentMessages) => {
+            return currentMessages.map((msg) =>
+              msg.id === lastMessage.id ? { ...msg, content: result.cleanedContent } : msg,
+            )
+          })
         }
       }
     }
@@ -523,27 +510,32 @@ export default function Home() {
     // Update the saint info
     setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
 
-    // Reset chat with new welcome message only when the saint actually changes
-    const welcomeMessage = {
-      id: "welcome-message",
-      role: "assistant" as const,
-      content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
-    }
+    // Only update the currentSaintRef if the saint has actually changed
+    if (currentSaintRef.current !== selectedSaint) {
+      currentSaintRef.current = selectedSaint
 
-    // Check if we need to reset the chat (only if there's no messages or the first message is for a different saint)
-    const shouldResetChat =
-      messages.length === 0 || (messages[0].role === "assistant" && !messages[0].content.includes(selectedSaint))
+      // Reset chat with new welcome message only when the saint actually changes
+      const welcomeMessage = {
+        id: "welcome-message",
+        role: "assistant" as const,
+        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
+      }
 
-    if (shouldResetChat) {
-      console.log("Resetting chat for new saint:", selectedSaint)
-      // Important: Use a direct array instead of a callback function
-      setMessages([welcomeMessage])
+      // Check if we need to reset the chat (only if there's no messages or the first message is for a different saint)
+      const shouldResetChat =
+        messages.length === 0 || (messages[0].role === "assistant" && !messages[0].content.includes(selectedSaint))
 
-      // Reset to default suggestions when changing saints
-      setDynamicSuggestions(defaultSuggestedQuestions)
+      if (shouldResetChat) {
+        console.log("Resetting chat for new saint:", selectedSaint)
+        // Important: Use a direct array instead of a callback function
+        setMessages([welcomeMessage])
 
-      // Show suggestions when changing saints
-      setShowSuggestions(true)
+        // Reset to default suggestions when changing saints
+        setDynamicSuggestions(defaultSuggestedQuestions)
+
+        // Show suggestions when changing saints
+        setShowSuggestions(true)
+      }
     }
 
     // Clear search when saint is selected
