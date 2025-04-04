@@ -217,12 +217,9 @@ export default function Home() {
         console.log("Updating message with cleaned content")
 
         // Find the message in the messages array and update it
-        const updatedMessages = messages.map((msg) =>
-          msg.id === message.id ? { ...msg, content: result.cleanedContent } : msg,
+        setMessages((currentMessages) =>
+          currentMessages.map((msg) => (msg.id === message.id ? { ...msg, content: result.cleanedContent } : msg)),
         )
-
-        // Update the messages
-        setMessages(updatedMessages)
       }
 
       // Force scroll to bottom
@@ -257,12 +254,17 @@ export default function Home() {
 
         // If the content was modified, update the message
         if (result.cleanedContent !== lastMessage.content) {
-          const updatedMessages = [...messages]
-          updatedMessages[messages.length - 1] = {
-            ...lastMessage,
-            content: result.cleanedContent,
-          }
-          setMessages(updatedMessages)
+          setMessages((currentMessages) => {
+            const updatedMessages = [...currentMessages]
+            const messageIndex = updatedMessages.findIndex((msg) => msg.id === lastMessage.id)
+            if (messageIndex !== -1) {
+              updatedMessages[messageIndex] = {
+                ...lastMessage,
+                content: result.cleanedContent,
+              }
+            }
+            return updatedMessages
+          })
         }
       }
     }
@@ -272,31 +274,6 @@ export default function Home() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
-
-  // Process each message for suggestions when messages change
-  useEffect(() => {
-    if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1]
-      if (lastMessage.role === "assistant") {
-        const result = processMessageContent(lastMessage.content)
-        if (result.suggestions) {
-          console.log("Setting dynamic suggestions from messages effect:", result.suggestions)
-          setDynamicSuggestions(result.suggestions)
-          setShowSuggestions(true)
-
-          // If the content was modified, update the message
-          if (result.cleanedContent !== lastMessage.content) {
-            const updatedMessages = [...messages]
-            updatedMessages[messages.length - 1] = {
-              ...lastMessage,
-              content: result.cleanedContent,
-            }
-            setMessages(updatedMessages)
-          }
-        }
-      }
-    }
-  }, [messages, processMessageContent, setMessages])
 
   // List of all saints with their alternative names for search
   const saintsWithAlternatives = [
@@ -531,26 +508,34 @@ export default function Home() {
       },
     }
 
+    // Update the saint info
     setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
 
-    // Reset chat with new welcome message
-    setMessages([
-      {
-        id: "welcome-message",
-        role: "assistant",
-        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
-      },
-    ])
+    // Reset chat with new welcome message only when the saint actually changes
+    const welcomeMessage = {
+      id: "welcome-message",
+      role: "assistant" as const,
+      content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
+    }
 
-    // Reset to default suggestions when changing saints
-    setDynamicSuggestions(defaultSuggestedQuestions)
+    // Check if we need to reset the chat (only if there's no messages or the first message is for a different saint)
+    const shouldResetChat =
+      messages.length === 0 || (messages[0].role === "assistant" && !messages[0].content.includes(selectedSaint))
 
-    // Show suggestions when changing saints
-    setShowSuggestions(true)
+    if (shouldResetChat) {
+      console.log("Resetting chat for new saint:", selectedSaint)
+      setMessages([welcomeMessage])
+
+      // Reset to default suggestions when changing saints
+      setDynamicSuggestions(defaultSuggestedQuestions)
+
+      // Show suggestions when changing saints
+      setShowSuggestions(true)
+    }
 
     // Clear search when saint is selected
     setSearchQuery("")
-  }, [selectedSaint, setMessages])
+  }, [selectedSaint, setMessages, messages, defaultSuggestedQuestions])
 
   // Add this useEffect to ensure scrolling works
   useEffect(() => {
@@ -688,6 +673,16 @@ export default function Home() {
             />
           </div>
 
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search for a saint..."
+              className="search-input"
+              onFocus={() => setShowSearchResults(true)}
+            />
+          </div>
+
           {showSearchResults && (
             <div className="search-results">
               {filteredSaints.length > 0 ? (
@@ -724,133 +719,128 @@ export default function Home() {
           </a>
         </div>
       </div>
+  \
+  ;<div className="main-content">
+    {/* Header */}
+    <header className="header">
+      <div className="header-content">
+        <div className="header-left">
+          <h2 className="header-title">Dialogue with {selectedSaint}</h2>
+        </div>
+        <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
+          <Menu size={24} />
+        </button>
+      </div>
 
-      {/* Main content */}
-      <div className="main-content">
-        {/* Header */}
-        <header className="header">
-          <div className="header-content">
-            <div className="header-left">
-              <h2 className="header-title">Dialogue with {selectedSaint}</h2>
-            </div>
-            <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
-              <Menu size={24} />
-            </button>
+      <div className="mobile-selector">
+        {/* Mobile search input */}
+        <div className="search-container mobile-search" ref={mobileSearchRef}>
+          <div className="search-input-wrapper">
+            <Search size={16} className="search-icon" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search for a saint..."
+              className="search-input"
+              onFocus={() => setShowSearchResults(true)}
+            />
           </div>
 
-          <div className="mobile-selector">
-            {/* Mobile search input */}
-            <div className="search-container mobile-search" ref={mobileSearchRef}>
-              <div className="search-input-wrapper">
-                <Search size={16} className="search-icon" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  placeholder="Search for a saint..."
-                  className="search-input"
-                  onFocus={() => setShowSearchResults(true)}
-                />
-              </div>
+          {/* Fix the mobile search results to ensure they're properly clickable */}
 
-              {/* Fix the mobile search results to ensure they're properly clickable */}
-
-              {showSearchResults && (
-                <div className="search-results mobile-search-results">
-                  {filteredSaints.length > 0 ? (
-                    filteredSaints.map((saint) => (
-                      <div
-                        key={saint}
-                        className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
-                        onClick={() => {
-                          handleSaintSelect(saint)
-                          // Force close the search results
-                          setShowSearchResults(false)
-                        }}
-                      >
-                        {saint}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="search-no-results">No saints found</div>
-                  )}
-                </div>
+          {showSearchResults && (
+            <div className="search-results mobile-search-results">
+              {filteredSaints.length > 0 ? (
+                filteredSaints.map((saint) => (
+                  <div
+                    key={saint}
+                    className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
+                    onClick={() => {
+                      handleSaintSelect(saint)
+                      // Force close the search results
+                      setShowSearchResults(false)
+                    }}
+                  >
+                    {saint}
+                  </div>
+                ))
+              ) : (
+                <div className="search-no-results">No saints found</div>
               )}
             </div>
-          </div>
-        </header>
-
-        {/* Chat area */}
-        <div className="chat-area" ref={chatAreaRef}>
-          <div className="chat-container">
-            {messages.map((message) => (
-              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
-                {message.role !== "user" && (
-                  <div className="message-avatar">
-                    <img
-                      src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
-                      alt={selectedSaint}
-                      onError={handleImageError}
-                    />
-                  </div>
-                )}
-
-                <div className="message-content">
-                  <p>{message.content}</p>
-                </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} style={{ height: "1px", width: "100%" }}></div>
-          </div>
+          )}
         </div>
+      </div>
+    </header>
 
-        {/* Input area */}
-        <div className="input-area">
-          <div className="input-container">
-            {showSuggestions && (
-              <div className="suggestions-container">
-                <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
-                  <ChevronLeft size={16} />
-                </button>
-
-                <div ref={suggestionsRef} className="suggestions hide-scrollbar">
-                  {dynamicSuggestions.map((question) => (
-                    <button
-                      key={question}
-                      className="suggestion-button"
-                      onClick={() => handleSuggestionClick(question)}
-                    >
-                      {question}
-                    </button>
-                  ))}
-                </div>
-
-                <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
-                  <ChevronRight size={16} />
-                </button>
+    {/* Chat area */}
+    <div className="chat-area" ref={chatAreaRef}>
+      <div className="chat-container">
+        {messages.map((message) => (
+          <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
+            {message.role !== "user" && (
+              <div className="message-avatar">
+                <img
+                  src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
+                  alt={selectedSaint}
+                  onError={handleImageError}
+                />
               </div>
             )}
 
-            <form onSubmit={handleFormSubmit} className="input-form">
-              <input
-                type="text"
-                value={input}
-                onChange={handleInputChange}
-                placeholder="Ask for wisdom..."
-                className="input-field"
-                disabled={isLoading}
-              />
-              <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
-                <span className="send-icon">
-                  <Send size={16} />
-                </span>
-                <span className="send-text">Send</span>
-              </button>
-            </form>
+            <div className="message-content">
+              <p>{message.content}</p>
+            </div>
           </div>
-        </div>
+        ))}
+        <div ref={messagesEndRef} style={{ height: "1px", width: "100%" }}></div>
       </div>
     </div>
+
+    {/* Input area */}
+    <div className="input-area">
+      <div className="input-container">
+        {showSuggestions && (
+          <div className="suggestions-container">
+            <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+              <ChevronLeft size={16} />
+            </button>
+
+            <div ref={suggestionsRef} className="suggestions hide-scrollbar">
+              {dynamicSuggestions.map((question) => (
+                <button key={question} className="suggestion-button" onClick={() => handleSuggestionClick(question)}>
+                  {question}
+                </button>
+              ))}
+            </div>
+
+            <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
+
+        <form onSubmit={handleFormSubmit} className="input-form">
+          <input
+            type="text"
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Ask for wisdom..."
+            className="input-field"
+            disabled={isLoading}
+          />
+          <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
+            <span className="send-icon">
+              <Send size={16} />
+            </span>
+            <span className="send-text">Send</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
   )
 }
 
