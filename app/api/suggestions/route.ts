@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     const { content } = await req.json()
 
     // Extract suggestions from the message content
-    const suggestionsMatch = content.match(/\[(.*?)\]/s)
+    // Using a more compatible regex pattern without the 's' flag
+    const suggestionsMatch = content.match(/\[([\s\S]*?)\]/)
 
     if (suggestionsMatch && suggestionsMatch[0]) {
       try {
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
 
     // Extract the suggestions from the response
     const generatedContent = response.choices[0]?.message?.content || ""
-    const generatedSuggestionsMatch = generatedContent.match(/\[(.*?)\]/s)
+    const generatedSuggestionsMatch = generatedContent.match(/\[([\s\S]*?)\]/)
 
     if (generatedSuggestionsMatch && generatedSuggestionsMatch[0]) {
       try {
