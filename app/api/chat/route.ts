@@ -15,18 +15,6 @@ Share wisdom, stories from your life, and spiritual guidance in a way that refle
 Your responses should be warm, wise, and reflect Catholic theology and spirituality.
 If asked about matters beyond your lifetime, you can respond with timeless spiritual wisdom while acknowledging your historical context.
 
-IMPORTANT: After each response, you MUST generate 3-5 follow-up questions that the user might want to ask next based on the context of the conversation. These should be thoughtful questions that would help the user learn more about your life, teachings, or spiritual insights.
-
-Format your response as follows:
-1. Your normal response text
-2. A blank line
-3. The JSON array of suggested questions in the format: ["Question 1?", "Question 2?", "Question 3?"]
-
-Example format:
-Your response text here...
-
-["What was your greatest spiritual challenge?", "How did you overcome temptation?", "What advice would you give to someone struggling with faith?"]
-
 Here are some specific details about your life and teachings to incorporate:
 
 ${
@@ -292,70 +280,14 @@ ${
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder()
-        let responseText = ""
-        let jsonStarted = false
-        let jsonBuffer = ""
 
         // Process each chunk from the OpenAI stream
         for await (const chunk of response) {
           // Extract the content delta if it exists
           const content = chunk.choices[0]?.delta?.content || ""
           if (content) {
-            responseText += content
-
-            // Check if we're starting to receive JSON
-            if (!jsonStarted && content.includes("[")) {
-              const parts = responseText.split("\n\n")
-              // If we have at least two parts and the last part starts with [
-              if (parts.length >= 2 && parts[parts.length - 1].trim().startsWith("[")) {
-                jsonStarted = true
-                // Extract everything before the JSON as the visible content
-                const visibleContent = parts.slice(0, -1).join("\n\n")
-                // Send the visible content
-                controller.enqueue(encoder.encode(visibleContent))
-                // Start collecting JSON
-                jsonBuffer = parts[parts.length - 1]
-                continue
-              }
-            }
-
-            // If we're collecting JSON, add to buffer instead of sending
-            if (jsonStarted) {
-              jsonBuffer += content
-              // Try to parse the JSON to see if it's complete
-              try {
-                // If the buffer ends with ] and we can parse it, it's complete
-                if (jsonBuffer.trim().endsWith("]")) {
-                  const suggestions = JSON.parse(jsonBuffer.trim())
-                  if (Array.isArray(suggestions)) {
-                    // Send suggestions as a special message
-                    controller.enqueue(
-                      encoder.encode(`\n\n__SUGGESTIONS__${JSON.stringify(suggestions)}__END_SUGGESTIONS__`),
-                    )
-                    jsonBuffer = ""
-                    jsonStarted = false
-                  }
-                }
-              } catch (e) {
-                // JSON is not complete yet, continue collecting
-              }
-            } else {
-              // If we're not collecting JSON, send the content directly
-              controller.enqueue(encoder.encode(content))
-            }
-          }
-        }
-
-        // If we have any remaining JSON buffer, try to parse it
-        if (jsonStarted && jsonBuffer) {
-          try {
-            const suggestions = JSON.parse(jsonBuffer.trim())
-            if (Array.isArray(suggestions)) {
-              controller.enqueue(encoder.encode(`\n\n__SUGGESTIONS__${JSON.stringify(suggestions)}__END_SUGGESTIONS__`))
-            }
-          } catch (e) {
-            // If we can't parse it, just send it as regular text
-            controller.enqueue(encoder.encode(jsonBuffer))
+            // Send the content to the stream
+            controller.enqueue(encoder.encode(content))
           }
         }
 
