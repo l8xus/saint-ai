@@ -504,6 +504,7 @@ h6 {
   .header {
     left: 0;
     width: 100%;
+    padding: 0.75rem 1rem;
   }
 
   .input-area {
@@ -523,28 +524,24 @@ h6 {
 
   .header-title {
     font-size: 1.25rem;
+    margin-left: 2rem; /* Add space between menu icon and title */
   }
 
   .header-content {
     justify-content: center;
-    padding-left: 40px; /* Make space for the menu button */
+    padding-left: 0; /* Remove the padding that was causing issues */
+    position: relative;
   }
 
   .header-left {
     left: 1rem;
     z-index: 5;
+    position: absolute; /* Ensure it's positioned absolutely */
   }
 
   .mobile-selector {
     display: block;
     margin-top: 0.75rem;
-  }
-
-  .mobile-selector .saint-selector {
-    max-width: 200px;
-    margin: 0 auto;
-    padding: 0.5rem;
-    font-size: 0.9rem;
   }
 
   .send-text {
@@ -558,32 +555,37 @@ h6 {
   .send-icon {
     margin-right: 0;
   }
-}
 
-/* Mobile search styles */
-.mobile-search {
-  max-width: 250px;
-  margin: 0 auto;
-}
+  /* Fix chat alignment */
+  .chat-area {
+    padding-top: 120px; /* Increase top padding to account for header and search */
+  }
 
-.mobile-search .search-input {
-  padding: 0.5rem 1rem 0.5rem 2rem;
-  font-size: 0.9rem;
-}
+  .chat-container {
+    width: 100%;
+    padding: 0 0.5rem;
+  }
 
-.mobile-search .search-icon {
-  left: 0.5rem;
-}
+  /* Mobile search styles */
+  .mobile-search {
+    max-width: 90%;
+    margin: 0.75rem auto 0;
+  }
 
-.mobile-search-results {
-  position: absolute;
-  max-height: 200px;
-  z-index: 50;
-}
+  .mobile-search .search-input {
+    padding: 0.5rem 1rem 0.5rem 2rem;
+    font-size: 0.9rem;
+  }
 
-@media (max-width: 768px) {
-  .search-results {
+  .mobile-search .search-icon {
+    left: 0.5rem;
+  }
+
+  .mobile-search-results {
+    position: absolute;
     max-height: 200px;
+    z-index: 50;
+    width: 100%;
   }
 }
 
