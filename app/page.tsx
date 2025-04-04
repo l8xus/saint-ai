@@ -91,8 +91,11 @@ export default function Home() {
     } => {
       console.log("Processing message content:", content.substring(0, 100) + "...")
 
-      // Check for the suggestion format
+      // First, check for the new suggestion format
       const suggestionsMatch = content.match(/\[SUGGESTIONS_START\]([\s\S]*?)\[SUGGESTIONS_END\]/)
+
+      let cleanedContent = content
+      let extractedSuggestions: string[] | null = null
 
       if (suggestionsMatch && suggestionsMatch[1]) {
         try {
@@ -108,19 +111,18 @@ export default function Home() {
           } catch (e) {
             console.error("JSON parse error:", e)
             // Try to extract strings if JSON parsing fails
-            const extractedSuggestions = suggestionsJson.match(/"([^"]+)"/g)
-            if (extractedSuggestions) {
-              suggestions = extractedSuggestions.map((s) => s.replace(/"/g, ""))
+            const extractedSuggestionsMatches = suggestionsJson.match(/"([^"]+)"/g)
+            if (extractedSuggestionsMatches) {
+              suggestions = extractedSuggestionsMatches.map((s) => s.replace(/"/g, ""))
               console.log("Extracted suggestions:", suggestions)
             }
           }
 
           // Remove the suggestions block from the content
-          const cleanedContent = content.replace(/\[SUGGESTIONS_START\]([\s\S]*?)\[SUGGESTIONS_END\]/g, "")
+          cleanedContent = cleanedContent.replace(/\[SUGGESTIONS_START\]([\s\S]*?)\[SUGGESTIONS_END\]/g, "")
 
-          return {
-            cleanedContent,
-            suggestions: Array.isArray(suggestions) && suggestions.length > 0 ? suggestions : null,
+          if (Array.isArray(suggestions) && suggestions.length > 0) {
+            extractedSuggestions = suggestions
           }
         } catch (error) {
           console.error("Error processing suggestions:", error)
@@ -128,7 +130,7 @@ export default function Home() {
       }
 
       // Also check for the old format as a fallback
-      const oldFormatMatch = content.match(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/)
+      const oldFormatMatch = cleanedContent.match(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/)
       if (oldFormatMatch && oldFormatMatch[1]) {
         try {
           const suggestionsText = oldFormatMatch[1].trim()
@@ -140,28 +142,33 @@ export default function Home() {
           } catch (e) {
             console.error("JSON parse error (old format):", e)
             // Try to extract strings if JSON parsing fails
-            const extractedSuggestions = suggestionsText.match(/"([^"]+)"/g)
-            if (extractedSuggestions) {
-              suggestions = extractedSuggestions.map((s) => s.replace(/"/g, ""))
+            const extractedSuggestionsMatches = suggestionsText.match(/"([^"]+)"/g)
+            if (extractedSuggestionsMatches) {
+              suggestions = extractedSuggestionsMatches.map((s) => s.replace(/"/g, ""))
             }
           }
 
           // Remove the suggestions block from the content
-          const cleanedContent = content.replace(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/g, "")
+          cleanedContent = cleanedContent.replace(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/g, "")
 
-          return {
-            cleanedContent,
-            suggestions: Array.isArray(suggestions) && suggestions.length > 0 ? suggestions : null,
+          if (!extractedSuggestions && Array.isArray(suggestions) && suggestions.length > 0) {
+            extractedSuggestions = suggestions
           }
         } catch (error) {
           console.error("Error processing old format suggestions:", error)
         }
       }
 
-      // If no suggestions found, return the original content
+      // Ensure we've removed all suggestion markers that might be incomplete
+      cleanedContent = cleanedContent.replace(/\[SUGGESTIONS_START\][\s\S]*$/, "")
+      cleanedContent = cleanedContent.replace(/\[SUGGESTIONS\][\s\S]*$/, "")
+
+      // Trim any extra whitespace that might have been left
+      cleanedContent = cleanedContent.trim()
+
       return {
-        cleanedContent: content,
-        suggestions: null,
+        cleanedContent,
+        suggestions: extractedSuggestions,
       }
     },
     [],
@@ -216,10 +223,12 @@ export default function Home() {
       if (result.cleanedContent !== message.content) {
         console.log("Updating message with cleaned content")
 
-        // Find the message in the messages array and update it
+        // Create a new array with the updated message
         const updatedMessages = messages.map((msg) =>
           msg.id === message.id ? { ...msg, content: result.cleanedContent } : msg,
         )
+
+        // Important: Use a direct array instead of a callback function
         setMessages(updatedMessages)
       }
 
@@ -255,10 +264,19 @@ export default function Home() {
 
         // If the content was modified, update the message
         if (result.cleanedContent !== lastMessage.content) {
-          const updatedMessages = messages.map((msg) =>
-            msg.id === lastMessage.id ? { ...msg, content: result.cleanedContent } : msg,
-          )
-          setMessages(updatedMessages)
+          // Create a new array with the updated message
+          const updatedMessages = [...messages]
+          const messageIndex = updatedMessages.findIndex((msg) => msg.id === lastMessage.id)
+
+          if (messageIndex !== -1) {
+            updatedMessages[messageIndex] = {
+              ...lastMessage,
+              content: result.cleanedContent,
+            }
+
+            // Important: Use a direct array instead of a callback function
+            setMessages(updatedMessages)
+          }
         }
       }
     }
@@ -518,6 +536,7 @@ export default function Home() {
 
     if (shouldResetChat) {
       console.log("Resetting chat for new saint:", selectedSaint)
+      // Important: Use a direct array instead of a callback function
       setMessages([welcomeMessage])
 
       // Reset to default suggestions when changing saints
