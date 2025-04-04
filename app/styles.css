@@ -540,12 +540,13 @@ h6 {
   }
 
   .header-title {
-    font-size: 1.25rem;
-    margin: 0 0 0 40px; /* Fixed margin to ensure consistent spacing from menu icon */
-    max-width: calc(100% - 50px); /* Ensure the title doesn't overlap with the menu */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 1.1rem; /* Reduce font size slightly */
+    margin: 0;
+    padding-left: 2.5rem; /* Keep space from the menu icon */
+    max-width: 90%; /* Ensure it doesn't overflow */
+    white-space: normal; /* Allow text to wrap */
+    line-height: 1.2; /* Tighten line height for wrapped text */
+    text-align: center; /* Center the text */
   }
 
   /* Ensure the menu button has proper spacing */
