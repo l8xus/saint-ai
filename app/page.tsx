@@ -208,7 +208,7 @@ export default function Home() {
               <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
                 <Menu size={24} />
               </button>
-              <h1 className="header-title">Sanctus Dialogus</h1>
+              <h1 className="header-title main-title">Sanctus Dialogus</h1>
             </div>
             <div className="header-right">
               <h2 className="header-title">Dialogue with {selectedSaint}</h2>
@@ -228,73 +228,73 @@ export default function Home() {
               </select>
             </div>
           </div>
-        </header>
 
-        {/* Chat area */}
-        <div className="chat-area">
-          <div className="chat-container">
-            {messages.map((message) => (
-              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
-                {message.role !== "user" && (
-                  <div className="message-avatar">
-                    <img src={saintInfo.image || "/placeholder.svg"} alt={selectedSaint} onError={handleImageError} />
+          {/* Chat area */}
+          <div className="chat-area">
+            <div className="chat-container">
+              {messages.map((message) => (
+                <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
+                  {message.role !== "user" && (
+                    <div className="message-avatar">
+                      <img src={saintInfo.image || "/placeholder.svg"} alt={selectedSaint} onError={handleImageError} />
+                    </div>
+                  )}
+
+                  <div className="message-content">
+                    <p>{message.content}</p>
                   </div>
-                )}
-
-                <div className="message-content">
-                  <p>{message.content}</p>
                 </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef}></div>
+              ))}
+              <div ref={messagesEndRef}></div>
+            </div>
           </div>
-        </div>
 
-        {/* Input area */}
-        <div className="input-area">
-          <div className="input-container">
-            {showSuggestions && (
-              <div className="suggestions-container">
-                <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
-                  <ChevronLeft size={16} />
-                </button>
+          {/* Input area */}
+          <div className="input-area">
+            <div className="input-container">
+              {showSuggestions && (
+                <div className="suggestions-container">
+                  <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+                    <ChevronLeft size={16} />
+                  </button>
 
-                <div ref={suggestionsRef} className="suggestions hide-scrollbar">
-                  {suggestedQuestions.map((question) => (
-                    <button
-                      key={question}
-                      className="suggestion-button"
-                      onClick={() => handleSuggestionClick(question)}
-                    >
-                      {question}
-                    </button>
-                  ))}
+                  <div ref={suggestionsRef} className="suggestions hide-scrollbar">
+                    {suggestedQuestions.map((question) => (
+                      <button
+                        key={question}
+                        className="suggestion-button"
+                        onClick={() => handleSuggestionClick(question)}
+                      >
+                        {question}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+                    <ChevronRight size={16} />
+                  </button>
                 </div>
+              )}
 
-                <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
-                  <ChevronRight size={16} />
+              <form onSubmit={handleSubmit} className="input-form">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={handleInputChange}
+                  placeholder="Ask for wisdom..."
+                  className="input-field"
+                  disabled={isLoading}
+                />
+                <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
+                  <span className="send-icon">
+                    <Send size={16} />
+                  </span>
+                  Send
                 </button>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="input-form">
-              <input
-                type="text"
-                value={input}
-                onChange={handleInputChange}
-                placeholder="Ask for wisdom..."
-                className="input-field"
-                disabled={isLoading}
-              />
-              <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
-                <span className="send-icon">
-                  <Send size={16} />
-                </span>
-                Send
-              </button>
-            </form>
+              </form>
+            </div>
           </div>
-        </div>
+        </header>
       </div>
     </div>
   )
