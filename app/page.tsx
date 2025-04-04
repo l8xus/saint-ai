@@ -26,9 +26,6 @@ export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([])
   const [lastMessageId, setLastMessageId] = useState<string | null>(null)
-  const [pendingSuggestions, setPendingSuggestions] = useState<string[] | null>(null)
-
-  // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
   const [showSearchResults, setShowSearchResults] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -85,67 +82,70 @@ export default function Home() {
     return newArray
   }
 
-  // Effect to update suggestions when pendingSuggestions changes
-  useEffect(() => {
-    if (pendingSuggestions && pendingSuggestions.length > 0) {
-      console.log("Updating dynamic suggestions with:", pendingSuggestions)
-      setDynamicSuggestions(pendingSuggestions)
-      setPendingSuggestions(null)
-    }
-  }, [pendingSuggestions])
+  // Replace the entire processMessageContent function with this simplified version:
 
-  // Improve the message content processing function to ensure all suggestion markers are removed
   const processMessageContent = (content: string) => {
-    // First, check if the message contains dynamic suggestions
-    const suggestionsMatch = content.match(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/)
+    // Check for the new suggestion format
+    const suggestionsMatch = content.match(/\[SUGGESTIONS_START\](.*?)\[SUGGESTIONS_END\]/s)
 
     if (suggestionsMatch && suggestionsMatch[1]) {
       try {
-        // Parse the suggestions JSON
-        const suggestionsText = suggestionsMatch[1].trim()
-        console.log("Raw suggestions text:", suggestionsText)
+        // Parse the suggestions
+        const suggestionsJson = suggestionsMatch[1].trim()
+        console.log("Found suggestions JSON:", suggestionsJson)
 
-        // Handle both array format and string format
-        let suggestions
-        try {
-          suggestions = JSON.parse(suggestionsText)
-          console.log("Parsed suggestions as JSON:", suggestions)
-        } catch (e) {
-          console.error("JSON parse error:", e)
-          // If JSON parsing fails, try to extract from the text directly
-          const extractedSuggestions = suggestionsText.match(
-            /\["([^"]+)",\s*"([^"]+)",\s*"([^"]+)",\s*"([^"]+)",\s*"([^"]+)"\]/,
-          )
-          if (extractedSuggestions) {
-            suggestions = [
-              extractedSuggestions[1],
-              extractedSuggestions[2],
-              extractedSuggestions[3],
-              extractedSuggestions[4],
-              extractedSuggestions[5],
-            ]
-            console.log("Extracted suggestions from text:", suggestions)
-          }
+        const suggestions = JSON.parse(suggestionsJson)
+        console.log("Parsed suggestions:", suggestions)
+
+        if (Array.isArray(suggestions) && suggestions.length > 0) {
+          // Directly update the suggestions state
+          console.log("Setting dynamic suggestions to:", suggestions)
+          setDynamicSuggestions(suggestions)
+          setShowSuggestions(true)
         }
 
-        if (suggestions && Array.isArray(suggestions)) {
-          // Set pending suggestions to be applied after the current render cycle
-          console.log("Setting pending suggestions:", suggestions)
-          setPendingSuggestions(suggestions)
-        }
-
-        // Remove the dynamic suggestions block from the content
-        const cleanedContent = content.replace(/\[DYNAMIC_SUGGESTIONS\][\s\S]*?\[\/DYNAMIC_SUGGESTIONS\]/g, "")
-
-        // Also remove any remaining [SUGGESTIONS] blocks
-        return cleanedContent.replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/g, "")
+        // Remove the suggestions block from the content
+        return content.replace(/\[SUGGESTIONS_START\].*?\[SUGGESTIONS_END\]/s, "")
       } catch (error) {
         console.error("Error processing suggestions:", error)
       }
     }
 
-    // If no dynamic suggestions found, just remove any [SUGGESTIONS] blocks
-    return content.replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/g, "")
+    // Also check for the old format as a fallback
+    const oldFormatMatch = content.match(/\[DYNAMIC_SUGGESTIONS\](.*?)\[\/DYNAMIC_SUGGESTIONS\]/s)
+    if (oldFormatMatch && oldFormatMatch[1]) {
+      try {
+        const suggestionsText = oldFormatMatch[1].trim()
+        console.log("Found old format suggestions:", suggestionsText)
+
+        let suggestions
+        try {
+          suggestions = JSON.parse(suggestionsText)
+        } catch (e) {
+          // Try to extract strings if JSON parsing fails
+          const extractedSuggestions = suggestionsText.match(/"([^"]+)"/g)
+          if (extractedSuggestions) {
+            suggestions = extractedSuggestions.map((s) => s.replace(/"/g, ""))
+          }
+        }
+
+        if (Array.isArray(suggestions) && suggestions.length > 0) {
+          console.log("Setting dynamic suggestions from old format:", suggestions)
+          setDynamicSuggestions(suggestions)
+          setShowSuggestions(true)
+        }
+
+        return content.replace(/\[DYNAMIC_SUGGESTIONS\].*?\[\/DYNAMIC_SUGGESTIONS\]/s, "")
+      } catch (error) {
+        console.error("Error processing old format suggestions:", error)
+      }
+    }
+
+    // Remove any remaining suggestion blocks
+    return content
+      .replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/g, "")
+      .replace(/\[DYNAMIC_SUGGESTIONS\][\s\S]*?\[\/DYNAMIC_SUGGESTIONS\]/g, "")
+      .replace(/\[SUGGESTIONS_START\].*?\[SUGGESTIONS_END\]/s, "")
   }
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
@@ -160,6 +160,7 @@ export default function Home() {
     body: {
       saintName: selectedSaint,
     },
+    // Also update the onFinish callback to be more robust:
     onFinish: (message) => {
       console.log("onFinish triggered with message:", message)
 
@@ -168,6 +169,8 @@ export default function Home() {
 
       // If the content was modified, update the message
       if (cleanedContent !== message.content) {
+        console.log("Updating message with cleaned content")
+
         // Find the message in the messages array and update it
         const updatedMessages = messages.map((msg) =>
           msg.id === message.id ? { ...msg, content: cleanedContent } : msg,
