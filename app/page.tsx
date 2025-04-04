@@ -74,148 +74,6 @@ export default function Home() {
     }
   }, [isMobileMenuOpen])
 
-  // Generate contextual follow-up questions based on conversation
-  const generateContextualSuggestions = () => {
-    console.log("Generating contextual suggestions...")
-    console.log("Current messages:", messages)
-
-    // Only generate contextual suggestions if there's at least one exchange
-    if (messages.length < 2) {
-      console.log("Not enough messages, returning default questions")
-      return defaultSuggestedQuestions
-    }
-
-    // Get the last user message and saint response
-    const userMessages = messages.filter((msg) => msg.role === "user")
-    const lastUserMessage = userMessages[userMessages.length - 1]?.content.toLowerCase() || ""
-    const lastSaintResponse = messages[messages.length - 1]?.content.toLowerCase() || ""
-
-    console.log("Last user message:", lastUserMessage)
-    console.log("Last saint response:", lastSaintResponse)
-
-    // Define patterns to look for and corresponding follow-up questions
-    const patterns = [
-      {
-        keywords: ["pray", "prayer", "praying"],
-        questions: [
-          "Can you teach me a prayer you often said?",
-          "How did prayer transform your life?",
-          "What advice do you have for someone struggling with prayer?",
-        ],
-      },
-      {
-        keywords: ["suffering", "pain", "difficult", "hardship", "challenge"],
-        questions: [
-          "How did you find meaning in suffering?",
-          "What was your greatest trial?",
-          "How can I offer up my suffering as you did?",
-        ],
-      },
-      {
-        keywords: ["conversion", "change", "transform"],
-        questions: [
-          "What was the moment that changed your life?",
-          "How did your conversion affect those around you?",
-          "What advice do you have for someone seeking conversion?",
-        ],
-      },
-      {
-        keywords: ["teaching", "wisdom", "lesson"],
-        questions: [
-          "What other teachings are important for our times?",
-          "How did you share your wisdom with others?",
-          "What is the most misunderstood aspect of your teachings?",
-        ],
-      },
-      {
-        keywords: ["call", "vocation", "purpose"],
-        questions: [
-          "How did you discern God's will in your life?",
-          "What advice do you have for someone finding one's vocation?",
-          "Did you ever doubt your calling?",
-        ],
-      },
-      {
-        keywords: ["miracle", "supernatural", "vision"],
-        questions: [
-          "Can you tell me about a miracle in your life?",
-          "How did your mystical experiences shape your faith?",
-          "What should we understand about supernatural experiences?",
-        ],
-      },
-      {
-        keywords: ["church", "catholic", "faith", "belief"],
-        questions: [
-          "What do you think of the Church today?",
-          "How did you remain faithful during difficult times?",
-          "What is the most important aspect of the faith to preserve?",
-        ],
-      },
-      {
-        keywords: ["sin", "temptation", "struggle", "weakness"],
-        questions: [
-          "How did you overcome your greatest temptation?",
-          "What advice do you have for those struggling with sin?",
-          "How did you find forgiveness?",
-        ],
-      },
-      {
-        keywords: ["love", "charity", "compassion"],
-        questions: [
-          "How did you practice charity in your daily life?",
-          "What does true Christian love look like?",
-          "How can I grow in compassion for others?",
-        ],
-      },
-      {
-        keywords: ["heaven", "afterlife", "eternity", "death"],
-        questions: [
-          "What do you think heaven is like?",
-          "How should we prepare for death?",
-          "How do you intercede for us now?",
-        ],
-      },
-    ]
-
-    // Check if any keywords match the last exchange
-    let matchedQuestions: string[] = []
-
-    // Check user message for keywords
-    for (const pattern of patterns) {
-      if (pattern.keywords.some((keyword) => lastUserMessage.includes(keyword))) {
-        console.log(`Found keyword match in user message: ${pattern.keywords}`)
-        matchedQuestions = [...matchedQuestions, ...pattern.questions]
-      }
-    }
-
-    // Also check saint response for keywords to catch themes in the response
-    for (const pattern of patterns) {
-      if (pattern.keywords.some((keyword) => lastSaintResponse.includes(keyword))) {
-        console.log(`Found keyword match in saint response: ${pattern.keywords}`)
-        matchedQuestions = [...matchedQuestions, ...pattern.questions]
-      }
-    }
-
-    // If we found matches, return them (up to 5 random ones)
-    if (matchedQuestions.length > 0) {
-      console.log(`Found ${matchedQuestions.length} matched questions, shuffling and taking 5`)
-      // Shuffle and take up to 5
-      const shuffled = shuffleArray(matchedQuestions).slice(0, 5)
-      console.log("Returning shuffled questions:", shuffled)
-      return shuffled
-    }
-
-    // If no specific matches, return general follow-up questions
-    console.log("No specific matches found, returning general follow-up questions")
-    return [
-      "Can you elaborate on that?",
-      "How does that relate to your spirituality?",
-      "What scripture guided you in this area?",
-      "How can I apply this wisdom today?",
-      "Did you write about this in your works?",
-    ]
-  }
-
   // Helper function to shuffle an array (for randomizing suggestions)
   const shuffleArray = (array: string[]) => {
     const newArray = [...array]
@@ -224,6 +82,30 @@ export default function Home() {
       ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
     }
     return newArray
+  }
+
+  // Process the message content to extract dynamic suggestions
+  const processMessageContent = (content: string) => {
+    // Check if the message contains dynamic suggestions
+    const suggestionsMatch = content.match(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/)
+
+    if (suggestionsMatch && suggestionsMatch[1]) {
+      try {
+        // Parse the suggestions JSON
+        const suggestions = JSON.parse(suggestionsMatch[1].trim())
+        console.log("Extracted dynamic suggestions:", suggestions)
+
+        // Update the dynamic suggestions
+        setDynamicSuggestions(suggestions)
+
+        // Remove the suggestions block from the content
+        return content.replace(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/, "")
+      } catch (error) {
+        console.error("Error parsing dynamic suggestions:", error)
+      }
+    }
+
+    return content
   }
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
@@ -241,44 +123,28 @@ export default function Home() {
     onFinish: (message) => {
       console.log("onFinish triggered with message:", message)
 
-      // Add a special flag to the last message ID to prevent the useEffect from also updating suggestions
-      const finishTriggerId = `finish-trigger-${Date.now()}`
-      setLastMessageId(finishTriggerId)
+      // Process the message content to extract dynamic suggestions
+      const cleanedContent = processMessageContent(message.content)
 
-      // Force update suggestions with a slight delay to ensure the message is processed
+      // If the content was modified, update the message
+      if (cleanedContent !== message.content) {
+        // Find the message in the messages array and update it
+        const updatedMessages = messages.map((msg) =>
+          msg.id === message.id ? { ...msg, content: cleanedContent } : msg,
+        )
+
+        // Update the messages
+        setMessages(updatedMessages)
+      }
+
+      // Force scroll to bottom
       setTimeout(() => {
-        const newSuggestions = generateContextualSuggestions()
-        console.log("Generated new suggestions from onFinish:", newSuggestions)
-        setDynamicSuggestions(newSuggestions)
-        setShowSuggestions(true)
-
-        // Force scroll to bottom
         if (messagesEndRef.current) {
           messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
         }
       }, 300)
     },
   })
-
-  // Track when messages change to update suggestions
-  useEffect(() => {
-    if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1]
-
-      // Only update if this is a new message
-      if (lastMessage.id !== lastMessageId) {
-        setLastMessageId(lastMessage.id)
-
-        // Only update suggestions if this is an assistant message (response)
-        // AND it's not from the onFinish callback (which we'll handle separately)
-        if (lastMessage.role === "assistant" && messages.length > 1 && !lastMessage.id.includes("finish-trigger")) {
-          console.log("New assistant message detected, updating suggestions")
-          const newSuggestions = generateContextualSuggestions()
-          setDynamicSuggestions(newSuggestions)
-        }
-      }
-    }
-  }, [messages, lastMessageId])
 
   // Scroll to bottom when messages change
   useEffect(() => {
