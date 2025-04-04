@@ -315,7 +315,7 @@ ${
                 const suggestionsMatch = responseText.match(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/)
                 if (suggestionsMatch && suggestionsMatch[1]) {
                   const suggestionsJson = suggestionsMatch[1].trim()
-                  // Send the suggestions as a special message
+                  // Send the suggestions as a special message with a clear delimiter
                   controller.enqueue(
                     encoder.encode(`\n\n[DYNAMIC_SUGGESTIONS]${suggestionsJson}[/DYNAMIC_SUGGESTIONS]`),
                   )
