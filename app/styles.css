@@ -524,30 +524,37 @@ h6 {
   }
 
   /* Fix the header title spacing on mobile */
-
-  .header-title {
-    font-size: 1.25rem;
-    margin: 0;
-    padding-left: 2.5rem; /* Increase padding to create more space from the menu icon */
-  }
-
   .header-content {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 0; /* Remove any padding that might be causing issues */
     position: relative;
   }
 
   .header-left {
-    left: 1rem;
-    z-index: 5;
     position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+
+  .header-title {
+    font-size: 1.25rem;
+    margin: 0 0 0 40px; /* Fixed margin to ensure consistent spacing from menu icon */
+    max-width: calc(100% - 50px); /* Ensure the title doesn't overlap with the menu */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* Ensure the menu button has proper spacing */
   .menu-button {
-    display: block;
-    margin-right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.5rem;
+    margin: 0;
   }
 
   .mobile-selector {
@@ -567,9 +574,9 @@ h6 {
     margin-right: 0;
   }
 
-  /* Fix chat alignment */
+  /* Fix chat alignment - reduce the space between search and first message */
   .chat-area {
-    padding-top: 120px; /* Increase top padding to account for header and search */
+    padding-top: 90px; /* Reduced from 120px to bring the first message closer to the navbar */
   }
 
   .chat-container {
