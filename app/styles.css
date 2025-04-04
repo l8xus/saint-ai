@@ -279,22 +279,26 @@ h6 {
 
 /* Chat area */
 .chat-area {
-  padding-top: 90px; /* Reduced from 120px to bring the first message closer to the navbar */
-  background-color: #f8f3ec; /* Ensure the background color is correct */
   flex: 1;
-  overflow-y: auto;
+  background-color: #f8f3ec;
+  overflow-y: auto !important;
   padding: 1.5rem;
   padding-bottom: 100px; /* Space for input area */
   margin-top: 70px; /* Space for fixed header */
-  height: calc(100vh - 170px); /* Set a fixed height to ensure scrollability */
-  position: relative; /* Ensure proper stacking context */
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 300px;
+  right: 0;
+  height: calc(100vh - 170px);
+  z-index: 10;
 }
 
 .chat-container {
   max-width: 768px;
   margin: 0 auto;
   padding-bottom: 1rem;
-  overflow-y: visible; /* Ensure content can overflow for scrolling */
+  overflow-y: visible;
 }
 
 .message {
@@ -566,8 +570,9 @@ h6 {
 
   /* Fix chat alignment - reduce the space between search and first message */
   .chat-area {
-    padding-top: 90px; /* Reduced from 120px to bring the first message closer to the navbar */
-    background-color: #f8f3ec; /* Ensure the background color is correct */
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 170px);
   }
 
   .chat-container {
