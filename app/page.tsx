@@ -24,6 +24,7 @@ export default function Home() {
   const [showSuggestions, setShowSuggestions] = useState(true)
   const suggestionsRef = useRef<HTMLDivElement>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([])
 
   // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
@@ -34,11 +35,29 @@ export default function Home() {
   const desktopSearchRef = useRef<HTMLDivElement>(null)
   const mobileSearchRef = useRef<HTMLDivElement>(null)
 
+  // Chat area ref for scrolling
+  const chatAreaRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Default suggested questions
+  const defaultSuggestedQuestions = [
+    "What is your greatest teaching?",
+    "How did you find your calling?",
+    "What challenges did you face?",
+    "What advice would you give me?",
+    "Tell me about your spiritual journey",
+    "How did you pray?",
+    "What is your view on suffering?",
+  ]
+
   // Initialize with the saint from URL if available
   useEffect(() => {
     if (saintParam) {
       setSelectedSaint(saintParam)
     }
+
+    // Initialize dynamic suggestions with default questions
+    setDynamicSuggestions(defaultSuggestedQuestions)
   }, [saintParam])
 
   // Add/remove body class when sidebar is open on mobile
@@ -54,60 +73,22 @@ export default function Home() {
     }
   }, [isMobileMenuOpen])
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
-    initialMessages: [
-      {
-        id: "welcome-message",
-        role: "assistant",
-        content: `Peace be with you, my child. I am ${saintInfo.name}. How may I share my wisdom with you today?`,
-      },
-    ],
-    api: "/api/chat",
-    body: {
-      saintName: selectedSaint,
-    },
-    onFinish: () => {
-      // Generate new contextual suggestions after receiving a response
-      const newSuggestions = generateContextualSuggestions()
-      setDynamicSuggestions(newSuggestions)
-      // Always show suggestions
-      setShowSuggestions(true)
-    },
-  })
-
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
-
-  // First, let's modify the useEffect that currently hides suggestions after the first message
-  // We'll remove this effect since we want suggestions to always show
-
-  // Remove or comment out this useEffect:
-  // useEffect(() => {
-  //   const userMessages = messages.filter((msg) => msg.role === "user")
-  //   setShowSuggestions(userMessages.length === 0)
-  // }, [messages])
-
-  // Instead, let's always show suggestions and make them contextual
-  // Add these new functions and state for dynamic suggestions
-
-  // Add this new state for dynamic suggestions after the other state declarations
-  const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([])
-
-  // Add this function to generate contextual follow-up questions based on conversation
+  // Generate contextual follow-up questions based on conversation
   const generateContextualSuggestions = () => {
+    console.log("Generating contextual suggestions...")
+
     // Only generate contextual suggestions if there's at least one exchange
     if (messages.length < 2) {
-      return suggestedQuestions // Return default questions for the first interaction
+      return defaultSuggestedQuestions // Return default questions for the first interaction
     }
 
     // Get the last user message and saint response
     const userMessages = messages.filter((msg) => msg.role === "user")
     const lastUserMessage = userMessages[userMessages.length - 1]?.content.toLowerCase() || ""
     const lastSaintResponse = messages[messages.length - 1]?.content || ""
+
+    console.log("Last user message:", lastUserMessage)
+    console.log("Last saint response:", lastSaintResponse)
 
     // Define patterns to look for and corresponding follow-up questions
     const patterns = [
@@ -236,10 +217,38 @@ export default function Home() {
     return newArray
   }
 
-  // Initialize dynamic suggestions with default questions
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
+    initialMessages: [
+      {
+        id: "welcome-message",
+        role: "assistant",
+        content: `Peace be with you, my child. I am ${saintInfo.name}. How may I share my wisdom with you today?`,
+      },
+    ],
+    api: "/api/chat",
+    body: {
+      saintName: selectedSaint,
+    },
+    onFinish: () => {
+      // Generate new contextual suggestions after receiving a response
+      const newSuggestions = generateContextualSuggestions()
+      console.log("New suggestions:", newSuggestions)
+      setDynamicSuggestions(newSuggestions)
+
+      // Always show suggestions
+      setShowSuggestions(true)
+
+      // Ensure we scroll to the bottom after the response is complete
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+      }, 100)
+    },
+  })
+
+  // Scroll to bottom when messages change
   useEffect(() => {
-    setDynamicSuggestions(suggestedQuestions)
-  }, [])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   // List of all saints with their alternative names for search
   const saintsWithAlternatives = [
@@ -485,6 +494,9 @@ export default function Home() {
       },
     ])
 
+    // Reset to default suggestions when changing saints
+    setDynamicSuggestions(defaultSuggestedQuestions)
+
     // Show suggestions when changing saints
     setShowSuggestions(true)
 
@@ -504,18 +516,7 @@ export default function Home() {
     }
   }
 
-  const suggestedQuestions = [
-    "What is your greatest teaching?",
-    "How did you find your calling?",
-    "What challenges did you face?",
-    "What advice would you give me?",
-    "Tell me about your spiritual journey",
-    "How did you pray?",
-    "What is your view on suffering?",
-  ]
-
   // Fix the handleSaintSelect function to ensure it properly updates the state
-
   const handleSaintSelect = (saint: string) => {
     // Set the selected saint
     setSelectedSaint(saint)
@@ -564,6 +565,15 @@ export default function Home() {
       role: "user",
       content: question,
     })
+  }
+
+  // Custom submit handler to ensure suggestions update
+  const customSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    if (input.trim()) {
+      handleSubmit(e)
+    }
   }
 
   return (
@@ -684,7 +694,7 @@ export default function Home() {
         </header>
 
         {/* Chat area */}
-        <div className="chat-area">
+        <div className="chat-area" ref={chatAreaRef}>
           <div className="chat-container">
             {messages.map((message) => (
               <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
@@ -734,7 +744,7 @@ export default function Home() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="input-form">
+            <form onSubmit={customSubmitHandler} className="input-form">
               <input
                 type="text"
                 value={input}
