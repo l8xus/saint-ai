@@ -84,8 +84,13 @@ export default function Home() {
     return newArray
   }
 
-  // Process the message content to extract dynamic suggestions
+  // Improve the message content processing function to ensure all suggestion markers are removed
+
+  // Replace the existing processMessageContent function with this improved version:
   const processMessageContent = (content: string) => {
+    // First, remove any [SUGGESTIONS]...[/SUGGESTIONS] blocks completely
+    let cleanedContent = content.replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/g, "")
+
     // Check if the message contains dynamic suggestions
     const suggestionsMatch = content.match(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/)
 
@@ -98,14 +103,14 @@ export default function Home() {
         // Update the dynamic suggestions
         setDynamicSuggestions(suggestions)
 
-        // Remove the suggestions block from the content
-        return content.replace(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/, "")
+        // Remove the dynamic suggestions block from the content
+        cleanedContent = cleanedContent.replace(/\[DYNAMIC_SUGGESTIONS\][\s\S]*?\[\/DYNAMIC_SUGGESTIONS\]/g, "")
       } catch (error) {
         console.error("Error parsing dynamic suggestions:", error)
       }
     }
 
-    return content
+    return cleanedContent
   }
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
@@ -120,10 +125,11 @@ export default function Home() {
     body: {
       saintName: selectedSaint,
     },
+    // Also update the onFinish callback to ensure it properly cleans the message:
     onFinish: (message) => {
       console.log("onFinish triggered with message:", message)
 
-      // Process the message content to extract dynamic suggestions
+      // Process the message content to extract dynamic suggestions and clean it
       const cleanedContent = processMessageContent(message.content)
 
       // If the content was modified, update the message
