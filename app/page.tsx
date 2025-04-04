@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
-import { ChevronLeft, ChevronRight, Menu, Send, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 export default function Home() {
@@ -24,6 +24,11 @@ export default function Home() {
   const [showSuggestions, setShowSuggestions] = useState(true)
   const suggestionsRef = useRef<HTMLDivElement>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Search functionality
+  const [searchQuery, setSearchQuery] = useState("")
+  const [showSearchResults, setShowSearchResults] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // Initialize with the saint from URL if available
   useEffect(() => {
@@ -78,6 +83,33 @@ export default function Home() {
     const userMessages = messages.filter((msg) => msg.role === "user")
     setShowSuggestions(userMessages.length === 0)
   }, [messages])
+
+  // List of all saints
+  const allSaints = [
+    "St. Francis of Assisi",
+    "St. Thomas Aquinas",
+    "St. Teresa of Ávila",
+    "St. Augustine",
+    "St. Thérèse of Lisieux",
+    "St. Peter",
+    "St. Paul",
+    "St. John the Evangelist",
+    "St. Athanasius",
+    "St. Jerome",
+    "St. Benedict of Nursia",
+    "St. Gregory the Great",
+    "St. Clare of Assisi",
+    "St. Dominic",
+    "St. Catherine of Siena",
+    "St. John of the Cross",
+    "St. Ignatius of Loyola",
+    "St. Francis Xavier",
+    "St. Joan of Arc",
+    "St. Mother Teresa of Calcutta",
+  ]
+
+  // Filter saints based on search query
+  const filteredSaints = allSaints.filter((saint) => saint.toLowerCase().includes(searchQuery.toLowerCase()))
 
   // Update chat when saint changes
   useEffect(() => {
@@ -261,6 +293,9 @@ export default function Home() {
 
     // Show suggestions when changing saints
     setShowSuggestions(true)
+
+    // Clear search when saint is selected
+    setSearchQuery("")
   }, [selectedSaint, setMessages])
 
   // Scroll suggestions
@@ -285,13 +320,33 @@ export default function Home() {
     "What is your view on suffering?",
   ]
 
-  const handleSaintChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSaint = e.target.value
-    setSelectedSaint(newSaint)
+  const handleSaintSelect = (saint: string) => {
+    setSelectedSaint(saint)
+    setShowSearchResults(false)
 
     // Update the URL with the selected saint
-    router.push(`/?saint=${encodeURIComponent(newSaint)}`, { scroll: false })
+    router.push(`/?saint=${encodeURIComponent(saint)}`, { scroll: false })
   }
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+    setShowSearchResults(true)
+  }
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
+        setShowSearchResults(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
 
   // Function to handle image loading errors
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -317,31 +372,38 @@ export default function Home() {
           </button>
         </div>
 
-        <select className="saint-selector" value={selectedSaint} onChange={handleSaintChange}>
-          {/* Original saints */}
-          <option value="St. Francis of Assisi">St. Francis of Assisi</option>
-          <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
-          <option value="St. Teresa of Ávila">St. Teresa of Ávila</option>
-          <option value="St. Augustine">St. Augustine</option>
-          <option value="St. Thérèse of Lisieux">St. Thérèse of Lisieux</option>
+        {/* Search input instead of dropdown */}
+        <div className="search-container" ref={searchInputRef}>
+          <div className="search-input-wrapper">
+            <Search size={18} className="search-icon" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search for a saint..."
+              className="search-input"
+              onFocus={() => setShowSearchResults(true)}
+            />
+          </div>
 
-          {/* New saints */}
-          <option value="St. Peter">St. Peter</option>
-          <option value="St. Paul">St. Paul</option>
-          <option value="St. John the Evangelist">St. John the Evangelist</option>
-          <option value="St. Athanasius">St. Athanasius</option>
-          <option value="St. Jerome">St. Jerome</option>
-          <option value="St. Benedict of Nursia">St. Benedict of Nursia</option>
-          <option value="St. Gregory the Great">St. Gregory the Great</option>
-          <option value="St. Clare of Assisi">St. Clare of Assisi</option>
-          <option value="St. Dominic">St. Dominic</option>
-          <option value="St. Catherine of Siena">St. Catherine of Siena</option>
-          <option value="St. John of the Cross">St. John of the Cross</option>
-          <option value="St. Ignatius of Loyola">St. Ignatius of Loyola</option>
-          <option value="St. Francis Xavier">St. Francis Xavier</option>
-          <option value="St. Joan of Arc">St. Joan of Arc</option>
-          <option value="St. Mother Teresa of Calcutta">St. Mother Teresa of Calcutta</option>
-        </select>
+          {showSearchResults && (
+            <div className="search-results">
+              {filteredSaints.length > 0 ? (
+                filteredSaints.map((saint) => (
+                  <div
+                    key={saint}
+                    className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
+                    onClick={() => handleSaintSelect(saint)}
+                  >
+                    {saint}
+                  </div>
+                ))
+              ) : (
+                <div className="search-no-results">No saints found</div>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="saint-profile">
           <div className="saint-image-container">
@@ -375,31 +437,38 @@ export default function Home() {
           </div>
 
           <div className="mobile-selector">
-            <select className="saint-selector" value={selectedSaint} onChange={handleSaintChange}>
-              {/* Original saints */}
-              <option value="St. Francis of Assisi">St. Francis of Assisi</option>
-              <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
-              <option value="St. Teresa of Ávila">St. Teresa of Ávila</option>
-              <option value="St. Augustine">St. Augustine</option>
-              <option value="St. Thérèse of Lisieux">St. Thérèse of Lisieux</option>
+            {/* Mobile search input */}
+            <div className="search-container mobile-search" ref={searchInputRef}>
+              <div className="search-input-wrapper">
+                <Search size={16} className="search-icon" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search for a saint..."
+                  className="search-input"
+                  onFocus={() => setShowSearchResults(true)}
+                />
+              </div>
 
-              {/* New saints */}
-              <option value="St. Peter">St. Peter</option>
-              <option value="St. Paul">St. Paul</option>
-              <option value="St. John the Evangelist">St. John the Evangelist</option>
-              <option value="St. Athanasius">St. Athanasius</option>
-              <option value="St. Jerome">St. Jerome</option>
-              <option value="St. Benedict of Nursia">St. Benedict of Nursia</option>
-              <option value="St. Gregory the Great">St. Gregory the Great</option>
-              <option value="St. Clare of Assisi">St. Clare of Assisi</option>
-              <option value="St. Dominic">St. Dominic</option>
-              <option value="St. Catherine of Siena">St. Catherine of Siena</option>
-              <option value="St. John of the Cross">St. John of the Cross</option>
-              <option value="St. Ignatius of Loyola">St. Ignatius of Loyola</option>
-              <option value="St. Francis Xavier">St. Francis Xavier</option>
-              <option value="St. Joan of Arc">St. Joan of Arc</option>
-              <option value="St. Mother Teresa of Calcutta">St. Mother Teresa of Calcutta</option>
-            </select>
+              {showSearchResults && (
+                <div className="search-results mobile-search-results">
+                  {filteredSaints.length > 0 ? (
+                    filteredSaints.map((saint) => (
+                      <div
+                        key={saint}
+                        className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
+                        onClick={() => handleSaintSelect(saint)}
+                      >
+                        {saint}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="search-no-results">No saints found</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
