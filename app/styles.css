@@ -246,7 +246,7 @@ h6 {
 .header-content {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Change from center to flex-start for left alignment */
   position: relative;
 }
 
@@ -265,7 +265,7 @@ h6 {
   max-width: calc(100% - 3rem); /* Ensure it doesn't overflow but has room */
   white-space: normal; /* Allow text to wrap */
   line-height: 1.2; /* Tighten line height for wrapped text */
-  text-align: center; /* Center the text */
+  text-align: left; /* Change from center to left alignment */
 }
 
 /* Ensure the menu button has proper spacing */
@@ -531,7 +531,7 @@ h6 {
   .header-content {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; /* Change from center to flex-start for left alignment */
     position: relative;
   }
 
@@ -550,7 +550,7 @@ h6 {
     max-width: calc(100% - 3rem); /* Ensure it doesn't overflow but has room */
     white-space: normal; /* Allow text to wrap */
     line-height: 1.2; /* Tighten line height for wrapped text */
-    text-align: center; /* Center the text */
+    text-align: left; /* Change from center to left alignment */
   }
 
   /* Ensure the menu button has proper spacing */
