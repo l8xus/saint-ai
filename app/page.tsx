@@ -60,9 +60,15 @@ export default function Home() {
     }
   }, [isMobileMenuOpen])
 
-  // Function to fetch suggestions
+  // Add a new state to track when suggestions are loading
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+
+  // Update the fetchSuggestions function to set loading state
   const fetchSuggestions = async (content: string) => {
     try {
+      // Set loading to true when starting to fetch
+      setSuggestionsLoading(true)
+
       const response = await fetch("/api/suggestions", {
         method: "POST",
         headers: {
@@ -89,9 +95,13 @@ export default function Home() {
         "What advice would you give me?",
         "Tell me about your spiritual journey",
       ])
+    } finally {
+      // Set loading to false when done
+      setSuggestionsLoading(false)
     }
   }
 
+  // Update the onFinish callback in useChat to clear suggestions first
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
     initialMessages: [
       {
@@ -105,6 +115,8 @@ export default function Home() {
       saintName: selectedSaint,
     },
     onFinish: (message) => {
+      // Clear suggestions and set loading to true
+      setSuggestions([])
       // Fetch suggestions based on the assistant's response
       fetchSuggestions(message.content)
     },
@@ -577,7 +589,7 @@ export default function Home() {
         {/* Input area */}
         <div className="input-area">
           <div className="input-container">
-            {suggestions.length > 0 && !isLoading && (
+            {suggestions.length > 0 && !isLoading && !suggestionsLoading && (
               <div className="suggestions-container">
                 <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
                   <ChevronLeft size={16} />
