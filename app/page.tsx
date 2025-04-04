@@ -106,19 +106,21 @@ export default function Home() {
         articleLink: "https://www.thecatholicvoice.com/saints/saint-therese-of-lisieux-biography-miracles-and-wisdom",
       },
 
-      // New saints
+      // New saints with their images
       "St. Peter": {
         name: "St. Peter",
         years: "1-64",
         description: "One of the Twelve Apostles of Jesus Christ, first Pope of the Catholic Church, and martyr.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/saint_peter_1960.6.32%20%281%29.jpg-Z5DNPucHrg52Wehgg1dJds6VXMCcSa.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-peter-biography-miracles-and-wisdom",
       },
       "St. Paul": {
         name: "St. Paul",
         years: "5-67",
         description: "Apostle to the Gentiles, missionary, theologian, and author of many New Testament epistles.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/saint%20paul.jpg-wfs4TRIu5ex9kGvkye6vkM4E7QWpn1.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-paul-biography-miracles-and-wisdom",
       },
       "St. John the Evangelist": {
@@ -126,7 +128,8 @@ export default function Home() {
         years: "6-100",
         description:
           "One of the Twelve Apostles of Jesus, author of the Gospel of John, three Epistles, and the Book of Revelation.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20the%20Evangelist-lr94ux9DDVRyRmkwCkGnp2EoFKXnI9.webp", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-john-the-evangelist-biography-miracles-and-wisdom",
       },
       "St. Athanasius": {
@@ -134,49 +137,56 @@ export default function Home() {
         years: "296-373",
         description:
           "Bishop of Alexandria, Doctor of the Church, and defender of the divinity of Christ against Arianism.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Athanasius-UbK6Ktil0tdlVwlPJXugIw4ILZaGs0.png", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-athanasius-biography-miracles-and-wisdom",
       },
       "St. Jerome": {
         name: "St. Jerome",
         years: "347-420",
         description: "Doctor of the Church, theologian, and translator of the Bible into Latin (the Vulgate).",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Jerome.jpg-s2peOmZ743ayIs7GPPF9ram0adu9qE.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-jerome-biography-miracles-and-wisdom",
       },
       "St. Benedict of Nursia": {
         name: "St. Benedict of Nursia",
         years: "480-547",
         description: "Founder of Western monasticism and author of the Rule of Saint Benedict.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Benedict%20of%20Nursia.jpg-JCRJgGs7H6W5SBji3BTKWcm70YifUr.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-benedict-of-nursia-biography-miracles-and-wisdom",
       },
       "St. Gregory the Great": {
         name: "St. Gregory the Great",
         years: "540-604",
         description: "Pope, Doctor of the Church, and reformer who significantly influenced the medieval Church.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Gregory%20the%20Great.jpg-CX6ws3DvvL4RM7TfilfPhJHmN0Zl2u.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-gregory-the-great-biography-miracles-and-wisdom",
       },
       "St. Clare of Assisi": {
         name: "St. Clare of Assisi",
         years: "1194-1253",
         description: "Founder of the Order of Poor Ladies (Poor Clares) and close associate of St. Francis of Assisi.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Clare%20of%20Assisi-5HSeYGy7w8pLChdnhualb0xcvTZGrD.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-clare-of-assisi-biography-miracles-and-wisdom",
       },
       "St. Dominic": {
         name: "St. Dominic",
         years: "1170-1221",
         description: "Founder of the Dominican Order, preacher, and champion of orthodox Catholic belief.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Dominic.jpg-5gMF4a0a5ttx201eMbnXI0CBb1kYoN.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-dominic-biography-miracles-and-wisdom",
       },
       "St. Catherine of Siena": {
         name: "St. Catherine of Siena",
         years: "1347-1380",
         description: "Dominican tertiary, mystic, Doctor of the Church, and counselor to popes and rulers.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Catherine%20of%20Siena.jpg-hO1wgdMaejMvfu9OaS2EAhXC4ucxjq.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-catherine-of-siena-biography-miracles-and-wisdom",
       },
       "St. John of the Cross": {
@@ -184,21 +194,24 @@ export default function Home() {
         years: "1542-1591",
         description:
           "Spanish Carmelite friar, mystic, Doctor of the Church, and co-founder of the Discalced Carmelites.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20of%20the%20Cross.jpg-GiNBBx5qSI7arRfDwWlPtHv933qgB5.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-john-of-the-cross-biography-miracles-and-wisdom",
       },
       "St. Ignatius of Loyola": {
         name: "St. Ignatius of Loyola",
         years: "1491-1556",
         description: "Founder of the Society of Jesus (Jesuits) and author of the Spiritual Exercises.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Ignatius%20of%20Loyola-ECzeGZM2uLsmyOTx82P8ssemObWgZY.webp", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-ignatius-of-loyola-biography-miracles-and-wisdom",
       },
       "St. Francis Xavier": {
         name: "St. Francis Xavier",
         years: "1506-1552",
         description: "Co-founder of the Society of Jesus and pioneering missionary to Asia.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Francis%20Xavier.jpg-rFrq6g2TLReuMHL0U06e9kjQD4trvf.jpeg", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-francis-xavier-biography-miracles-and-wisdom",
       },
       "St. Joan of Arc": {
@@ -206,7 +219,8 @@ export default function Home() {
         years: "1412-1431",
         description:
           "French military leader, mystic, and martyr who led the French army to victory during the Hundred Years' War.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Joan%20of%20Arc-lAVAUp8KjvuzTk7hmFyCE1uaOczlLz.webp", // Updated with provided image
         articleLink: "https://www.thecatholicvoice.com/saints/saint-joan-of-arc-biography-miracles-and-wisdom",
       },
       "St. Mother Teresa of Calcutta": {
@@ -214,7 +228,8 @@ export default function Home() {
         years: "1910-1997",
         description:
           "Founder of the Missionaries of Charity and Nobel Peace Prize recipient known for her work with the poor.",
-        image: "/placeholder.svg?height=200&width=200", // Placeholder until image is uploaded
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Mother%20Teresa%20of%20Calcutta.jpg-VvPTNunrwxVfQmh3RlgUBFuvM47F6N.jpeg", // Updated with provided image
         articleLink:
           "https://www.thecatholicvoice.com/saints/saint-mother-teresa-of-calcutta-biography-miracles-and-wisdom",
       },
