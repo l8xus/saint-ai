@@ -241,10 +241,14 @@ export default function Home() {
     onFinish: (message) => {
       console.log("onFinish triggered with message:", message)
 
+      // Add a special flag to the last message ID to prevent the useEffect from also updating suggestions
+      const finishTriggerId = `finish-trigger-${Date.now()}`
+      setLastMessageId(finishTriggerId)
+
       // Force update suggestions with a slight delay to ensure the message is processed
       setTimeout(() => {
         const newSuggestions = generateContextualSuggestions()
-        console.log("Generated new suggestions:", newSuggestions)
+        console.log("Generated new suggestions from onFinish:", newSuggestions)
         setDynamicSuggestions(newSuggestions)
         setShowSuggestions(true)
 
@@ -266,7 +270,8 @@ export default function Home() {
         setLastMessageId(lastMessage.id)
 
         // Only update suggestions if this is an assistant message (response)
-        if (lastMessage.role === "assistant" && messages.length > 1) {
+        // AND it's not from the onFinish callback (which we'll handle separately)
+        if (lastMessage.role === "assistant" && messages.length > 1 && !lastMessage.id.includes("finish-trigger")) {
           console.log("New assistant message detected, updating suggestions")
           const newSuggestions = generateContextualSuggestions()
           setDynamicSuggestions(newSuggestions)
