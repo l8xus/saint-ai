@@ -88,29 +88,56 @@ export default function Home() {
 
   // Replace the existing processMessageContent function with this improved version:
   const processMessageContent = (content: string) => {
-    // First, remove any [SUGGESTIONS]...[/SUGGESTIONS] blocks completely
-    let cleanedContent = content.replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/g, "")
-
-    // Check if the message contains dynamic suggestions
+    // First, check if the message contains dynamic suggestions
     const suggestionsMatch = content.match(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/)
 
     if (suggestionsMatch && suggestionsMatch[1]) {
       try {
         // Parse the suggestions JSON
-        const suggestions = JSON.parse(suggestionsMatch[1].trim())
-        console.log("Extracted dynamic suggestions:", suggestions)
+        const suggestionsText = suggestionsMatch[1].trim()
+        console.log("Raw suggestions text:", suggestionsText)
 
-        // Update the dynamic suggestions
-        setDynamicSuggestions(suggestions)
+        // Handle both array format and string format
+        let suggestions
+        try {
+          suggestions = JSON.parse(suggestionsText)
+          console.log("Parsed suggestions as JSON:", suggestions)
+        } catch (e) {
+          // If JSON parsing fails, try to extract from the text directly
+          const extractedSuggestions = suggestionsText.match(
+            /\["([^"]+)",\s*"([^"]+)",\s*"([^"]+)",\s*"([^"]+)",\s*"([^"]+)"\]/,
+          )
+          if (extractedSuggestions) {
+            suggestions = [
+              extractedSuggestions[1],
+              extractedSuggestions[2],
+              extractedSuggestions[3],
+              extractedSuggestions[4],
+              extractedSuggestions[5],
+            ]
+            console.log("Extracted suggestions from text:", suggestions)
+          }
+        }
+
+        if (suggestions && Array.isArray(suggestions)) {
+          // Update the dynamic suggestions immediately
+          console.log("Setting dynamic suggestions to:", suggestions)
+          setDynamicSuggestions(suggestions)
+          setShowSuggestions(true)
+        }
 
         // Remove the dynamic suggestions block from the content
-        cleanedContent = cleanedContent.replace(/\[DYNAMIC_SUGGESTIONS\][\s\S]*?\[\/DYNAMIC_SUGGESTIONS\]/g, "")
+        const cleanedContent = content.replace(/\[DYNAMIC_SUGGESTIONS\][\s\S]*?\[\/DYNAMIC_SUGGESTIONS\]/g, "")
+
+        // Also remove any remaining [SUGGESTIONS] blocks
+        return cleanedContent.replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/g, "")
       } catch (error) {
-        console.error("Error parsing dynamic suggestions:", error)
+        console.error("Error processing suggestions:", error)
       }
     }
 
-    return cleanedContent
+    // If no dynamic suggestions found, just remove any [SUGGESTIONS] blocks
+    return content.replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/g, "")
   }
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
