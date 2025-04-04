@@ -230,6 +230,8 @@ h6 {
 
 .message.user {
   margin-left: auto;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
 }
 
 .message-avatar {
@@ -263,6 +265,8 @@ h6 {
   background-color: #2b2357;
   color: white;
   border: none;
+  margin-right: 0;
+  margin-left: 0.75rem;
 }
 
 /* Input area */
@@ -446,6 +450,19 @@ h6 {
 
   .header-title {
     font-size: 1.25rem;
+  }
+
+  .header-title.main-title {
+    display: none;
+  }
+
+  .header-content {
+    justify-content: space-between;
+  }
+
+  .header-right {
+    flex: 1;
+    text-align: right;
   }
 }
 
