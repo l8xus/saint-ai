@@ -314,11 +314,28 @@ ${
               try {
                 const suggestionsMatch = responseText.match(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/)
                 if (suggestionsMatch && suggestionsMatch[1]) {
-                  const suggestionsJson = suggestionsMatch[1].trim()
-                  // Send the suggestions as a special message with a clear delimiter
-                  controller.enqueue(
-                    encoder.encode(`\n\n[DYNAMIC_SUGGESTIONS]${suggestionsJson}[/DYNAMIC_SUGGESTIONS]`),
-                  )
+                  const suggestionsText = suggestionsMatch[1].trim()
+                  console.log("Extracted suggestions text:", suggestionsText)
+
+                  // Format as a simple array of strings to avoid parsing issues
+                  let suggestions = []
+                  try {
+                    // Try to parse as JSON first
+                    suggestions = JSON.parse(suggestionsText)
+                  } catch (e) {
+                    // If that fails, try to extract from the text directly
+                    const extractedSuggestions = suggestionsText.match(/"([^"]+)"/g)
+                    if (extractedSuggestions) {
+                      suggestions = extractedSuggestions.map((s) => s.replace(/"/g, ""))
+                    }
+                  }
+
+                  if (Array.isArray(suggestions) && suggestions.length > 0) {
+                    // Send the suggestions as a special message with a clear delimiter and a simple format
+                    controller.enqueue(
+                      encoder.encode(`\n\n[SUGGESTIONS_START]${JSON.stringify(suggestions)}[SUGGESTIONS_END]`),
+                    )
+                  }
                 }
               } catch (error) {
                 console.error("Error parsing suggestions:", error)
