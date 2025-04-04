@@ -204,6 +204,8 @@ h6 {
 
 .mobile-selector {
   display: none;
+  margin-top: 0.5rem;
+  text-align: center;
 }
 
 /* Chat area */
@@ -440,10 +442,6 @@ h6 {
     display: block;
   }
 
-  .mobile-selector {
-    display: block;
-  }
-
   .message {
     max-width: 90%;
   }
@@ -457,12 +455,46 @@ h6 {
   }
 
   .header-content {
-    justify-content: space-between;
+    justify-content: center;
+  }
+
+  .header-left {
+    position: absolute;
+    left: 1rem;
   }
 
   .header-right {
-    flex: 1;
-    text-align: right;
+    text-align: center;
+    width: 100%;
+  }
+
+  .header-right .header-title {
+    font-size: 1.1rem;
+    white-space: nowrap;
+  }
+
+  .mobile-selector {
+    display: block;
+    margin-top: 0.5rem;
+  }
+
+  .mobile-selector .saint-selector {
+    max-width: 200px;
+    margin: 0 auto;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .send-text {
+    display: none;
+  }
+
+  .send-button {
+    padding: 0.75rem;
+  }
+
+  .send-icon {
+    margin-right: 0;
   }
 }
 
