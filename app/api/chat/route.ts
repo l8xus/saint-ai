@@ -256,6 +256,9 @@ ${
 `
     : ""
 }
+
+Additionally, after each response, analyze the conversation to identify key themes and topics that have been discussed. 
+This will help generate contextually relevant follow-up questions for the user.
 `
 
   // Prepare the messages array with the system message
