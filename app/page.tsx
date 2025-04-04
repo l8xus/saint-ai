@@ -82,11 +82,10 @@ export default function Home() {
     return newArray
   }
 
-  // Replace the entire processMessageContent function with this simplified version:
-
+  // Replace the entire processMessageContent function with this ES2015-compatible version:
   const processMessageContent = (content: string) => {
-    // Check for the new suggestion format
-    const suggestionsMatch = content.match(/\[SUGGESTIONS_START\](.*?)\[SUGGESTIONS_END\]/s)
+    // Check for the new suggestion format - without using /s flag
+    const suggestionsMatch = content.match(/\[SUGGESTIONS_START\]([\s\S]*?)\[SUGGESTIONS_END\]/)
 
     if (suggestionsMatch && suggestionsMatch[1]) {
       try {
@@ -105,14 +104,14 @@ export default function Home() {
         }
 
         // Remove the suggestions block from the content
-        return content.replace(/\[SUGGESTIONS_START\].*?\[SUGGESTIONS_END\]/s, "")
+        return content.replace(/\[SUGGESTIONS_START\]([\s\S]*?)\[SUGGESTIONS_END\]/g, "")
       } catch (error) {
         console.error("Error processing suggestions:", error)
       }
     }
 
     // Also check for the old format as a fallback
-    const oldFormatMatch = content.match(/\[DYNAMIC_SUGGESTIONS\](.*?)\[\/DYNAMIC_SUGGESTIONS\]/s)
+    const oldFormatMatch = content.match(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/)
     if (oldFormatMatch && oldFormatMatch[1]) {
       try {
         const suggestionsText = oldFormatMatch[1].trim()
@@ -135,7 +134,7 @@ export default function Home() {
           setShowSuggestions(true)
         }
 
-        return content.replace(/\[DYNAMIC_SUGGESTIONS\].*?\[\/DYNAMIC_SUGGESTIONS\]/s, "")
+        return content.replace(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/g, "")
       } catch (error) {
         console.error("Error processing old format suggestions:", error)
       }
@@ -143,9 +142,9 @@ export default function Home() {
 
     // Remove any remaining suggestion blocks
     return content
-      .replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/g, "")
-      .replace(/\[DYNAMIC_SUGGESTIONS\][\s\S]*?\[\/DYNAMIC_SUGGESTIONS\]/g, "")
-      .replace(/\[SUGGESTIONS_START\].*?\[SUGGESTIONS_END\]/s, "")
+      .replace(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/g, "")
+      .replace(/\[DYNAMIC_SUGGESTIONS\]([\s\S]*?)\[\/DYNAMIC_SUGGESTIONS\]/g, "")
+      .replace(/\[SUGGESTIONS_START\]([\s\S]*?)\[SUGGESTIONS_END\]/g, "")
   }
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
