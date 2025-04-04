@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { useChat } from "ai/react"
 import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
+import type { Message } from "ai"
 
 export default function Home() {
   const router = useRouter()
@@ -232,7 +233,7 @@ export default function Home() {
         }
       }, 100)
     },
-    onMessage: (message: { id: string; content: string; role: "user" | "assistant" | "system" }) => {
+    onMessage: (message: Message) => {
       // Process each incoming message for suggestions
       console.log("onMessage triggered:", message.id)
 
@@ -246,8 +247,9 @@ export default function Home() {
         setShowSuggestions(true)
       }
     },
-    experimental_onFunctionCall: () => {
+    experimental_onFunctionCall: async () => {
       // This is just to enable streaming
+      return Promise.resolve()
     },
   })
 
