@@ -1,13 +1,19 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
 import { ChevronLeft, ChevronRight, Menu, Send, X } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export default function Home() {
-  const [selectedSaint, setSelectedSaint] = useState("St. Francis of Assisi")
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Get the saint from URL parameters or default to St. Francis
+  const saintParam = searchParams.get("saint")
+
+  const [selectedSaint, setSelectedSaint] = useState(saintParam || "St. Francis of Assisi")
   const [saintInfo, setSaintInfo] = useState({
     name: "St. Francis of Assisi",
     years: "1181-1226",
@@ -18,6 +24,13 @@ export default function Home() {
   const [showSuggestions, setShowSuggestions] = useState(true)
   const suggestionsRef = useRef<HTMLDivElement>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Initialize with the saint from URL if available
+  useEffect(() => {
+    if (saintParam) {
+      setSelectedSaint(saintParam)
+    }
+  }, [saintParam])
 
   // Add/remove body class when sidebar is open on mobile
   useEffect(() => {
@@ -273,7 +286,11 @@ export default function Home() {
   ]
 
   const handleSaintChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedSaint(e.target.value)
+    const newSaint = e.target.value
+    setSelectedSaint(newSaint)
+
+    // Update the URL with the selected saint
+    router.push(`/?saint=${encodeURIComponent(newSaint)}`, { scroll: false })
   }
 
   // Function to handle image loading errors
