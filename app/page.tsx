@@ -97,7 +97,8 @@ export default function Home() {
   // Function to extract suggestions from message content
   const extractSuggestions = useCallback(
     (content: string): { cleanedContent: string; suggestions: string[] | null } => {
-      const suggestionsMatch = content.match(/__SUGGESTIONS__(.*?)__END_SUGGESTIONS__/s)
+      // Using a more compatible regex pattern without the 's' flag
+      const suggestionsMatch = content.match(/__SUGGESTIONS__([\s\S]*?)__END_SUGGESTIONS__/)
 
       let cleanedContent = content
       let extractedSuggestions: string[] | null = null
@@ -109,7 +110,7 @@ export default function Home() {
           const suggestions = JSON.parse(suggestionsJson)
 
           // Remove the suggestions block from the content
-          cleanedContent = cleanedContent.replace(/__SUGGESTIONS__.*?__END_SUGGESTIONS__/s, "")
+          cleanedContent = cleanedContent.replace(/__SUGGESTIONS__[\s\S]*?__END_SUGGESTIONS__/, "")
 
           if (Array.isArray(suggestions) && suggestions.length > 0) {
             extractedSuggestions = suggestions
