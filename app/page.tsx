@@ -206,11 +206,8 @@ export default function Home() {
               <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
                 <Menu size={24} />
               </button>
-              <h1 className="header-title main-title">Sanctus Dialogus</h1>
             </div>
-            <div className="header-right">
-              <h2 className="header-title">Dialogue with {selectedSaint}</h2>
-            </div>
+            <h2 className="header-title">Dialogue with {selectedSaint}</h2>
           </div>
 
           <div className="mobile-selector">
