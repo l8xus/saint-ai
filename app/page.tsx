@@ -232,7 +232,7 @@ export default function Home() {
         }
       }, 100)
     },
-    onMessage: (message) => {
+    onMessage: (message: { id: string; content: string; role: "user" | "assistant" | "system" }) => {
       // Process each incoming message for suggestions
       console.log("onMessage triggered:", message.id)
 
