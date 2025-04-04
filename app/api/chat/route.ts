@@ -256,14 +256,6 @@ ${
 `
     : ""
 }
-
-After you provide your response, I want you to analyze the conversation and generate 5 contextually relevant follow-up questions that the user might want to ask next. These questions should be directly related to the themes and topics discussed in the conversation so far. Format these questions as a JSON array at the very end of your response, like this:
-
-[SUGGESTIONS]
-["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"]
-[/SUGGESTIONS]
-
-This JSON array will be parsed and removed from the visible response, so make sure your main response is complete before adding this section.
 `
 
   // Prepare the messages array with the system message
@@ -332,9 +324,10 @@ This JSON array will be parsed and removed from the visible response, so make su
                 console.error("Error parsing suggestions:", error)
               }
             }
-            // If we're inside the suggestion block, accumulate the content
+            // If we're inside the suggestion block, accumulate the content but don't send it
             else if (inSuggestionBlock) {
               suggestionBuffer += content
+              // Don't send anything to the client while in suggestion block
             }
             // Otherwise, send the content to the stream
             else {
