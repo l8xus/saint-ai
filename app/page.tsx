@@ -30,6 +30,10 @@ export default function Home() {
   const [showSearchResults, setShowSearchResults] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
+  // Create separate refs for desktop and mobile search
+  const desktopSearchRef = useRef<HTMLDivElement>(null)
+  const mobileSearchRef = useRef<HTMLDivElement>(null)
+
   // Initialize with the saint from URL if available
   useEffect(() => {
     if (saintParam) {
@@ -357,9 +361,15 @@ export default function Home() {
     "What is your view on suffering?",
   ]
 
+  // Fix the handleSaintSelect function to ensure it properly updates the state
+
   const handleSaintSelect = (saint: string) => {
+    // Set the selected saint
     setSelectedSaint(saint)
+    // Close the search results
     setShowSearchResults(false)
+    // Close the mobile menu if it's open
+    setIsMobileMenuOpen(false)
 
     // Update the URL with the selected saint
     router.push(`/?saint=${encodeURIComponent(saint)}`, { scroll: false })
@@ -374,7 +384,12 @@ export default function Home() {
   // Close search results when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
+      if (
+        desktopSearchRef.current &&
+        !desktopSearchRef.current.contains(event.target as Node) &&
+        mobileSearchRef.current &&
+        !mobileSearchRef.current.contains(event.target as Node)
+      ) {
         setShowSearchResults(false)
       }
     }
@@ -410,7 +425,7 @@ export default function Home() {
         </div>
 
         {/* Search input instead of dropdown */}
-        <div className="search-container" ref={searchInputRef}>
+        <div className="search-container" ref={desktopSearchRef}>
           <div className="search-input-wrapper">
             <Search size={18} className="search-icon" />
             <input
@@ -475,7 +490,7 @@ export default function Home() {
 
           <div className="mobile-selector">
             {/* Mobile search input */}
-            <div className="search-container mobile-search" ref={searchInputRef}>
+            <div className="search-container mobile-search" ref={mobileSearchRef}>
               <div className="search-input-wrapper">
                 <Search size={16} className="search-icon" />
                 <input
@@ -488,6 +503,8 @@ export default function Home() {
                 />
               </div>
 
+              {/* Fix the mobile search results to ensure they're properly clickable */}
+
               {showSearchResults && (
                 <div className="search-results mobile-search-results">
                   {filteredSaints.length > 0 ? (
@@ -495,7 +512,11 @@ export default function Home() {
                       <div
                         key={saint}
                         className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
-                        onClick={() => handleSaintSelect(saint)}
+                        onClick={() => {
+                          handleSaintSelect(saint)
+                          // Force close the search results
+                          setShowSearchResults(false)
+                        }}
                       >
                         {saint}
                       </div>
