@@ -84,32 +84,69 @@ export default function Home() {
     setShowSuggestions(userMessages.length === 0)
   }, [messages])
 
-  // List of all saints
-  const allSaints = [
-    "St. Francis of Assisi",
-    "St. Thomas Aquinas",
-    "St. Teresa of Ávila",
-    "St. Augustine",
-    "St. Thérèse of Lisieux",
-    "St. Peter",
-    "St. Paul",
-    "St. John the Evangelist",
-    "St. Athanasius",
-    "St. Jerome",
-    "St. Benedict of Nursia",
-    "St. Gregory the Great",
-    "St. Clare of Assisi",
-    "St. Dominic",
-    "St. Catherine of Siena",
-    "St. John of the Cross",
-    "St. Ignatius of Loyola",
-    "St. Francis Xavier",
-    "St. Joan of Arc",
-    "St. Mother Teresa of Calcutta",
+  // List of all saints with their alternative names for search
+  const saintsWithAlternatives = [
+    { display: "St. Francis of Assisi", alternatives: ["saint francis", "francis of assisi", "francis assisi"] },
+    { display: "St. Thomas Aquinas", alternatives: ["saint thomas", "thomas aquinas", "aquinas"] },
+    {
+      display: "St. Teresa of Ávila",
+      alternatives: ["saint teresa", "teresa of avila", "teresa avila", "st teresa", "st. teresa"],
+    },
+    { display: "St. Augustine", alternatives: ["saint augustine", "augustine of hippo"] },
+    {
+      display: "St. Thérèse of Lisieux",
+      alternatives: [
+        "saint therese",
+        "therese of lisieux",
+        "therese lisieux",
+        "little flower",
+        "st therese",
+        "st. therese",
+      ],
+    },
+    { display: "St. Peter", alternatives: ["saint peter", "peter the apostle"] },
+    { display: "St. Paul", alternatives: ["saint paul", "paul the apostle", "saul of tarsus"] },
+    { display: "St. John the Evangelist", alternatives: ["saint john", "john evangelist", "beloved disciple"] },
+    { display: "St. Athanasius", alternatives: ["saint athanasius", "athanasius of alexandria"] },
+    { display: "St. Jerome", alternatives: ["saint jerome"] },
+    { display: "St. Benedict of Nursia", alternatives: ["saint benedict", "benedict nursia", "benedict of nursia"] },
+    { display: "St. Gregory the Great", alternatives: ["saint gregory", "gregory great", "pope gregory"] },
+    { display: "St. Clare of Assisi", alternatives: ["saint clare", "clare assisi", "clare of assisi"] },
+    { display: "St. Dominic", alternatives: ["saint dominic", "dominic de guzman"] },
+    { display: "St. Catherine of Siena", alternatives: ["saint catherine", "catherine siena", "catherine of siena"] },
+    { display: "St. John of the Cross", alternatives: ["saint john of the cross", "john cross", "juan de la cruz"] },
+    { display: "St. Ignatius of Loyola", alternatives: ["saint ignatius", "ignatius loyola"] },
+    { display: "St. Francis Xavier", alternatives: ["saint francis xavier", "francis xavier"] },
+    { display: "St. Joan of Arc", alternatives: ["saint joan", "joan arc", "maid of orleans"] },
+    {
+      display: "St. Mother Teresa of Calcutta",
+      alternatives: ["saint teresa", "mother teresa", "teresa calcutta", "teresa of calcutta"],
+    },
   ]
 
+  // Helper function to normalize text for searching (remove accents, lowercase, etc.)
+  const normalizeText = (text: string) => {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // Remove accents
+      .replace(/[^\w\s]/g, "") // Remove punctuation
+      .trim()
+  }
+
   // Filter saints based on search query
-  const filteredSaints = allSaints.filter((saint) => saint.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredSaints = saintsWithAlternatives
+    .filter((saint) => {
+      const normalizedQuery = normalizeText(searchQuery)
+      if (!normalizedQuery) return true
+
+      // Check the display name
+      if (normalizeText(saint.display).includes(normalizedQuery)) return true
+
+      // Check alternative names
+      return saint.alternatives.some((alt) => normalizeText(alt).includes(normalizedQuery))
+    })
+    .map((saint) => saint.display)
 
   // Update chat when saint changes
   useEffect(() => {
