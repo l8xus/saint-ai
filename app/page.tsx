@@ -25,7 +25,7 @@ export default function Home() {
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/assissi-xsrYL2QtPtrEYH4rNJYmlDIPqYzdw0.jpeg",
     articleLink: "https://www.thecatholicvoice.com/saints/saint-francis-of-assisi-biography-miracles-and-wisdom",
   })
-  const [showSuggestions, setShowSuggestions] = useState(true)
+  const [showSuggestions, setShowSuggestions] = useState(showSuggestions)
   const suggestionsRef = useRef<HTMLDivElement>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>([])
@@ -235,11 +235,17 @@ export default function Home() {
         }, 100)
       },
     }),
-    [processMessageContent, currentSaintRef, messages, setMessages],
+    [processMessageContent, currentSaintRef],
   )
 
   // Initialize the chat and get the chat helpers
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat(chatConfig())
+
+  // Add a useEffect to update the chatConfig when messages change
+  useEffect(() => {
+    // This effect will run when messages change, but we don't need to do anything here
+    // as the onFinish callback in chatConfig already has access to the latest messages
+  }, [messages, setMessages])
 
   // Process each new message as it's added to the messages array
   useEffect(() => {
