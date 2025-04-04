@@ -175,16 +175,18 @@ h6 {
 
 .header-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
 }
 
 .header-left {
+  position: absolute;
+  left: 0;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
 }
 
 .menu-button {
@@ -204,7 +206,7 @@ h6 {
 
 .mobile-selector {
   display: none;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
   text-align: center;
 }
 
@@ -232,7 +234,6 @@ h6 {
 
 .message.user {
   margin-left: auto;
-  flex-direction: row-reverse;
   justify-content: flex-end;
 }
 
@@ -267,8 +268,6 @@ h6 {
   background-color: #2b2357;
   color: white;
   border: none;
-  margin-right: 0;
-  margin-left: 0.75rem;
 }
 
 /* Input area */
@@ -440,6 +439,7 @@ h6 {
 
   .menu-button {
     display: block;
+    margin-right: 15px;
   }
 
   .message {
@@ -450,32 +450,19 @@ h6 {
     font-size: 1.25rem;
   }
 
-  .header-title.main-title {
-    display: none;
-  }
-
   .header-content {
     justify-content: center;
+    padding-left: 40px; /* Make space for the menu button */
   }
 
   .header-left {
-    position: absolute;
     left: 1rem;
-  }
-
-  .header-right {
-    text-align: center;
-    width: 100%;
-  }
-
-  .header-right .header-title {
-    font-size: 1.1rem;
-    white-space: nowrap;
+    z-index: 5;
   }
 
   .mobile-selector {
     display: block;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
   }
 
   .mobile-selector .saint-selector {
