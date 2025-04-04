@@ -94,89 +94,32 @@ export default function Home() {
     return newArray
   }
 
-  // Create a memoized version of processMessageContent to avoid recreating it on every render
-  const processMessageContent = useCallback(
-    (
-      content: string,
-    ): {
-      cleanedContent: string
-      suggestions: string[] | null
-    } => {
-      console.log("Processing message content:", content.substring(0, 100) + "...")
-
-      // First, check for the new suggestion format
-      const suggestionsMatch = content.match(/\[SUGGESTIONS_START\]([\s\S]*?)\[SUGGESTIONS_END\]/)
+  // Function to extract suggestions from message content
+  const extractSuggestions = useCallback(
+    (content: string): { cleanedContent: string; suggestions: string[] | null } => {
+      const suggestionsMatch = content.match(/__SUGGESTIONS__(.*?)__END_SUGGESTIONS__/s)
 
       let cleanedContent = content
       let extractedSuggestions: string[] | null = null
 
       if (suggestionsMatch && suggestionsMatch[1]) {
         try {
-          // Parse the suggestions
+          // Parse the suggestions JSON
           const suggestionsJson = suggestionsMatch[1].trim()
-          console.log("Found suggestions JSON:", suggestionsJson)
-
-          let suggestions: string[] = []
-          try {
-            // Try to parse as JSON
-            suggestions = JSON.parse(suggestionsJson)
-            console.log("Parsed suggestions:", suggestions)
-          } catch (e) {
-            console.error("JSON parse error:", e)
-            // Try to extract strings if JSON parsing fails
-            const extractedSuggestionsMatches = suggestionsJson.match(/"([^"]+)"/g)
-            if (extractedSuggestionsMatches) {
-              suggestions = extractedSuggestionsMatches.map((s) => s.replace(/"/g, ""))
-              console.log("Extracted suggestions:", suggestions)
-            }
-          }
+          const suggestions = JSON.parse(suggestionsJson)
 
           // Remove the suggestions block from the content
-          cleanedContent = cleanedContent.replace(/\[SUGGESTIONS_START\]([\s\S]*?)\[SUGGESTIONS_END\]/g, "")
+          cleanedContent = cleanedContent.replace(/__SUGGESTIONS__.*?__END_SUGGESTIONS__/s, "")
 
           if (Array.isArray(suggestions) && suggestions.length > 0) {
             extractedSuggestions = suggestions
           }
         } catch (error) {
-          console.error("Error processing suggestions:", error)
+          console.error("Error extracting suggestions:", error)
         }
       }
 
-      // Also check for the old format as a fallback
-      const oldFormatMatch = cleanedContent.match(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/)
-      if (oldFormatMatch && oldFormatMatch[1]) {
-        try {
-          const suggestionsText = oldFormatMatch[1].trim()
-          console.log("Found old format suggestions:", suggestionsText)
-
-          let suggestions: string[] = []
-          try {
-            suggestions = JSON.parse(suggestionsText)
-          } catch (e) {
-            console.error("JSON parse error (old format):", e)
-            // Try to extract strings if JSON parsing fails
-            const extractedSuggestionsMatches = suggestionsText.match(/"([^"]+)"/g)
-            if (extractedSuggestionsMatches) {
-              suggestions = extractedSuggestionsMatches.map((s) => s.replace(/"/g, ""))
-            }
-          }
-
-          // Remove the suggestions block from the content
-          cleanedContent = cleanedContent.replace(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/g, "")
-
-          if (!extractedSuggestions && Array.isArray(suggestions) && suggestions.length > 0) {
-            extractedSuggestions = suggestions
-          }
-        } catch (error) {
-          console.error("Error processing old format suggestions:", error)
-        }
-      }
-
-      // Ensure we've removed all suggestion markers that might be incomplete
-      cleanedContent = cleanedContent.replace(/\[SUGGESTIONS_START\][\s\S]*$/, "")
-      cleanedContent = cleanedContent.replace(/\[SUGGESTIONS\][\s\S]*$/, "")
-
-      // Trim any extra whitespace that might have been left
+      // Trim any extra whitespace
       cleanedContent = cleanedContent.trim()
 
       return {
@@ -193,7 +136,7 @@ export default function Home() {
       initialMessages: [
         {
           id: "welcome-message",
-          role: "assistant" as const, // Explicitly type as 'assistant'
+          role: "assistant" as const,
           content: `Peace be with you, my child. I am ${currentSaintRef.current}. How may I share my wisdom with you today?`,
         },
       ],
@@ -204,23 +147,23 @@ export default function Home() {
       onFinish: (message: Message) => {
         console.log("onFinish triggered with message:", message.id)
 
-        // Process the message content to extract dynamic suggestions and clean it
-        const result = processMessageContent(message.content)
+        // Process the message content to extract suggestions
+        const { cleanedContent, suggestions } = extractSuggestions(message.content)
 
         // If suggestions were found, update the state
-        if (result.suggestions) {
-          console.log("Setting dynamic suggestions from onFinish:", result.suggestions)
-          setDynamicSuggestions(result.suggestions)
+        if (suggestions) {
+          console.log("Setting dynamic suggestions from onFinish:", suggestions)
+          setDynamicSuggestions(suggestions)
           setShowSuggestions(true)
         }
 
         // If the content was modified, update the message
-        if (result.cleanedContent !== message.content) {
+        if (cleanedContent !== message.content) {
           console.log("Updating message with cleaned content")
 
           // Create a new array with the updated message
           const updatedMessages = messages.map((msg) =>
-            msg.id === message.id ? { ...msg, content: result.cleanedContent } : msg,
+            msg.id === message.id ? { ...msg, content: cleanedContent } : msg,
           )
 
           // Set the messages directly with the new array
@@ -235,17 +178,11 @@ export default function Home() {
         }, 100)
       },
     }),
-    [processMessageContent, currentSaintRef],
+    [extractSuggestions, currentSaintRef],
   )
 
   // Initialize the chat and get the chat helpers
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat(chatConfig())
-
-  // Add a useEffect to update the chatConfig when messages change
-  useEffect(() => {
-    // This effect will run when messages change, but we don't need to do anything here
-    // as the onFinish callback in chatConfig already has access to the latest messages
-  }, [messages, setMessages])
 
   // Process each new message as it's added to the messages array
   useEffect(() => {
@@ -254,21 +191,21 @@ export default function Home() {
       if (lastMessage.role === "assistant") {
         console.log("Processing new assistant message:", lastMessage.id)
 
-        // Process the message content
-        const result = processMessageContent(lastMessage.content)
+        // Process the message content to extract suggestions
+        const { cleanedContent, suggestions } = extractSuggestions(lastMessage.content)
 
-        // If suggestions were found, update the state immediately
-        if (result.suggestions) {
-          console.log("Setting dynamic suggestions from new message:", result.suggestions)
-          setDynamicSuggestions(result.suggestions)
+        // If suggestions were found, update the state
+        if (suggestions) {
+          console.log("Setting dynamic suggestions from new message:", suggestions)
+          setDynamicSuggestions(suggestions)
           setShowSuggestions(true)
         }
 
         // If the content was modified, update the message
-        if (result.cleanedContent !== lastMessage.content) {
+        if (cleanedContent !== lastMessage.content) {
           // Create a new array with the updated message
           const updatedMessages = messages.map((msg) =>
-            msg.id === lastMessage.id ? { ...msg, content: result.cleanedContent } : msg,
+            msg.id === lastMessage.id ? { ...msg, content: cleanedContent } : msg,
           )
 
           // Set the messages directly with the new array
@@ -276,7 +213,7 @@ export default function Home() {
         }
       }
     }
-  }, [messages, processMessageContent, setMessages])
+  }, [messages, extractSuggestions, setMessages])
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -805,7 +742,7 @@ export default function Home() {
         {/* Input area */}
         <div className="input-area">
           <div className="input-container">
-            {showSuggestions && (
+            {showSuggestions && dynamicSuggestions.length > 0 && (
               <div className="suggestions-container">
                 <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
                   <ChevronLeft size={16} />
