@@ -6,24 +6,6 @@ import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
 import { ChevronLeft, ChevronRight, Menu, Send, X } from "lucide-react"
 
-// Custom hook for scrolling to bottom
-function useScrollToBottom<T extends HTMLElement>() {
-  const containerRef = useRef<T>(null)
-  const bottomRef = useRef<HTMLDivElement>(null)
-
-  const scrollToBottom = () => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" })
-    }
-  }
-
-  useEffect(() => {
-    scrollToBottom()
-  }, [])
-
-  return [containerRef, bottomRef, scrollToBottom] as const
-}
-
 export default function Home() {
   const [selectedSaint, setSelectedSaint] = useState("St. Francis of Assisi")
   const [saintInfo, setSaintInfo] = useState({
@@ -71,12 +53,12 @@ export default function Home() {
     },
   })
 
-  const [messagesContainerRef, messagesEndRef, scrollToBottom] = useScrollToBottom<HTMLDivElement>()
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Scroll to bottom when messages change
   useEffect(() => {
-    scrollToBottom()
-  }, [messages, scrollToBottom])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   // Check if there are user messages and update showSuggestions
   useEffect(() => {
@@ -179,77 +161,83 @@ export default function Home() {
   }
 
   return (
-    <>
-      {/* Header */}
-      <header className="flex flex-row justify-between items-center h-20 px-5 lg:px-10 bg-[#f0e6da] border-b border-[#d0b557] fixed top-0 left-0 right-0 z-30">
-        <div className="flex items-center">
-          <button className="lg:hidden mr-4 text-[#76070d]" onClick={() => setIsMobileMenuOpen(true)}>
-            <Menu size={24} />
+    <div className="app-container">
+      {/* Sidebar */}
+      <div className={`sidebar ${isMobileMenuOpen ? "open" : ""}`}>
+        <div className="sidebar-header">
+          <h2 className="sidebar-title">Choose Your Saint</h2>
+          <button className="close-button" onClick={() => setIsMobileMenuOpen(false)}>
+            <X size={20} />
           </button>
-          <h1 className="text-2xl font-cinzel text-[#2b2357] font-bold">Sanctus Dialogus</h1>
         </div>
-        <div className="text-xl font-cinzel text-[#2b2357]">Dialogue with {selectedSaint}</div>
-      </header>
 
-      <div className="main-layout pt-20">
-        {/* Sidebar */}
-        <div className={`sidebar ${isMobileMenuOpen ? "open" : ""}`}>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-cinzel text-[#2b2357] font-bold">Choose Your Saint</h2>
-            <button className="lg:hidden text-[#76070d]" onClick={() => setIsMobileMenuOpen(false)}>
-              <X size={20} />
-            </button>
+        <select className="saint-selector" value={selectedSaint} onChange={handleSaintChange}>
+          <option value="St. Francis of Assisi">St. Francis of Assisi</option>
+          <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
+          <option value="St. Teresa of Ávila">St. Teresa of Ávila</option>
+          <option value="St. Augustine">St. Augustine</option>
+          <option value="St. Thérèse of Lisieux">St. Thérèse of Lisieux</option>
+        </select>
+
+        <div className="saint-profile">
+          <div className="saint-image-container">
+            <img
+              src={saintInfo.image || "/placeholder.svg"}
+              alt={saintInfo.name}
+              className="saint-image"
+              onError={handleImageError}
+            />
           </div>
+          <h3 className="saint-name">{saintInfo.name}</h3>
+          <p className="saint-years">{saintInfo.years}</p>
+          <p className="saint-description">{saintInfo.description}</p>
+          <a href={saintInfo.articleLink} target="_blank" rel="noopener noreferrer" className="read-more">
+            Read More
+          </a>
+        </div>
 
-          <select
-            className="w-full p-3 mb-6 bg-[#f0e6da] border border-[#d0b557] rounded-md font-futura text-[#2b2357]"
-            value={selectedSaint}
-            onChange={handleSaintChange}
-          >
-            <option value="St. Francis of Assisi">St. Francis of Assisi</option>
-            <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
-            <option value="St. Teresa of Ávila">St. Teresa of Ávila</option>
-            <option value="St. Augustine">St. Augustine</option>
-            <option value="St. Thérèse of Lisieux">St. Thérèse of Lisieux</option>
-          </select>
+        <hr className="separator" />
+      </div>
 
-          <div className="bg-white/50 border border-[#d0b557] rounded-lg p-6 text-center">
-            <div className="w-24 h-24 mx-auto mb-4 rounded-full border-2 border-[#d0b557] overflow-hidden">
-              <img
-                src={saintInfo.image || "/placeholder.svg"}
-                alt={saintInfo.name}
-                className="w-full h-full object-cover rounded-full"
-                onError={handleImageError}
-              />
+      {/* Main content */}
+      <div className="main-content">
+        {/* Header */}
+        <header className="header">
+          <div className="header-content">
+            <div className="header-left">
+              <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
+                <Menu size={24} />
+              </button>
+              <h1 className="header-title">Sanctus Dialogus</h1>
             </div>
-            <h3 className="text-xl font-cinzel text-[#2b2357] font-bold mb-1">{saintInfo.name}</h3>
-            <p className="text-sm text-[#76070d] italic mb-2">{saintInfo.years}</p>
-            <p className="text-sm mb-4 font-futura">{saintInfo.description}</p>
-            <a
-              href={saintInfo.articleLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-[#2b2357] text-white py-2 px-4 rounded font-cinzel text-sm hover:bg-[#2b2357]/80 transition-colors"
-            >
-              Read More
-            </a>
+            <div className="header-right">
+              <h2 className="header-title">Dialogue with {selectedSaint}</h2>
+            </div>
+            <div className="mobile-selector">
+              <select
+                className="saint-selector"
+                value={selectedSaint}
+                onChange={handleSaintChange}
+                style={{ padding: "0.5rem", fontSize: "0.875rem" }}
+              >
+                <option value="St. Francis of Assisi">St. Francis of Assisi</option>
+                <option value="St. Thomas Aquinas">St. Thomas Aquinas</option>
+                <option value="St. Teresa of Ávila">St. Teresa of Ávila</option>
+                <option value="St. Augustine">St. Augustine</option>
+                <option value="St. Thérèse of Lisieux">St. Thérèse of Lisieux</option>
+              </select>
+            </div>
           </div>
-        </div>
+        </header>
 
-        {/* Main content */}
-        <div className="main-content">
-          {/* Chat area */}
-          <div className="chat-area" ref={messagesContainerRef}>
+        {/* Chat area */}
+        <div className="chat-area">
+          <div className="chat-container">
             {messages.map((message) => (
-              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""} animate-fadeIn`}>
+              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
                 {message.role !== "user" && (
-                  <div className="w-10 h-10 mr-3 rounded-full border-2 border-[#d0b557] overflow-hidden flex-shrink-0">
-                    <img
-                      src={saintInfo.image || "/placeholder.svg"}
-                      alt={selectedSaint}
-                      className="w-full h-full object-cover"
-                      onError={handleImageError}
-                    />
+                  <div className="message-avatar">
+                    <img src={saintInfo.image || "/placeholder.svg"} alt={selectedSaint} onError={handleImageError} />
                   </div>
                 )}
 
@@ -258,21 +246,20 @@ export default function Home() {
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef} className="h-20"></div>
+            <div ref={messagesEndRef}></div>
           </div>
+        </div>
 
-          {/* Input area */}
-          <div className="input-area">
+        {/* Input area */}
+        <div className="input-area">
+          <div className="input-container">
             {showSuggestions && (
               <div className="suggestions-container">
-                <button
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-[#f0e6da] border border-[#d0b557] rounded-full"
-                  onClick={() => scrollSuggestions("left")}
-                >
+                <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
                   <ChevronLeft size={16} />
                 </button>
 
-                <div ref={suggestionsRef} className="suggestions scrollbar-hide">
+                <div ref={suggestionsRef} className="suggestions hide-scrollbar">
                   {suggestedQuestions.map((question) => (
                     <button
                       key={question}
@@ -284,36 +271,32 @@ export default function Home() {
                   ))}
                 </div>
 
-                <button
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 flex items-center justify-center bg-[#f0e6da] border border-[#d0b557] rounded-full"
-                  onClick={() => scrollSuggestions("right")}
-                >
+                <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
                   <ChevronRight size={16} />
                 </button>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="flex gap-3">
+            <form onSubmit={handleSubmit} className="input-form">
               <input
                 type="text"
                 value={input}
                 onChange={handleInputChange}
                 placeholder="Ask for wisdom..."
-                className="flex-1 p-3 bg-[#f0e6da] border border-[#d0b557] rounded-md font-futura"
+                className="input-field"
                 disabled={isLoading}
               />
-              <button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                className="bg-[#76070d] text-white p-3 rounded-md flex items-center justify-center disabled:opacity-50"
-              >
-                <Send size={18} />
+              <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
+                <span className="send-icon">
+                  <Send size={16} />
+                </span>
+                Send
               </button>
             </form>
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
