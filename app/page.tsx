@@ -94,9 +94,6 @@ export default function Home() {
     return newArray
   }
 
-  // Initialize the chat and get the chat helpers
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat(chatConfig())
-
   // Create a memoized version of processMessageContent to avoid recreating it on every render
   const processMessageContent = useCallback(
     (
@@ -240,6 +237,9 @@ export default function Home() {
     }),
     [processMessageContent, currentSaintRef, messages, setMessages],
   )
+
+  // Initialize the chat and get the chat helpers
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat(chatConfig())
 
   // Process each new message as it's added to the messages array
   useEffect(() => {
@@ -570,12 +570,6 @@ export default function Home() {
   const handleSaintSelect = (saint: string) => {
     // Set the selected saint
     setSelectedSaint(saint)
-    // Close the search results
-    setShowSearchResults(false)
-    // Close the mobile menu if it's open
-    setIsMobileMenuOpen(false)
-
-    // Update the URL
     // Close the search results
     setShowSearchResults(false)
     // Close the mobile menu if it's open
