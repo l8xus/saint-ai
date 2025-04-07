@@ -286,12 +286,15 @@ h6 {
   padding: 1.5rem;
   padding-bottom: 100px; /* Space for input area */
   margin-top: 70px; /* Space for fixed header */
+  scroll-behavior: auto; /* Ensure smooth scrolling doesn't interfere */
 }
 
 .chat-container {
   max-width: 768px;
   margin: 0 auto;
   padding-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .message {
@@ -785,11 +788,14 @@ h6 {
     content: "";
     display: block;
     height: 50px; /* Adjust as needed */
+    flex: 1; /* Take up remaining space */
+    min-height: 20px; /* Minimum height */
   }
 
   /* Ensure first message has enough margin from the top */
   .chat-container .message:first-child {
     margin-top: 20px;
+    margin-top: 0;
   }
 }
 
