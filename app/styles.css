@@ -645,14 +645,19 @@ h6 {
     left: 0;
     width: 100%;
     padding: 0.75rem 1rem;
-    height: 50px; /* Reduced height for mobile */
+    height: 60px; /* Adjusted height for mobile */
+    position: fixed;
+    top: 0;
+    z-index: 40;
   }
 
   .input-area {
     left: 0;
     bottom: 0;
     width: 100%;
-    padding: 0.5rem 1rem; /* Further reduced padding on mobile */
+    padding: 0.75rem 1rem; /* Adjusted padding on mobile */
+    position: fixed;
+    z-index: 40;
   }
 
   /* Completely reworked mobile header layout */
@@ -660,6 +665,7 @@ h6 {
     display: flex;
     align-items: center;
     justify-content: space-between; /* Space between title and menu button */
+    width: 100%;
   }
 
   .header-left {
@@ -688,7 +694,7 @@ h6 {
 
   .mobile-selector {
     display: block;
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     text-align: left; /* Align to the left */
   }
 
@@ -704,24 +710,28 @@ h6 {
     margin-right: 0;
   }
 
-  /* Fix chat alignment - increase padding-top to push content below navbar */
+  /* Fix chat alignment - ensure proper spacing */
   .chat-area {
-    padding-top: 120px; /* Increased to ensure content is below navbar */
+    padding-top: 70px; /* Adjusted to match header height */
     margin-top: 0; /* Reset margin-top for mobile */
     background-color: #f8f3ec; /* Ensure the background color is correct */
     padding-bottom: 80px; /* Space for input area on mobile */
+    overflow-y: auto;
+    height: calc(100vh - 60px); /* Full height minus header */
+    position: relative;
+    z-index: 10;
   }
 
   .chat-container {
     width: 100%;
-    padding: 0 0.5rem;
+    padding: 0.5rem;
     min-height: calc(100vh - 200px); /* Ensure there's enough space for content on mobile */
   }
 
   /* Mobile search styles */
   .mobile-search {
     max-width: 100%;
-    margin: 0.75rem 0 0;
+    margin: 0.5rem 0 0;
     text-align: left;
   }
 
@@ -752,6 +762,20 @@ h6 {
     right: 0.25rem;
     width: 24px;
     height: 24px;
+  }
+
+  /* Fix suggestions container on mobile */
+  .suggestions-container {
+    margin-bottom: 0.5rem;
+  }
+
+  .suggestions {
+    padding: 0.5rem 1.5rem;
+  }
+
+  .suggestion-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
   }
 }
 
