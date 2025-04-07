@@ -612,6 +612,79 @@ h6 {
 
 /* Mobile styles */
 @media (max-width: 768px) {
+  /* Fix header size and spacing */
+  .header {
+    height: auto;
+    min-height: 60px;
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    position: absolute; /* Change from fixed to absolute for Safari */
+  }
+
+  .header-content {
+    width: 100%;
+  }
+
+  .header-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0;
+    text-align: left;
+    line-height: 1.2;
+    white-space: normal; /* Allow text to wrap */
+    max-width: calc(100% - 50px); /* Give space for the menu button */
+  }
+
+  /* Fix chat area to prevent first message from appearing under navbar */
+  .chat-area {
+    padding-top: 180px; /* Increased to ensure content is below navbar even when Safari UI appears */
+    margin-top: 0;
+    position: relative; /* Ensure proper stacking context */
+  }
+
+  /* Add specific styling for the first message to ensure it's properly positioned */
+  .chat-container .message:first-child {
+    margin-top: 40px; /* Increased margin for the first message */
+    position: relative; /* Ensure proper stacking */
+    z-index: 5; /* Lower than header but above other content */
+  }
+
+  /* Improve mobile selector positioning and size */
+  .mobile-selector {
+    margin-top: 0.5rem;
+    width: 100%;
+    display: block;
+  }
+
+  /* Make search input larger and more prominent on mobile */
+  .mobile-search {
+    max-width: 100%;
+    margin: 0.75rem 0 0;
+    text-align: left;
+  }
+
+  .mobile-search .search-input {
+    height: 40px;
+    font-size: 1rem;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mobile-search .search-icon {
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .mobile-search-results {
+    position: absolute;
+    max-height: 200px;
+    z-index: 50;
+    width: 100%;
+  }
+
   body.sidebar-open {
     overflow: hidden;
     position: fixed;
@@ -629,10 +702,14 @@ h6 {
     left: 0;
     right: 0;
     bottom: 0;
+    transform: translateX(-100%);
+    opacity: 0;
   }
 
   .sidebar.open {
     display: block;
+    transform: translateX(0);
+    opacity: 1;
   }
 
   .close-button {
@@ -642,18 +719,23 @@ h6 {
   .main-content {
     margin-left: 0;
     width: 100%;
+    position: relative; /* Ensure proper stacking */
   }
 
   .header {
     left: 0;
     width: 100%;
-    padding: 0.75rem 1rem;
+    top: 0;
+    z-index: 40;
   }
 
   .input-area {
     left: 0;
     bottom: 0;
     width: 100%;
+    padding: 0.75rem 1rem; /* Adjusted padding on mobile */
+    position: fixed;
+    z-index: 40;
   }
 
   /* Completely reworked mobile header layout */
@@ -661,21 +743,12 @@ h6 {
     display: flex;
     align-items: center;
     justify-content: space-between; /* Space between title and menu button */
+    width: 100%;
   }
 
   .header-left {
     display: flex;
     align-items: center;
-  }
-
-  .header-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin: 0;
-    text-align: left;
-    line-height: 1.2;
-    white-space: normal; /* Allow text to wrap */
-    max-width: calc(100% - 50px); /* Give space for the menu button */
   }
 
   .menu-button {
@@ -685,12 +758,6 @@ h6 {
     padding: 0.5rem;
     margin: 0;
     color: #76070d;
-  }
-
-  .mobile-selector {
-    display: block;
-    margin-top: 0.75rem;
-    text-align: left; /* Align to the left */
   }
 
   .send-text {
@@ -705,42 +772,76 @@ h6 {
     margin-right: 0;
   }
 
-  /* Fix chat alignment - reduce the space between search and first message */
+  /* Fix chat alignment - ensure proper spacing */
   .chat-area {
-    padding-top: 90px; /* Reduced from 120px to bring the first message closer to the navbar */
     background-color: #f8f3ec; /* Ensure the background color is correct */
+    padding-bottom: 80px; /* Space for input area on mobile */
+    overflow-y: auto;
+    height: calc(100vh - 60px); /* Full height minus header */
+    position: relative;
+    z-index: 10;
   }
 
   .chat-container {
     width: 100%;
-    padding: 0 0.5rem;
-  }
-
-  /* Mobile search styles */
-  .mobile-search {
-    max-width: 100%;
-    margin: 0.75rem 0 0;
-    text-align: left;
-  }
-
-  .mobile-search .search-input {
-    padding: 0.5rem 1rem 0.5rem 2rem;
-    font-size: 0.9rem;
-  }
-
-  .mobile-search .search-icon {
-    left: 0.5rem;
-  }
-
-  .mobile-search-results {
-    position: absolute;
-    max-height: 200px;
-    z-index: 50;
-    width: 100%;
+    padding: 0.5rem;
+    min-height: calc(100vh - 200px); /* Ensure there's enough space for content on mobile */
+    padding-top: 20px; /* Add padding to the top of the container */
   }
 
   .message {
     max-width: 90%;
+  }
+
+  /* Adjust copy button for mobile */
+  .copy-button {
+    opacity: 1; /* Always visible on mobile */
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Fix suggestions container on mobile */
+  .suggestions-container {
+    margin-bottom: 0.5rem;
+  }
+
+  .suggestions {
+    padding: 0.5rem 1.5rem;
+  }
+
+  .suggestion-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  /* In the mobile media query, add specific styling for the first message */
+  .message.first-message {
+    margin-top: 30px; /* Add extra space for the first message on mobile */
+  }
+
+  /* Safari-specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    /* CSS specific to iOS devices */
+    .header {
+      position: fixed; /* Keep fixed on iOS */
+    }
+
+    .chat-area {
+      padding-top: 200px; /* Even more padding for iOS Safari */
+    }
+
+    .chat-container {
+      padding-top: 30px; /* More padding for iOS Safari */
+    }
+
+    /* Add a spacer at the top of the chat container for iOS */
+    .chat-container::before {
+      content: "";
+      display: block;
+      height: 30px;
+    }
   }
 }
 
@@ -763,12 +864,147 @@ h6 {
   border-radius: 0.25rem;
   font-family: "Cinzel", serif;
   font-size: 1rem;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.2s;
   text-align: center;
   margin: 1rem 0;
 }
 
 .chat-with-saint-button:hover {
   background-color: rgba(118, 7, 13, 0.8);
+  transform: translateY(-2px);
+}
+
+/* Animation for suggestions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation for saint profile transition */
+.saint-profile-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.saint-profile-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.saint-profile-exit {
+  opacity: 1;
+}
+
+.saint-profile-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Loading animation for suggestions */
+.suggestions-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  margin-bottom: 0.5rem; /* Further reduced margin */
+}
+
+.loading-dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  border-radius: 50%;
+  background-color: #d0b557;
+  animation: loadingDot 1.4s infinite ease-in-out both;
+}
+
+.loading-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes loadingDot {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Custom scrollbar for a more Renaissance feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0e6da;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d0b557;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #76070d;
+}
+
+/* Hide scrollbar for the suggestions slider while preserving functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom fonts */
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Domine:wght@400;500;600;700&display=swap");
+
+/* Fix for Safari viewport height issues */
+/* This helps with the mobile Safari viewport height changes when the browser UI appears/disappears */
+@supports (-webkit-touch-callout: none) {
+  .app-container {
+    min-height: -webkit-fill-available;
+  }
+
+  html,
+  body {
+    height: -webkit-fill-available;
+  }
+}
+
+/* Add this at the very end of the file, after all other CSS */
+/* Fix for Safari mobile viewport issues */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari specific CSS */
+  .chat-area {
+    padding-top: 170px; /* Extra padding only for iOS Safari */
+  }
+
+  /* Add a small invisible spacer only for iOS Safari */
+  .chat-container::before {
+    content: "";
+    display: block;
+    height: 20px;
+  }
+
+  /* Ensure the first message has enough space */
+  .message.first-message {
+    margin-top: 40px;
+  }
 }
 
