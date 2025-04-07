@@ -51,7 +51,7 @@ h6 {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
-  padding: 1rem 0;
+  padding: 0rem 0;
   height: 60px; /* Match the header height */
 }
 
@@ -265,7 +265,7 @@ h6 {
   right: 0;
   z-index: 30;
   transition: left 0.3s ease;
-  height: 60px; /* Adjusted to match sidebar header better */
+  height: 70px; /* Adjusted to match sidebar header better */
   display: flex;
   align-items: center;
 }
