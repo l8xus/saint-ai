@@ -605,6 +605,42 @@ h6 {
 
 /* Mobile styles */
 @media (max-width: 768px) {
+  /* Fix header size and spacing */
+  .header {
+    height: auto;
+    min-height: 60px;
+    padding: 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-content {
+    width: 100%;
+  }
+
+  .header-title {
+    font-size: 0.9rem;
+    max-width: calc(100% - 40px);
+  }
+
+  /* Fix chat area to prevent first message from appearing under navbar */
+  .chat-area {
+    padding-top: 110px; /* Increased to ensure content is below navbar */
+    margin-top: 0;
+  }
+
+  /* Adjust mobile selector positioning */
+  .mobile-selector {
+    margin-top: 0.25rem;
+    width: 100%;
+  }
+
+  /* Make search input smaller on mobile */
+  .mobile-search .search-input {
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
   body.sidebar-open {
     overflow: hidden;
     position: fixed;
