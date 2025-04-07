@@ -543,6 +543,20 @@ export default function Home() {
     })
   }
 
+  // Add this near your other useEffect hooks
+  useEffect(() => {
+    // Check if there's only one message (the welcome message)
+    if (messagesContainerRef.current) {
+      if (messages.length <= 1) {
+        // Disable scrolling when there's only one message
+        messagesContainerRef.current.style.overflowY = "hidden"
+      } else {
+        // Enable scrolling when there are multiple messages
+        messagesContainerRef.current.style.overflowY = "auto"
+      }
+    }
+  }, [messages.length])
+
   return (
     <div className="app-container">
       {/* Sidebar */}
@@ -619,11 +633,6 @@ export default function Home() {
           </div>
 
           <div className="mobile-selector">
-            {/* Mobile  />
-            </button>
-          </div>
-
-          <div className="mobile-selector">
             {/* Mobile search input */}
             <div className="search-container mobile-search" ref={mobileSearchRef}>
               <div className="search-input-wrapper">
@@ -665,7 +674,7 @@ export default function Home() {
         </header>
 
         {/* Chat area */}
-        <div className="chat-area" ref={messagesContainerRef}>
+        <div className={`chat-area ${messages.length <= 1 ? "single-message" : ""}`} ref={messagesContainerRef}>
           <div className="chat-container">
             {messages.map((message) => (
               <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
