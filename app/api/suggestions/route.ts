@@ -16,7 +16,7 @@ export async function POST(req: Request) {
         {
           role: "system",
           content:
-            "Generate 3-5 thoughtful follow-up questions that a user might want to ask a Catholic saint based on the saint's previous response. The questions should be directly related to the context of the previous message and help the user learn more about the saint's life, teachings, or spiritual insights. Keep questions concise (under 10 words if possible) and focused on spiritual or historical aspects of the saint's life.",
+            "Generate 3-5 thoughtful follow-up questions that a user might want to ask a Catholic saint based on the saint's previous response. The questions should be directly related to the context of the previous message and help the user learn more about the saint's life, teachings, or spiritual insights. Keep questions concise (under 7 words if possible) and focused on spiritual or historical aspects of the saint's life.",
         },
         {
           role: "user",
