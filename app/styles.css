@@ -341,6 +341,13 @@ h6 {
   position: relative; /* For copy button positioning */
 }
 
+/* Add styling for the first-message class */
+
+/* Add this after the .message class definition */
+.message.first-message {
+  margin-top: 20px;
+}
+
 @keyframes fadeInMessage {
   from {
     opacity: 0;
@@ -630,8 +637,13 @@ h6 {
 
   /* Fix chat area to prevent first message from appearing under navbar */
   .chat-area {
-    padding-top: 130px; /* Increased to ensure content is below navbar with search */
+    padding-top: 150px; /* Increased from 130px to push content further down */
     margin-top: 0;
+  }
+
+  /* Add specific styling for the first message to ensure it's properly positioned */
+  .chat-container .message:first-child {
+    margin-top: 20px;
   }
 
   /* Improve mobile selector positioning and size */
@@ -797,6 +809,11 @@ h6 {
   .suggestion-button {
     padding: 0.5rem 0.75rem;
     font-size: 0.9rem;
+  }
+
+  /* In the mobile media query, add specific styling for the first message */
+  .message.first-message {
+    margin-top: 30px; /* Add extra space for the first message on mobile */
   }
 }
 
