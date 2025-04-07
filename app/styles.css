@@ -309,14 +309,14 @@ h6 {
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem;
-  padding-bottom: 100px; /* Space for input area */
+  padding-bottom: 80px; /* Reduced space for input area */
   margin-top: 70px; /* Space for fixed header */
 }
 
 .chat-container {
   max-width: 768px;
   margin: 0 auto;
-  padding-bottom: 1rem;
+  padding-bottom: 0; /* Reduced padding */
 }
 
 .message {
@@ -324,6 +324,7 @@ h6 {
   margin-bottom: 1.5rem;
   max-width: 80%;
   animation: fadeInMessage 0.4s ease-out forwards;
+  position: relative; /* For copy button positioning */
 }
 
 @keyframes fadeInMessage {
@@ -373,6 +374,7 @@ h6 {
   line-height: 1.4;
   font-family: "Domine", serif;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative; /* For copy button positioning */
 }
 
 .message:hover .message-content {
@@ -385,13 +387,59 @@ h6 {
   border: none;
 }
 
+/* Copy button styles */
+.copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #d0b557;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  color: #2b2357;
+}
+
+.message:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  transform: scale(1.1);
+  background-color: white;
+}
+
+.copy-tooltip {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  background-color: #2b2357;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.copy-tooltip.visible {
+  opacity: 1;
+}
+
 /* Input area */
 .input-area {
   position: fixed;
   bottom: 0;
   left: 300px;
   right: 0;
-  padding: 1.5rem;
+  padding: 1rem 1.5rem; /* Reduced padding */
   border-top: 1px solid #d0b557;
   background-color: #f0e6da;
   z-index: 20;
@@ -405,7 +453,7 @@ h6 {
 
 .suggestions-container {
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem; /* Reduced margin */
   animation: fadeIn 0.3s ease-out forwards;
 }
 
@@ -467,10 +515,16 @@ h6 {
   transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.scroll-button:hover {
+.scroll-button:hover:not(:disabled) {
   color: #76070d;
   background-color: white;
   transform: translateY(-50%) scale(1.1);
+}
+
+.scroll-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #999;
 }
 
 .scroll-left {
@@ -582,6 +636,7 @@ h6 {
     left: 0;
     bottom: 0;
     width: 100%;
+    padding: 0.75rem 1rem; /* Reduced padding on mobile */
   }
 
   /* Completely reworked mobile header layout */
@@ -637,6 +692,7 @@ h6 {
   .chat-area {
     padding-top: 90px; /* Reduced from 120px to bring the first message closer to the navbar */
     background-color: #f8f3ec; /* Ensure the background color is correct */
+    padding-bottom: 70px; /* Reduced space for input area on mobile */
   }
 
   .chat-container {
@@ -669,6 +725,15 @@ h6 {
 
   .message {
     max-width: 90%;
+  }
+
+  /* Adjust copy button for mobile */
+  .copy-button {
+    opacity: 1; /* Always visible on mobile */
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -739,7 +804,7 @@ h6 {
   justify-content: center;
   align-items: center;
   height: 40px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem; /* Reduced margin */
 }
 
 .loading-dot {
