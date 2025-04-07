@@ -452,20 +452,28 @@ export default function Home() {
 
   // Function to copy message content
   const copyMessageContent = (messageId: string, content: string) => {
-    navigator.clipboard.writeText(content).then(
-      () => {
-        // Set the copied message ID to show the check icon
-        setCopiedMessageId(messageId)
+    // Create a temporary, invisible element to avoid layout shifts
+    const tempTextArea = document.createElement("textarea")
+    tempTextArea.value = content
+    tempTextArea.style.position = "absolute"
+    tempTextArea.style.left = "-9999px"
+    tempTextArea.style.top = "0"
+    document.body.appendChild(tempTextArea)
 
-        // Reset after 2 seconds
-        setTimeout(() => {
-          setCopiedMessageId(null)
-        }, 2000)
-      },
-      (err) => {
-        console.error("Could not copy text: ", err)
-      },
-    )
+    // Select and copy the text
+    tempTextArea.select()
+    document.execCommand("copy")
+
+    // Remove the temporary element
+    document.body.removeChild(tempTextArea)
+
+    // Set the copied message ID to show the check icon
+    setCopiedMessageId(messageId)
+
+    // Reset after 2 seconds
+    setTimeout(() => {
+      setCopiedMessageId(null)
+    }, 2000)
   }
 
   // Fix the handleSaintSelect function to ensure it properly updates the state
