@@ -51,8 +51,8 @@ h6 {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
-  padding: 0rem 0;
-  height: 15px; /* Match the header height */
+  padding: 1.5rem 0;
+  height: 18px; /* Match the header height */
 }
 
 .sidebar-title {
