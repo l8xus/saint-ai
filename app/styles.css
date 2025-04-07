@@ -315,7 +315,7 @@ h6 {
 /* Chat area */
 /* Reduce the gap between the chat messages and suggestions */
 .chat-area {
-  padding-top: 90px;
+  padding-top: 30px;
   background-color: #f8f3ec;
   flex: 1;
   overflow-y: auto;
