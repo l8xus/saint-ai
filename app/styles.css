@@ -619,6 +619,7 @@ h6 {
     padding: 0.75rem 1rem;
     flex-direction: column;
     align-items: flex-start;
+    position: absolute; /* Change from fixed to absolute for Safari */
   }
 
   .header-content {
@@ -637,13 +638,16 @@ h6 {
 
   /* Fix chat area to prevent first message from appearing under navbar */
   .chat-area {
-    padding-top: 150px; /* Increased from 130px to push content further down */
+    padding-top: 180px; /* Increased to ensure content is below navbar even when Safari UI appears */
     margin-top: 0;
+    position: relative; /* Ensure proper stacking context */
   }
 
   /* Add specific styling for the first message to ensure it's properly positioned */
   .chat-container .message:first-child {
-    margin-top: 20px;
+    margin-top: 40px; /* Increased margin for the first message */
+    position: relative; /* Ensure proper stacking */
+    z-index: 5; /* Lower than header but above other content */
   }
 
   /* Improve mobile selector positioning and size */
@@ -715,12 +719,12 @@ h6 {
   .main-content {
     margin-left: 0;
     width: 100%;
+    position: relative; /* Ensure proper stacking */
   }
 
   .header {
     left: 0;
     width: 100%;
-    position: fixed;
     top: 0;
     z-index: 40;
   }
@@ -782,6 +786,7 @@ h6 {
     width: 100%;
     padding: 0.5rem;
     min-height: calc(100vh - 200px); /* Ensure there's enough space for content on mobile */
+    padding-top: 20px; /* Add padding to the top of the container */
   }
 
   .message {
@@ -814,6 +819,29 @@ h6 {
   /* In the mobile media query, add specific styling for the first message */
   .message.first-message {
     margin-top: 30px; /* Add extra space for the first message on mobile */
+  }
+
+  /* Safari-specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    /* CSS specific to iOS devices */
+    .header {
+      position: fixed; /* Keep fixed on iOS */
+    }
+
+    .chat-area {
+      padding-top: 200px; /* Even more padding for iOS Safari */
+    }
+
+    .chat-container {
+      padding-top: 30px; /* More padding for iOS Safari */
+    }
+
+    /* Add a spacer at the top of the chat container for iOS */
+    .chat-container::before {
+      content: "";
+      display: block;
+      height: 30px;
+    }
   }
 }
 
@@ -945,4 +973,17 @@ h6 {
 
 /* Custom fonts */
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Domine:wght@400;500;600;700&display=swap");
+
+/* Fix for Safari viewport height issues */
+/* This helps with the mobile Safari viewport height changes when the browser UI appears/disappears */
+@supports (-webkit-touch-callout: none) {
+  .app-container {
+    min-height: -webkit-fill-available;
+  }
+
+  html,
+  body {
+    height: -webkit-fill-available;
+  }
+}
 
