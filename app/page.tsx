@@ -557,6 +557,32 @@ export default function Home() {
     }
   }, [messages.length])
 
+  // Add this useEffect to fix the scrolling issue with the first message
+  useEffect(() => {
+    if (messagesContainerRef.current && messages.length <= 1) {
+      // For the first message, ensure it's positioned at the top
+      const chatArea = messagesContainerRef.current
+
+      // Force the scroll position to the top
+      chatArea.scrollTop = 0
+
+      // Prevent scrolling by handling the scroll event
+      const preventScroll = () => {
+        chatArea.scrollTop = 0
+      }
+
+      // Add event listener to force scroll position to top
+      chatArea.addEventListener("scroll", preventScroll)
+
+      // Clean up
+      return () => {
+        chatArea.removeEventListener("scroll", preventScroll)
+      }
+    }
+  }, [messages.length])
+
+  // Rest of your component...
+
   return (
     <div className="app-container">
       {/* Sidebar */}
@@ -673,8 +699,8 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Chat area */}
-        <div className={`chat-area ${messages.length <= 1 ? "single-message" : ""}`} ref={messagesContainerRef}>
+        {/* Chat area - remove the single-message class as we're handling it with JS */}
+        <div className="chat-area" ref={messagesContainerRef}>
           <div className="chat-container">
             {messages.map((message) => (
               <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
