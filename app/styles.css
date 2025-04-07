@@ -611,7 +611,7 @@ h6 {
 
   /* Fix chat alignment - reduce the space between search and first message */
   .chat-area {
-    padding-top: 90px; /* Reduced from 120px to bring the first message closer to the navbar */
+    padding-top: 150px; /* Reduced from 120px to bring the first message closer to the navbar */
     background-color: #f8f3ec; /* Ensure the background color is correct */
   }
 
