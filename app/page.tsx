@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
-import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, Menu, Search, Send, X, Copy, Check } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useScrollToBottom } from "@/hooks/useScrollToBottom"
 
@@ -31,6 +31,13 @@ export default function Home() {
     "What advice would you give me?",
     "Tell me about your spiritual journey",
   ])
+
+  // States for copy functionality
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null)
+
+  // States for suggestion scrolling
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
 
   // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
@@ -84,6 +91,12 @@ export default function Home() {
       const data = await response.json()
       if (data.suggestions && Array.isArray(data.suggestions)) {
         setSuggestions(data.suggestions)
+
+        // Reset scroll position and update scroll buttons state
+        if (suggestionsRef.current) {
+          suggestionsRef.current.scrollLeft = 0
+          updateScrollButtonsState()
+        }
       }
     } catch (error) {
       console.error("Error fetching suggestions:", error)
@@ -393,7 +406,36 @@ export default function Home() {
     }, 300)
   }, [selectedSaint, setMessages])
 
-  // Scroll suggestions
+  // Function to check if we can scroll left or right
+  const updateScrollButtonsState = () => {
+    if (!suggestionsRef.current) return
+
+    const { scrollLeft, scrollWidth, clientWidth } = suggestionsRef.current
+
+    // Can scroll left if we're not at the beginning
+    setCanScrollLeft(scrollLeft > 0)
+
+    // Can scroll right if we haven't reached the end
+    // Add a small buffer (5px) to account for rounding errors
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5)
+  }
+
+  // Add event listener to update scroll buttons state when scrolling
+  useEffect(() => {
+    const suggestionsElement = suggestionsRef.current
+    if (suggestionsElement) {
+      suggestionsElement.addEventListener("scroll", updateScrollButtonsState)
+
+      // Initial check
+      updateScrollButtonsState()
+
+      return () => {
+        suggestionsElement.removeEventListener("scroll", updateScrollButtonsState)
+      }
+    }
+  }, [suggestions])
+
+  // Scroll suggestions with button state check
   const scrollSuggestions = (direction: "left" | "right") => {
     if (suggestionsRef.current) {
       const scrollAmount = 200
@@ -402,7 +444,28 @@ export default function Home() {
       } else {
         suggestionsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" })
       }
+
+      // Update button states after scrolling
+      setTimeout(updateScrollButtonsState, 300)
     }
+  }
+
+  // Function to copy message content
+  const copyMessageContent = (messageId: string, content: string) => {
+    navigator.clipboard.writeText(content).then(
+      () => {
+        // Set the copied message ID to show the check icon
+        setCopiedMessageId(messageId)
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+          setCopiedMessageId(null)
+        }, 2000)
+      },
+      (err) => {
+        console.error("Could not copy text: ", err)
+      },
+    )
   }
 
   // Fix the handleSaintSelect function to ensure it properly updates the state
@@ -589,6 +652,20 @@ export default function Home() {
 
                 <div className="message-content">
                   <p>{message.content}</p>
+
+                  {/* Add copy button for saint messages only */}
+                  {message.role === "assistant" && (
+                    <button
+                      className="copy-button"
+                      onClick={() => copyMessageContent(message.id, message.content)}
+                      aria-label="Copy message"
+                    >
+                      {copiedMessageId === message.id ? <Check size={16} /> : <Copy size={16} />}
+                      <span className={`copy-tooltip ${copiedMessageId === message.id ? "visible" : ""}`}>
+                        {copiedMessageId === message.id ? "Copied!" : "Copy"}
+                      </span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -610,11 +687,15 @@ export default function Home() {
               !isLoading &&
               !suggestionsLoading && (
                 <div className="suggestions-container">
-                  <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+                  <button
+                    className="scroll-button scroll-left"
+                    onClick={() => scrollSuggestions("left")}
+                    disabled={!canScrollLeft}
+                  >
                     <ChevronLeft size={16} />
                   </button>
 
-                  <div ref={suggestionsRef} className="suggestions hide-scrollbar">
+                  <div ref={suggestionsRef} className="suggestions hide-scrollbar" onScroll={updateScrollButtonsState}>
                     {suggestions.map((question, index) => (
                       <button
                         key={question}
@@ -627,7 +708,11 @@ export default function Home() {
                     ))}
                   </div>
 
-                  <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+                  <button
+                    className="scroll-button scroll-right"
+                    onClick={() => scrollSuggestions("right")}
+                    disabled={!canScrollRight}
+                  >
                     <ChevronRight size={16} />
                   </button>
                 </div>
