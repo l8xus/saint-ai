@@ -52,7 +52,7 @@ h6 {
   align-items: center;
   margin-bottom: 1.5rem;
   padding: 0rem 0;
-  height: 70px; /* Match the header height exactly */
+  height: 30px; /* Match the header height exactly */
 }
 
 .sidebar-title {
@@ -335,7 +335,7 @@ h6 {
 
 .message {
   display: flex;
-  margin-bottom: 1.rem;
+  margin-bottom: 30px;
   max-width: 80%;
   animation: fadeInMessage 0.4s ease-out forwards;
   position: relative; /* For copy button positioning */
