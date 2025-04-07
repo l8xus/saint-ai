@@ -279,14 +279,57 @@ h6 {
 
 /* Chat area */
 .chat-area {
-  padding-top: 90px; /* Reduced from 120px to bring the first message closer to the navbar */
-  background-color: #f8f3ec; /* Ensure the background color is correct */
+  background-color: #f8f3ec;
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem;
   padding-bottom: 100px; /* Space for input area */
   margin-top: 70px; /* Space for fixed header */
-  scroll-behavior: auto; /* Ensure smooth scrolling doesn't interfere */
+  position: fixed;
+  top: 70px; /* Match the header height */
+  bottom: 80px; /* Match the input area height */
+  left: 300px;
+  right: 0;
+  z-index: 10;
+}
+
+/* For mobile */
+@media (max-width: 768px) {
+  .chat-area {
+    left: 0;
+    top: 120px; /* Account for the mobile header + search */
+    padding-top: 20px;
+  }
+}
+
+/* Add this new class for when there's only one message */
+.chat-area.first-message-only {
+  overflow: hidden !important;
+  -webkit-overflow-scrolling: auto !important;
+}
+
+.chat-area.first-message-only .chat-container {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+}
+
+/* Make sure the first message is always visible */
+.chat-container .message:first-child {
+  margin-top: 0;
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .chat-area {
+    bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+
+  .input-area {
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  }
 }
 
 .chat-container {
