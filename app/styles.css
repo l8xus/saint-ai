@@ -345,7 +345,7 @@ h6 {
 
 /* Add this after the .message class definition */
 .message.first-message {
-  margin-top: 0px;
+  margin-top: 20px;
 }
 
 @keyframes fadeInMessage {
@@ -645,7 +645,7 @@ h6 {
 
   /* Add specific styling for the first message to ensure it's properly positioned */
   .chat-container .message:first-child {
-    margin-top: 0px; /* Increased margin for the first message */
+    margin-top: 40px; /* Increased margin for the first message */
     position: relative; /* Ensure proper stacking */
     z-index: 5; /* Lower than header but above other content */
   }
@@ -984,6 +984,27 @@ h6 {
   html,
   body {
     height: -webkit-fill-available;
+  }
+}
+
+/* Add this at the very end of the file, after all other CSS */
+/* Fix for Safari mobile viewport issues */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari specific CSS */
+  .chat-area {
+    padding-top: 170px; /* Extra padding only for iOS Safari */
+  }
+
+  /* Add a small invisible spacer only for iOS Safari */
+  .chat-container::before {
+    content: "";
+    display: block;
+    height: 20px;
+  }
+
+  /* Ensure the first message has enough space */
+  .message.first-message {
+    margin-top: 40px;
   }
 }
 
