@@ -50,12 +50,15 @@ h6 {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
+  padding: 1rem 0; /* Add padding to match the header height */
+  height: 70px; /* Match the header height */
 }
 
 .sidebar-title {
   font-size: 1.5rem;
   font-weight: bold;
   margin: 0;
+  font-family: "Cinzel", serif; /* Match the header font */
 }
 
 .close-button {
@@ -260,6 +263,9 @@ h6 {
   right: 0;
   z-index: 30;
   transition: left 0.3s ease;
+  height: 70px; /* Fixed height to match sidebar header */
+  display: flex;
+  align-items: center;
 }
 
 .header-content {
@@ -371,6 +377,7 @@ h6 {
   border: 1px solid #d0b557;
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
+  padding-right: 2.5rem; /* Add extra padding for the copy button */
   line-height: 1.4;
   font-family: "Domine", serif;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -404,6 +411,7 @@ h6 {
   opacity: 0;
   transition: opacity 0.2s ease, transform 0.2s ease;
   color: #2b2357;
+  z-index: 5; /* Ensure it's above the message content */
 }
 
 .message:hover .copy-button {
@@ -427,6 +435,8 @@ h6 {
   opacity: 0;
   transition: opacity 0.2s ease;
   pointer-events: none;
+  width: 60px; /* Fixed width */
+  text-align: center;
 }
 
 .copy-tooltip.visible {
