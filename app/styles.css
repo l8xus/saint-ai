@@ -340,6 +340,31 @@ h6 {
   flex-direction: column;
 }
 
+/* For mobile, position the first message higher when it's the only one */
+@media (max-width: 768px) {
+  .chat-area.first-message-only .chat-container {
+    top: 0;
+    padding-top: 30px; /* Reduced from previous value */
+  }
+
+  /* Adjust the mobile header spacing */
+  .chat-area {
+    top: 110px; /* Reduced from 120px */
+  }
+
+  /* Ensure the message is centered vertically when it's the only one */
+  .chat-area.first-message-only {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .chat-area.first-message-only .chat-container {
+    position: relative;
+    margin-top: -60px; /* Move the message up */
+  }
+}
+
 .message {
   display: flex;
   margin-bottom: 1.5rem;
@@ -657,7 +682,7 @@ h6 {
 
   /* Fix chat alignment - reduce the space between search and first message */
   .chat-area {
-    padding-top: 160px; /* Reduced from 120px to bring the first message closer to the navbar */
+    padding-top: 20px; /* Reduced from 160px to bring the first message closer to the navbar */
     background-color: #f8f3ec; /* Ensure the background color is correct */
   }
 
@@ -815,6 +840,11 @@ h6 {
         .chat-area {
           bottom: calc(140px + env(safe-area-inset-bottom));
         }
+
+        /* Position the first message higher on iOS */
+        .chat-area.first-message-only .chat-container {
+          margin-top: -100px; /* Move message up even more on iOS */
+        }
       }
     }
     /* Add extra padding for iOS devices */
@@ -837,7 +867,6 @@ h6 {
 
   /* Ensure first message has enough margin from the top */
   .chat-container .message:first-child {
-    margin-top: 20px;
     margin-top: 0;
   }
 }
