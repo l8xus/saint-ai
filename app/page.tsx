@@ -667,13 +667,8 @@ export default function Home() {
         {/* Chat area */}
         <div className="chat-area" ref={messagesContainerRef}>
           <div className="chat-container">
-            {/* Add a specific class to the first message to help with styling */}
-
-            {messages.map((message, index) => (
-              <div
-                key={message.id}
-                className={`message ${message.role === "user" ? "user" : ""} ${index === 0 ? "first-message" : ""}`}
-              >
+            {messages.map((message) => (
+              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
                 {message.role !== "user" && (
                   <div className="message-avatar">
                     <img
