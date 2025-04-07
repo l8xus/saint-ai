@@ -263,7 +263,7 @@ h6 {
   right: 0;
   z-index: 30;
   transition: left 0.3s ease;
-  height: 70px; /* Fixed height to match sidebar header */
+  height: 20px; /* Fixed height to match sidebar header */
   display: flex;
   align-items: center;
 }
