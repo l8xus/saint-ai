@@ -5,7 +5,6 @@ import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
 import { ChevronLeft, ChevronRight, Menu, Search, Send, X, Copy, Check } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useScrollToBottom } from "@/hooks/useScrollToBottom"
 
 export default function Home() {
   const router = useRouter()
@@ -47,6 +46,10 @@ export default function Home() {
   const desktopSearchRef = useRef<HTMLDivElement>(null)
   const mobileSearchRef = useRef<HTMLDivElement>(null)
 
+  // Ref for chat container and messages end
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
   // Initialize with the saint from URL if available
   useEffect(() => {
     if (saintParam) {
@@ -69,6 +72,13 @@ export default function Home() {
 
   // Add a new state to track when suggestions are loading
   const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+
+  // Custom scroll to bottom function
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior, block: "start" })
+    }
+  }
 
   // Update the fetchSuggestions function to set loading state
   const fetchSuggestions = async (content: string) => {
@@ -132,11 +142,17 @@ export default function Home() {
       setSuggestions([])
       // Fetch suggestions based on the assistant's response
       fetchSuggestions(message.content)
+      // Scroll to bottom after a short delay to ensure the message is rendered
+      setTimeout(() => scrollToBottom(), 100)
     },
   })
 
-  // Use the scroll to bottom hook
-  const [messagesContainerRef, messagesEndRef] = useScrollToBottom<HTMLDivElement>()
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      scrollToBottom("auto")
+    }
+  }, [messages])
 
   // List of all saints with their alternative names for search
   const saintsWithAlternatives = [
@@ -677,7 +693,7 @@ export default function Home() {
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef} className="shrink-0 min-w-[24px] min-h-32"></div>
+            <div ref={messagesEndRef} className="shrink-0 min-w-[24px] min-h-8"></div>
           </div>
         </div>
 
