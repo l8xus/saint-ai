@@ -338,6 +338,54 @@ h6 {
   color: white;
   border: none;
 }
+/* Copy button styles */
+.copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #d0b557;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  color: #2b2357;
+  z-index: 5; /* Ensure it's above the message content */
+}
+
+.message:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  transform: scale(1.1);
+  background-color: white;
+}
+
+.copy-tooltip {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  background-color: #2b2357;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  width: 60px; /* Fixed width */
+  text-align: center;
+}
+
+.copy-tooltip.visible {
+  opacity: 1;
+}
 
 /* Input area */
 .input-area {
@@ -597,8 +645,17 @@ h6 {
 
   .message {
     max-width: 90%;
+
+      /* Adjust copy button for mobile */
+  .copy-button {
+    opacity: 1; /* Always visible on mobile */
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 24px;
+    height: 24px;
   }
 }
+
 
 /* Hide scrollbar but allow scrolling */
 .hide-scrollbar {
