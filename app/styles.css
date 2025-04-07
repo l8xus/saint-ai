@@ -647,7 +647,7 @@ h6 {
     max-width: 90%;
   }
 
-      /* Adjust copy button for mobile */
+  /* Adjust copy button for mobile */
   .copy-button {
     opacity: 1; /* Always visible on mobile */
     top: 0.25rem;
@@ -656,7 +656,6 @@ h6 {
     height: 24px;
   }
 }
-
 
 /* Hide scrollbar but allow scrolling */
 .hide-scrollbar {
@@ -686,85 +685,108 @@ h6 {
   background-color: rgba(118, 7, 13, 0.8);
 }
 
+/* Add this new CSS class after your existing .chat-area styles */
+
+/* Class to disable scrolling when there's only one message */
+.chat-area.single-message {
+  overflow: hidden !important;
+  position: relative !important;
+  height: auto !important;
+  min-height: unset !important;
+  max-height: fit-content !important;
+}
+
+.chat-area.single-message .chat-container {
+  min-height: unset !important;
+  height: auto !important;
+}
+
+/* Prevent any scrolling behavior */
+.chat-area.single-message::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
 /* Add this after your last style rule but before any @import statements */
 
 /* iOS height fix */
 @supports (-webkit-touch-callout: none) {
-  .chat-area {/* iOS Safari specific fixes */
-@supports (-webkit-touch-callout: none) {
-  /* Fix for the overall container height */
-  .app-container {
-    min-height: -webkit-fill-available;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-  }
-  
-  /* Fix for the main content area */
-  .main-content {
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-  }
-  
-  /* Fix for the chat area */
   .chat-area {
-    position: absolute;
-    top: 60px; /* Header height */
-    bottom: 140px; /* Input area height + padding */
-    left: 0;
-    right: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 20px;
-    margin-top: 0;
-  }
-  
-  /* Fix for the input area */
-  .input-area {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-    background-color: #f0e6da;
-    z-index: 30;
-  }
-}
+    /* iOS Safari specific fixes */
+    @supports (-webkit-touch-callout: none) {
+      /* Fix for the overall container height */
+      .app-container {
+        min-height: -webkit-fill-available;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+      }
 
-/* Fix for mobile Safari bottom bar */
-@media (max-width: 768px) {
-  @supports (-webkit-touch-callout: none) {
-    .input-area {
-      bottom: env(safe-area-inset-bottom);
+      /* Fix for the main content area */
+      .main-content {
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Fix for the chat area */
+      .chat-area {
+        position: absolute;
+        top: 60px; /* Header height */
+        bottom: 140px; /* Input area height + padding */
+        left: 0;
+        right: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 20px;
+        margin-top: 0;
+      }
+
+      /* Fix for the input area */
+      .input-area {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+        background-color: #f0e6da;
+        z-index: 30;
+      }
     }
-    
-    /* Add padding to account for the bottom bar */
-    .chat-area {
-      bottom: calc(140px + env(safe-area-inset-bottom));
+
+    /* Fix for mobile Safari bottom bar */
+    @media (max-width: 768px) {
+      @supports (-webkit-touch-callout: none) {
+        .input-area {
+          bottom: env(safe-area-inset-bottom);
+        }
+
+        /* Add padding to account for the bottom bar */
+        .chat-area {
+          bottom: calc(140px + env(safe-area-inset-bottom));
+        }
+      }
     }
-  }
-}
     /* Add extra padding for iOS devices */
     padding-bottom: 120px;
   }
-  
+
   .input-area {
     /* Ensure the input area is visible on iOS */
     padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
   }
-  
+
   /* Add an invisible spacer at the bottom of chat container */
   .chat-container::after {
-    content: '';
+    content: "";
     display: block;
     height: 50px; /* Adjust as needed */
   }
-  
+
   /* Ensure first message has enough margin from the top */
   .chat-container .message:first-child {
     margin-top: 20px;
