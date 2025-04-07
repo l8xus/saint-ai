@@ -543,40 +543,39 @@ export default function Home() {
     })
   }
 
-  // Add this near your other useEffect hooks
+  // Add this useEffect to handle the single message case
+  // Find the existing useEffect that checks messages.length and replace it with this:
+
   useEffect(() => {
     // Check if there's only one message (the welcome message)
     if (messagesContainerRef.current) {
       if (messages.length <= 1) {
-        // Disable scrolling when there's only one message
-        messagesContainerRef.current.style.overflowY = "hidden"
+        // Add a class to completely disable scrolling
+        messagesContainerRef.current.classList.add("first-message-only")
+
+        // Force scroll to top
+        messagesContainerRef.current.scrollTop = 0
+
+        // Disable all scroll events
+        const preventScroll = (e: Event) => {
+          e.preventDefault()
+          e.stopPropagation()
+          messagesContainerRef.current!.scrollTop = 0
+          return false
+        }
+
+        messagesContainerRef.current.addEventListener("scroll", preventScroll, { passive: false })
+        messagesContainerRef.current.addEventListener("touchmove", preventScroll, { passive: false })
+
+        return () => {
+          if (messagesContainerRef.current) {
+            messagesContainerRef.current.removeEventListener("scroll", preventScroll)
+            messagesContainerRef.current.removeEventListener("touchmove", preventScroll)
+          }
+        }
       } else {
         // Enable scrolling when there are multiple messages
-        messagesContainerRef.current.style.overflowY = "auto"
-      }
-    }
-  }, [messages.length])
-
-  // Add this useEffect to fix the scrolling issue with the first message
-  useEffect(() => {
-    if (messagesContainerRef.current && messages.length <= 1) {
-      // For the first message, ensure it's positioned at the top
-      const chatArea = messagesContainerRef.current
-
-      // Force the scroll position to the top
-      chatArea.scrollTop = 0
-
-      // Prevent scrolling by handling the scroll event
-      const preventScroll = () => {
-        chatArea.scrollTop = 0
-      }
-
-      // Add event listener to force scroll position to top
-      chatArea.addEventListener("scroll", preventScroll)
-
-      // Clean up
-      return () => {
-        chatArea.removeEventListener("scroll", preventScroll)
+        messagesContainerRef.current.classList.remove("first-message-only")
       }
     }
   }, [messages.length])
@@ -698,9 +697,9 @@ export default function Home() {
             </div>
           </div>
         </header>
-
         {/* Chat area - remove the single-message class as we're handling it with JS */}
-        <div className="chat-area" ref={messagesContainerRef}>
+        // Replace the chat-area div with this: // Find the chat-area div and replace it with:
+        <div className={`chat-area ${messages.length <= 1 ? "first-message-only" : ""}`} ref={messagesContainerRef}>
           <div className="chat-container">
             {messages.map((message) => (
               <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
@@ -736,7 +735,6 @@ export default function Home() {
             <div ref={messagesEndRef} className="shrink-0 min-w-[24px] min-h-48"></div>
           </div>
         </div>
-
         {/* Input area */}
         <div className="input-area">
           <div className="input-container">
