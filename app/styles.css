@@ -315,7 +315,7 @@ h6 {
 /* Chat area */
 /* Reduce the gap between the chat messages and suggestions */
 .chat-area {
-  padding-top: 90px; /* Increased from 30px to push content below navbar */
+  padding-top: 80px; /* Reduced from 90px to position content higher on desktop */
   background-color: #f8f3ec;
   flex: 1;
   overflow-y: auto;
@@ -342,10 +342,8 @@ h6 {
 }
 
 /* Add styling for the first-message class */
-
-/* Add this after the .message class definition */
 .message.first-message {
-  margin-top: 20px;
+  margin-top: 10px; /* Reduced from 20px for desktop */
 }
 
 @keyframes fadeInMessage {
@@ -637,13 +635,18 @@ h6 {
 
   /* Fix chat area to prevent first message from appearing under navbar */
   .chat-area {
-    padding-top: 150px; /* Increased from 130px to push content further down */
+    padding-top: 150px; /* Keep the increased padding for mobile */
     margin-top: 0;
   }
 
   /* Add specific styling for the first message to ensure it's properly positioned */
   .chat-container .message:first-child {
     margin-top: 20px;
+  }
+
+  /* Override the first-message class for mobile */
+  .message.first-message {
+    margin-top: 30px; /* Keep the larger margin for mobile */
   }
 
   /* Improve mobile selector positioning and size */
@@ -809,11 +812,6 @@ h6 {
   .suggestion-button {
     padding: 0.5rem 0.75rem;
     font-size: 0.9rem;
-  }
-
-  /* In the mobile media query, add specific styling for the first message */
-  .message.first-message {
-    margin-top: 30px; /* Add extra space for the first message on mobile */
   }
 }
 
