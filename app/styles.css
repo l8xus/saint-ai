@@ -609,7 +609,7 @@ h6 {
   .header {
     height: auto;
     min-height: 60px;
-    padding: 0.5rem;
+    padding: 0.75rem 1rem;
     flex-direction: column;
     align-items: flex-start;
   }
@@ -619,26 +619,54 @@ h6 {
   }
 
   .header-title {
-    font-size: 0.9rem;
-    max-width: calc(100% - 40px);
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0;
+    text-align: left;
+    line-height: 1.2;
+    white-space: normal; /* Allow text to wrap */
+    max-width: calc(100% - 50px); /* Give space for the menu button */
   }
 
   /* Fix chat area to prevent first message from appearing under navbar */
   .chat-area {
-    padding-top: 110px; /* Increased to ensure content is below navbar */
+    padding-top: 130px; /* Increased to ensure content is below navbar with search */
     margin-top: 0;
   }
 
-  /* Adjust mobile selector positioning */
+  /* Improve mobile selector positioning and size */
   .mobile-selector {
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
     width: 100%;
+    display: block;
   }
 
-  /* Make search input smaller on mobile */
+  /* Make search input larger and more prominent on mobile */
+  .mobile-search {
+    max-width: 100%;
+    margin: 0.75rem 0 0;
+    text-align: left;
+  }
+
   .mobile-search .search-input {
-    height: 32px;
-    font-size: 0.8rem;
+    height: 40px;
+    font-size: 1rem;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mobile-search .search-icon {
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .mobile-search-results {
+    position: absolute;
+    max-height: 200px;
+    z-index: 50;
+    width: 100%;
   }
 
   body.sidebar-open {
@@ -680,8 +708,6 @@ h6 {
   .header {
     left: 0;
     width: 100%;
-    padding: 0.75rem 1rem;
-    height: 60px; /* Adjusted height for mobile */
     position: fixed;
     top: 0;
     z-index: 40;
@@ -709,16 +735,6 @@ h6 {
     align-items: center;
   }
 
-  .header-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin: 0;
-    text-align: left;
-    line-height: 1.2;
-    white-space: normal; /* Allow text to wrap */
-    max-width: calc(100% - 50px); /* Give space for the menu button */
-  }
-
   .menu-button {
     display: flex;
     align-items: center;
@@ -726,12 +742,6 @@ h6 {
     padding: 0.5rem;
     margin: 0;
     color: #76070d;
-  }
-
-  .mobile-selector {
-    display: block;
-    margin-top: 0.5rem;
-    text-align: left; /* Align to the left */
   }
 
   .send-text {
@@ -748,8 +758,6 @@ h6 {
 
   /* Fix chat alignment - ensure proper spacing */
   .chat-area {
-    padding-top: 70px; /* Adjusted to match header height */
-    margin-top: 0; /* Reset margin-top for mobile */
     background-color: #f8f3ec; /* Ensure the background color is correct */
     padding-bottom: 80px; /* Space for input area on mobile */
     overflow-y: auto;
@@ -762,29 +770,6 @@ h6 {
     width: 100%;
     padding: 0.5rem;
     min-height: calc(100vh - 200px); /* Ensure there's enough space for content on mobile */
-  }
-
-  /* Mobile search styles */
-  .mobile-search {
-    max-width: 100%;
-    margin: 0.5rem 0 0;
-    text-align: left;
-  }
-
-  .mobile-search .search-input {
-    padding: 0.5rem 1rem 0.5rem 2rem;
-    font-size: 0.9rem;
-  }
-
-  .mobile-search .search-icon {
-    left: 0.5rem;
-  }
-
-  .mobile-search-results {
-    position: absolute;
-    max-height: 200px;
-    z-index: 50;
-    width: 100%;
   }
 
   .message {
