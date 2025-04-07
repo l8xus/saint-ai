@@ -52,7 +52,7 @@ h6 {
   align-items: center;
   margin-bottom: 1.5rem;
   padding: 1rem 0;
-  height: 18px; /* Match the header height */
+  height: 10px; /* Match the header height */
 }
 
 .sidebar-title {
