@@ -189,6 +189,9 @@ export default function Home() {
     })
     .map((saint) => saint.display)
 
+  // Add animation state for saint profile
+  const [profileAnimating, setProfileAnimating] = useState(false)
+
   // Update chat when saint changes
   useEffect(() => {
     const saintsData = {
@@ -358,29 +361,36 @@ export default function Home() {
       },
     }
 
-    // Update the saint info
-    setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
+    // Add animation for saint profile change
+    setProfileAnimating(true)
 
-    // Reset chat with new welcome message
-    setMessages([
-      {
-        id: "welcome-message",
-        role: "assistant",
-        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
-      },
-    ])
+    // Update the saint info after a short delay for animation
+    setTimeout(() => {
+      // Update the saint info
+      setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
+      setProfileAnimating(false)
 
-    // Reset suggestions to default
-    setSuggestions([
-      "What is your greatest teaching?",
-      "How did you find your calling?",
-      "What challenges did you face?",
-      "What advice would you give me?",
-      "Tell me about your spiritual journey",
-    ])
+      // Reset chat with new welcome message
+      setMessages([
+        {
+          id: "welcome-message",
+          role: "assistant",
+          content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
+        },
+      ])
 
-    // Clear search when saint is selected
-    setSearchQuery("")
+      // Reset suggestions to default
+      setSuggestions([
+        "What is your greatest teaching?",
+        "How did you find your calling?",
+        "What challenges did you face?",
+        "What advice would you give me?",
+        "Tell me about your spiritual journey",
+      ])
+
+      // Clear search when saint is selected
+      setSearchQuery("")
+    }, 300)
   }, [selectedSaint, setMessages])
 
   // Scroll suggestions
@@ -490,7 +500,7 @@ export default function Home() {
           )}
         </div>
 
-        <div className="saint-profile">
+        <div className={`saint-profile ${profileAnimating ? "saint-profile-enter" : ""}`}>
           <div className="saint-image-container">
             <img
               src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
@@ -589,28 +599,39 @@ export default function Home() {
         {/* Input area */}
         <div className="input-area">
           <div className="input-container">
-            {suggestions.length > 0 && !isLoading && !suggestionsLoading && (
-              <div className="suggestions-container">
-                <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
-                  <ChevronLeft size={16} />
-                </button>
-
-                <div ref={suggestionsRef} className="suggestions hide-scrollbar">
-                  {suggestions.map((question) => (
-                    <button
-                      key={question}
-                      className="suggestion-button"
-                      onClick={() => handleSuggestionClick(question)}
-                    >
-                      {question}
-                    </button>
-                  ))}
-                </div>
-
-                <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
-                  <ChevronRight size={16} />
-                </button>
+            {suggestionsLoading ? (
+              <div className="suggestions-loading">
+                <div className="loading-dot"></div>
+                <div className="loading-dot"></div>
+                <div className="loading-dot"></div>
               </div>
+            ) : (
+              suggestions.length > 0 &&
+              !isLoading &&
+              !suggestionsLoading && (
+                <div className="suggestions-container">
+                  <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+                    <ChevronLeft size={16} />
+                  </button>
+
+                  <div ref={suggestionsRef} className="suggestions hide-scrollbar">
+                    {suggestions.map((question, index) => (
+                      <button
+                        key={question}
+                        className="suggestion-button"
+                        onClick={() => handleSuggestionClick(question)}
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        {question}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              )
             )}
 
             <form onSubmit={handleSubmit} className="input-form">
