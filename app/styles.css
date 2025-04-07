@@ -686,3 +686,29 @@ h6 {
   background-color: rgba(118, 7, 13, 0.8);
 }
 
+/* Add this after your last style rule but before any @import statements */
+
+/* iOS height fix */
+@supports (-webkit-touch-callout: none) {
+  .chat-area {
+    /* Add extra padding for iOS devices */
+    padding-bottom: 120px;
+  }
+  
+  .input-area {
+    /* Ensure the input area is visible on iOS */
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  }
+  
+  /* Add an invisible spacer at the bottom of chat container */
+  .chat-container::after {
+    content: '';
+    display: block;
+    height: 50px; /* Adjust as needed */
+  }
+  
+  /* Ensure first message has enough margin from the top */
+  .chat-container .message:first-child {
+    margin-top: 20px;
+  }
+}
