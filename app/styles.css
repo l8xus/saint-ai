@@ -42,6 +42,7 @@ h6 {
   box-sizing: border-box;
   z-index: 40;
   overflow-y: auto;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .sidebar-header {
@@ -65,6 +66,11 @@ h6 {
   cursor: pointer;
   padding: 0.25rem;
   display: none; /* Hide by default on desktop */
+  transition: transform 0.2s ease;
+}
+
+.close-button:hover {
+  transform: scale(1.1);
 }
 
 .saint-selector {
@@ -113,11 +119,13 @@ h6 {
   font-family: "Domine", serif;
   color: #2b2357;
   font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search-input:focus {
   outline: none;
   border-color: #2b2357;
+  box-shadow: 0 0 0 2px rgba(43, 35, 87, 0.2);
 }
 
 .search-results {
@@ -133,6 +141,7 @@ h6 {
   border-radius: 0 0 0.25rem 0.25rem;
   z-index: 50; /* Increase z-index to ensure it's above other elements */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.2s ease-out forwards;
 }
 
 .search-result-item {
@@ -160,6 +169,7 @@ h6 {
   padding: 1.5rem;
   margin-top: 1.5rem;
   text-align: center;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .saint-image-container {
@@ -170,6 +180,11 @@ h6 {
   margin: 0 auto 1rem;
   overflow: hidden;
   position: relative;
+  transition: transform 0.3s ease;
+}
+
+.saint-image-container:hover {
+  transform: scale(1.05);
 }
 
 .saint-image {
@@ -177,6 +192,7 @@ h6 {
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  transition: opacity 0.3s ease;
 }
 
 .saint-name {
@@ -207,11 +223,12 @@ h6 {
   border-radius: 0.25rem;
   font-family: "Cinzel", serif;
   font-size: 0.875rem;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
 .read-more:hover {
   background-color: rgba(43, 35, 87, 0.8);
+  transform: translateY(-2px);
 }
 
 .separator {
@@ -229,6 +246,7 @@ h6 {
   flex-direction: column;
   min-height: 100vh;
   width: calc(100% - 300px);
+  transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
 /* Header */
@@ -241,6 +259,7 @@ h6 {
   left: 300px;
   right: 0;
   z-index: 30;
+  transition: left 0.3s ease;
 }
 
 .header-content {
@@ -262,6 +281,11 @@ h6 {
   color: #76070d;
   cursor: pointer;
   padding: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.menu-button:hover {
+  transform: scale(1.1);
 }
 
 .header-title {
@@ -269,6 +293,7 @@ h6 {
   font-weight: bold;
   margin: 0;
   text-align: left;
+  transition: opacity 0.3s ease;
 }
 
 .mobile-selector {
@@ -298,7 +323,18 @@ h6 {
   display: flex;
   margin-bottom: 1.5rem;
   max-width: 80%;
-  animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeInMessage 0.4s ease-out forwards;
+}
+
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .message.user {
@@ -315,6 +351,11 @@ h6 {
   flex-shrink: 0;
   margin-top: 0.25rem;
   margin-right: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.message:hover .message-avatar {
+  transform: scale(1.1);
 }
 
 .message-avatar img {
@@ -325,16 +366,27 @@ h6 {
 }
 
 .message-content {
+  position: relative; /* Add this for positioning the copy button */
   background-color: #f0e6da;
   border: 1px solid #d0b557;
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   line-height: 1.4;
   font-family: "Domine", serif;
-  position: relative; /* Add this for positioning the copy button */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Copy button styles */
+.message:hover .message-content {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message.user .message-content {
+  background-color: #2b2357;
+  color: white;
+  border: none;
+}
+
+/* Add these styles for the copy button */
 .copy-button {
   position: absolute;
   top: 0.5rem;
@@ -382,12 +434,6 @@ h6 {
   opacity: 1;
 }
 
-.message.user .message-content {
-  background-color: #2b2357;
-  color: white;
-  border: none;
-}
-
 /* Input area */
 .input-area {
   position: fixed;
@@ -398,6 +444,7 @@ h6 {
   border-top: 1px solid #d0b557;
   background-color: #f0e6da;
   z-index: 20;
+  transition: left 0.3s ease;
 }
 
 .input-container {
@@ -408,6 +455,7 @@ h6 {
 .suggestions-container {
   position: relative;
   margin-bottom: 1rem;
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
 .suggestions {
@@ -428,12 +476,26 @@ h6 {
   white-space: nowrap;
   font-family: "Domine", serif;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .suggestion-button:hover {
   background-color: white;
   color: #76070d;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .scroll-button {
@@ -451,10 +513,13 @@ h6 {
   justify-content: center;
   cursor: pointer;
   z-index: 5;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .scroll-button:hover {
   color: #76070d;
+  background-color: white;
+  transform: translateY(-50%) scale(1.1);
 }
 
 .scroll-left {
@@ -479,11 +544,13 @@ h6 {
   font-family: "Domine", serif;
   font-size: 1rem;
   color: #2b2357;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-field:focus {
   outline: none;
   border-color: #2b2357;
+  box-shadow: 0 0 0 2px rgba(43, 35, 87, 0.2);
 }
 
 .send-button {
@@ -497,11 +564,12 @@ h6 {
   cursor: pointer;
   display: flex;
   align-items: center;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.send-button:hover {
+.send-button:hover:not(:disabled) {
   background-color: rgba(118, 7, 13, 0.8);
+  transform: translateY(-2px);
 }
 
 .send-button:disabled {
@@ -513,6 +581,17 @@ h6 {
   margin-right: 0.5rem;
   display: flex;
   align-items: center;
+}
+
+/* Add styles for the disclaimer */
+.sidebar-disclaimer {
+  font-size: 0.75rem;
+  color: #76070d;
+  text-align: center;
+  padding: 1rem 0.5rem;
+  margin-top: 1rem;
+  border-top: 1px solid #d0b557;
+  font-style: italic;
 }
 
 /* Mobile styles */
@@ -534,10 +613,14 @@ h6 {
     left: 0;
     right: 0;
     bottom: 0;
+    transform: translateX(-100%);
+    opacity: 0;
   }
 
   .sidebar.open {
     display: block;
+    transform: translateX(0);
+    opacity: 1;
   }
 
   .close-button {
@@ -675,35 +758,130 @@ h6 {
   border-radius: 0.25rem;
   font-family: "Cinzel", serif;
   font-size: 1rem;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.2s;
   text-align: center;
   margin: 1rem 0;
 }
 
 .chat-with-saint-button:hover {
   background-color: rgba(118, 7, 13, 0.8);
+  transform: translateY(-2px);
 }
 
-/* Add styles for the disclaimer */
-.disclaimer {
-  background-color: rgba(255, 255, 255, 0.9);
-  border-top: 1px solid #d0b557;
-  padding: 0.75rem;
-  text-align: center;
-  font-size: 0.75rem;
-  color: #76070d;
-  position: fixed;
-  bottom: 0;
-  left: 300px;
-  right: 0;
-  z-index: 25;
+/* Animation for suggestions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* Update mobile styles for the disclaimer */
-@media (max-width: 768px) {
-  .disclaimer {
-    left: 0;
-    padding: 0.5rem;
-    font-size: 0.7rem;
+/* Animation for saint profile transition */
+.saint-profile-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.saint-profile-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.saint-profile-exit {
+  opacity: 1;
+}
+
+.saint-profile-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Loading animation for suggestions */
+.suggestions-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+.loading-dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  border-radius: 50%;
+  background-color: #d0b557;
+  animation: loadingDot 1.4s infinite ease-in-out both;
+}
+
+.loading-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes loadingDot {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Custom scrollbar for a more Renaissance feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0e6da;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d0b557;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #76070d;
+}
+
+/* Hide scrollbar for the suggestions slider while preserving functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom fonts */
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Domine:wght@400;500;600;700&display=swap");
+
+/* Fix for Safari/iOS scrolling issues */
+@supports (-webkit-touch-callout: none) {
+  .chat-area {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .message-content {
+    /* Ensure hardware acceleration on iOS */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  /* Always show copy button on iOS */
+  .copy-button {
+    opacity: 1;
   }
 }
