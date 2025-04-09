@@ -104,27 +104,6 @@ export default function Home() {
     }
   }
 
-  // Update the onFinish callback in useChat to clear suggestions first
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
-    initialMessages: [
-      {
-        id: "welcome-message",
-        role: "assistant",
-        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
-      },
-    ],
-    api: "/api/chat",
-    body: {
-      saintName: selectedSaint,
-    },
-    onFinish: (message) => {
-      // Clear suggestions and set loading to true
-      setSuggestions([])
-      // Fetch suggestions based on the assistant's response
-      fetchSuggestions(message.content)
-    },
-  })
-
   // Use the scroll to bottom hook
   const [messagesContainerRef, messagesEndRef] = useScrollToBottom<HTMLDivElement>()
 
@@ -194,6 +173,66 @@ export default function Home() {
 
   // Add animation state for saint profile
   const [profileAnimating, setProfileAnimating] = useState(false)
+
+  // Add this function after the handleSuggestionClick function
+  // Function to manually scroll to bottom
+  const scrollToBottomManually = () => {
+    if (messagesEndRef.current) {
+      // Use a more direct approach for mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+
+      if (isMobile) {
+        messagesEndRef.current.scrollIntoView({ behavior: "auto", block: "end" })
+
+        // Also try with the container
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
+        }
+      } else {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" })
+      }
+    }
+  }
+
+  // Update the useChat hook to include the onFinish callback that scrolls
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
+    initialMessages: [
+      {
+        id: "welcome-message",
+        role: "assistant",
+        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
+      },
+    ],
+    api: "/api/chat",
+    body: {
+      saintName: selectedSaint,
+    },
+    onFinish: (message) => {
+      // Clear suggestions and set loading to true
+      setSuggestions([])
+      // Fetch suggestions based on the assistant's response
+      fetchSuggestions(message.content)
+      // Manually scroll to bottom after message is complete
+      setTimeout(scrollToBottomManually, 100)
+    },
+  })
+
+  // Also update the append function to scroll after user messages
+  const handleSuggestionClick = (question: string) => {
+    append({
+      role: "user",
+      content: question,
+    })
+    // Scroll after user message is added
+    setTimeout(scrollToBottomManually, 100)
+  }
+
+  // Update the handleSubmit function to ensure scrolling
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    handleSubmit(e)
+    // Scroll after form submission
+    setTimeout(scrollToBottomManually, 100)
+  }
 
   // Update chat when saint changes
   useEffect(() => {
@@ -451,15 +490,6 @@ export default function Home() {
     e.currentTarget.src = "/placeholder.svg?height=200&width=200"
   }
 
-  // Function to handle suggestion click
-  const handleSuggestionClick = (question: string) => {
-    append({
-      role: "user",
-      content: question,
-    })
-  }
-
-  // Add this function before the return statement
   // Function to copy message content
   const copyMessageContent = (messageId: string, content: string) => {
     // Create a temporary, invisible element to avoid layout shifts
@@ -678,7 +708,7 @@ export default function Home() {
               )
             )}
 
-            <form onSubmit={handleSubmit} className="input-form">
+            <form onSubmit={handleFormSubmit} className="input-form">
               <input
                 type="text"
                 value={input}
