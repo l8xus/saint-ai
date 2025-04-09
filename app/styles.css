@@ -273,7 +273,7 @@ h6 {
   font-size: 1.5rem;
   font-weight: bold;
   margin: 0;
-  line-height: 1; /* Added line height for better spacing */
+  line-height: 1.2; /* Added line height for better spacing */
 }
 
 .mobile-selector {
