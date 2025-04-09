@@ -236,9 +236,9 @@ h6 {
 .header {
   background-color: #f0e6da;
   border-bottom: 1px solid #d0b557;
-  padding: 1.5rem 1.5rem; /* Increased padding from 1rem to 1.5rem */
+  padding: 2rem 1.5rem; /* Increased padding from 1rem to 1.5rem */
   position: fixed;
-  top: 1.5rem;
+  top: 1rem;
   left: 300px;
   right: 0;
   z-index: 30;
@@ -273,7 +273,7 @@ h6 {
   font-size: 1.5rem; 
   font-weight: bold;
   margin: 0;
-  line-height: 1.2; /* Added line height for better spacing */
+  line-height: 1.6; /* Added line height for better spacing */
 }
 
 .mobile-selector {
