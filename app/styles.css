@@ -247,7 +247,7 @@ h6 {
 .header-content {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
+  align-items: left;
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
@@ -257,7 +257,7 @@ h6 {
   position: absolute;
   left: 0;
   display: flex;
-  align-items: center;
+  align-items: left;
 }
 
 .menu-button {
@@ -273,7 +273,7 @@ h6 {
   font-size: 1.5rem;
   font-weight: bold;
   margin: 0;
-  line-height: 1.2; /* Added line height for better spacing */
+  line-height: 1.5; /* Added line height for better spacing */
 }
 
 .mobile-selector {
@@ -335,7 +335,7 @@ h6 {
   border: 1px solid #d0b557;
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
-  line-height: 1.4;
+  line-height: 2;
   font-family: "Domine", serif;
 }
 
