@@ -11,8 +11,30 @@ export function useScrollToBottom<T extends HTMLElement>(): [RefObject<T>, RefOb
     const end = endRef.current
 
     if (container && end) {
-      const observer = new MutationObserver(() => {
+      // Initial scroll to bottom
+      setTimeout(() => {
         end.scrollIntoView({ behavior: "smooth", block: "end" })
+      }, 100)
+
+      const observer = new MutationObserver(() => {
+        // For Safari/iOS, use a different approach
+        const isSafari =
+          /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPad|iPhone|iPod/.test(navigator.userAgent)
+
+        if (isSafari) {
+          // Use setTimeout to ensure the scroll happens after content is rendered
+          setTimeout(() => {
+            // Use scrollTo instead of scrollIntoView for better iOS compatibility
+            const scrollHeight = container.scrollHeight
+            container.scrollTo({
+              top: scrollHeight,
+              behavior: "smooth",
+            })
+          }, 50)
+        } else {
+          // For other browsers, use scrollIntoView
+          end.scrollIntoView({ behavior: "smooth", block: "end" })
+        }
       })
 
       observer.observe(container, {
@@ -28,4 +50,3 @@ export function useScrollToBottom<T extends HTMLElement>(): [RefObject<T>, RefOb
 
   return [containerRef, endRef]
 }
-
