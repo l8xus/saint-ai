@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
-import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, Menu, Search, Send, X, Copy, Check } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useScrollToBottom } from "@/hooks/useScrollToBottom"
 
@@ -62,6 +62,9 @@ export default function Home() {
 
   // Add a new state to track when suggestions are loading
   const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+
+  // Add this state for copy functionality after the other state declarations
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null)
 
   // Update the fetchSuggestions function to set loading state
   const fetchSuggestions = async (content: string) => {
@@ -446,6 +449,32 @@ export default function Home() {
     })
   }
 
+  // Function to copy message content
+  const copyMessageContent = (messageId: string, content: string) => {
+    // Create a temporary, invisible element to avoid layout shifts
+    const tempTextArea = document.createElement("textarea")
+    tempTextArea.value = content
+    tempTextArea.style.position = "absolute"
+    tempTextArea.style.left = "-9999px"
+    tempTextArea.style.top = "0"
+    document.body.appendChild(tempTextArea)
+
+    // Select and copy the text
+    tempTextArea.select()
+    document.execCommand("copy")
+
+    // Remove the temporary element
+    document.body.removeChild(tempTextArea)
+
+    // Set the copied message ID to show the check icon
+    setCopiedMessageId(messageId)
+
+    // Reset after 2 seconds
+    setTimeout(() => {
+      setCopiedMessageId(null)
+    }, 2000)
+  }
+
   return (
     <div className="app-container">
       {/* Sidebar */}
@@ -579,6 +608,19 @@ export default function Home() {
 
                 <div className="message-content">
                   <p>{message.content}</p>
+                  {/* Add copy button for saint messages only */}
+                  {message.role === "assistant" && (
+                    <button
+                      className="copy-button"
+                      onClick={() => copyMessageContent(message.id, message.content)}
+                      aria-label="Copy message"
+                    >
+                      {copiedMessageId === message.id ? <Check size={16} /> : <Copy size={16} />}
+                      <span className={`copy-tooltip ${copiedMessageId === message.id ? "visible" : ""}`}>
+                        {copiedMessageId === message.id ? "Copied!" : "Copy"}
+                      </span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -631,8 +673,8 @@ export default function Home() {
             </form>
           </div>
         </div>
+        <div className="disclaimer">This content is provided for educational and informational purposes only.</div>
       </div>
     </div>
   )
 }
-
