@@ -331,6 +331,55 @@ h6 {
   padding: 0.75rem 1rem;
   line-height: 1.4;
   font-family: "Domine", serif;
+  position: relative; /* Add this for positioning the copy button */
+}
+
+/* Copy button styles */
+.copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #d0b557;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  color: #2b2357;
+}
+
+.message:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  transform: scale(1.1);
+  background-color: white;
+}
+
+.copy-tooltip {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  background-color: #2b2357;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  width: 60px; /* Fixed width */
+  text-align: center;
+}
+
+.copy-tooltip.visible {
+  opacity: 1;
 }
 
 .message.user .message-content {
@@ -598,6 +647,13 @@ h6 {
   .message {
     max-width: 90%;
   }
+
+  /* Always show copy button on mobile */
+  .copy-button {
+    opacity: 1;
+    width: 24px;
+    height: 24px;
+  }
 }
 
 /* Hide scrollbar but allow scrolling */
@@ -628,3 +684,26 @@ h6 {
   background-color: rgba(118, 7, 13, 0.8);
 }
 
+/* Add styles for the disclaimer */
+.disclaimer {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid #d0b557;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #76070d;
+  position: fixed;
+  bottom: 0;
+  left: 300px;
+  right: 0;
+  z-index: 25;
+}
+
+/* Update mobile styles for the disclaimer */
+@media (max-width: 768px) {
+  .disclaimer {
+    left: 0;
+    padding: 0.5rem;
+    font-size: 0.7rem;
+  }
+}
