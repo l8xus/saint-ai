@@ -3,8 +3,9 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
-import { ChevronLeft, ChevronRight, Menu, Search, Send, X, Copy } from "lucide-react"
+import { ChevronLeft, ChevronRight, Menu, Search, Send, X } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useScrollToBottom } from "@/hooks/useScrollToBottom"
 
 export default function Home() {
   const router = useRouter()
@@ -21,14 +22,19 @@ export default function Home() {
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/assissi-xsrYL2QtPtrEYH4rNJYmlDIPqYzdw0.jpeg",
     articleLink: "https://www.thecatholicvoice.com/saints/saint-francis-of-assisi-biography-miracles-and-wisdom",
   })
-  const [showSuggestions, setShowSuggestions] = useState(true)
-  const suggestionsRef = useRef<HTMLDivElement>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const suggestionsRef = useRef<HTMLDivElement>(null)
+  const [suggestions, setSuggestions] = useState<string[]>([
+    "What is your greatest teaching?",
+    "How did you find your calling?",
+    "What challenges did you face?",
+    "What advice would you give me?",
+    "Tell me about your spiritual journey",
+  ])
 
   // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
   const [showSearchResults, setShowSearchResults] = useState(false)
-  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // Create separate refs for desktop and mobile search
   const desktopSearchRef = useRef<HTMLDivElement>(null)
@@ -54,39 +60,70 @@ export default function Home() {
     }
   }, [isMobileMenuOpen])
 
+  // Add a new state to track when suggestions are loading
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+
+  // Update the fetchSuggestions function to set loading state
+  const fetchSuggestions = async (content: string) => {
+    try {
+      // Set loading to true when starting to fetch
+      setSuggestionsLoading(true)
+
+      const response = await fetch("/api/suggestions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`)
+      }
+
+      const data = await response.json()
+      if (data.suggestions && Array.isArray(data.suggestions)) {
+        setSuggestions(data.suggestions)
+      }
+    } catch (error) {
+      console.error("Error fetching suggestions:", error)
+      // If there's an error, use default suggestions
+      setSuggestions([
+        "What is your greatest teaching?",
+        "How did you find your calling?",
+        "What challenges did you face?",
+        "What advice would you give me?",
+        "Tell me about your spiritual journey",
+      ])
+    } finally {
+      // Set loading to false when done
+      setSuggestionsLoading(false)
+    }
+  }
+
+  // Update the onFinish callback in useChat to clear suggestions first
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
     initialMessages: [
       {
         id: "welcome-message",
         role: "assistant",
-        content: `Peace be with you, my child. I am ${saintInfo.name}. How may I share my wisdom with you today?`,
+        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
       },
     ],
     api: "/api/chat",
     body: {
       saintName: selectedSaint,
     },
-    onFinish: () => {
-      // Check if there are user messages and hide suggestions if there are
-      const userMessages = messages.filter((msg) => msg.role === "user")
-      if (userMessages.length > 0) {
-        setShowSuggestions(false)
-      }
+    onFinish: (message) => {
+      // Clear suggestions and set loading to true
+      setSuggestions([])
+      // Fetch suggestions based on the assistant's response
+      fetchSuggestions(message.content)
     },
   })
 
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
-
-  // Check if there are user messages and update showSuggestions
-  useEffect(() => {
-    const userMessages = messages.filter((msg) => msg.role === "user")
-    setShowSuggestions(userMessages.length === 0)
-  }, [messages])
+  // Use the scroll to bottom hook
+  const [messagesContainerRef, messagesEndRef] = useScrollToBottom<HTMLDivElement>()
 
   // List of all saints with their alternative names for search
   const saintsWithAlternatives = [
@@ -321,6 +358,7 @@ export default function Home() {
       },
     }
 
+    // Update the saint info
     setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
 
     // Reset chat with new welcome message
@@ -332,8 +370,14 @@ export default function Home() {
       },
     ])
 
-    // Show suggestions when changing saints
-    setShowSuggestions(true)
+    // Reset suggestions to default
+    setSuggestions([
+      "What is your greatest teaching?",
+      "How did you find your calling?",
+      "What challenges did you face?",
+      "What advice would you give me?",
+      "Tell me about your spiritual journey",
+    ])
 
     // Clear search when saint is selected
     setSearchQuery("")
@@ -351,18 +395,7 @@ export default function Home() {
     }
   }
 
-  const suggestedQuestions = [
-    "What is your greatest teaching?",
-    "How did you find your calling?",
-    "What challenges did you face?",
-    "What advice would you give me?",
-    "Tell me about your spiritual journey",
-    "How did you pray?",
-    "What is your view on suffering?",
-  ]
-
   // Fix the handleSaintSelect function to ensure it properly updates the state
-
   const handleSaintSelect = (saint: string) => {
     // Set the selected saint
     setSelectedSaint(saint)
@@ -403,11 +436,6 @@ export default function Home() {
   // Function to handle image loading errors
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     e.currentTarget.src = "/placeholder.svg?height=200&width=200"
-  }
-
-  // Function to copy message text to clipboard
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
   }
 
   // Function to handle suggestion click
@@ -486,11 +514,11 @@ export default function Home() {
         <header className="header">
           <div className="header-content">
             <div className="header-left">
-              <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
-                <Menu size={24} />
-              </button>
+              <h2 className="header-title">Dialogue with {selectedSaint}</h2>
             </div>
-            <h2 className="header-title">Dialogue with {selectedSaint}</h2>
+            <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu size={24} />
+            </button>
           </div>
 
           <div className="mobile-selector">
@@ -509,7 +537,6 @@ export default function Home() {
               </div>
 
               {/* Fix the mobile search results to ensure they're properly clickable */}
-
               {showSearchResults && (
                 <div className="search-results mobile-search-results">
                   {filteredSaints.length > 0 ? (
@@ -536,7 +563,7 @@ export default function Home() {
         </header>
 
         {/* Chat area */}
-        <div className="chat-area">
+        <div className="chat-area" ref={messagesContainerRef}>
           <div className="chat-container">
             {messages.map((message) => (
               <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
@@ -552,33 +579,24 @@ export default function Home() {
 
                 <div className="message-content">
                   <p>{message.content}</p>
-                  {message.role !== "user" && (
-                    <button
-                      className="copy-btn"
-                      onClick={() => copyToClipboard(message.content)}
-                      aria-label="Copy message"
-                    >
-                      <Copy size={16} />
-                    </button>
-                  )}
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef}></div>
+            <div ref={messagesEndRef} className="shrink-0 min-w-[24px] min-h-32"></div>
           </div>
         </div>
 
         {/* Input area */}
         <div className="input-area">
           <div className="input-container">
-            {showSuggestions && (
+            {suggestions.length > 0 && !isLoading && !suggestionsLoading && (
               <div className="suggestions-container">
                 <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
                   <ChevronLeft size={16} />
                 </button>
 
                 <div ref={suggestionsRef} className="suggestions hide-scrollbar">
-                  {suggestedQuestions.map((question) => (
+                  {suggestions.map((question) => (
                     <button
                       key={question}
                       className="suggestion-button"
@@ -617,3 +635,4 @@ export default function Home() {
     </div>
   )
 }
+
