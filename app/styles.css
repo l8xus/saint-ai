@@ -236,7 +236,7 @@ h6 {
 .header {
   background-color: #f0e6da;
   border-bottom: 1px solid #d0b557;
-  padding: 1rem 1.5rem;
+  padding: 1.5rem 1.5rem; /* Increased padding from 1rem to 1.5rem */
   position: fixed;
   top: 0;
   left: 300px;
@@ -270,9 +270,10 @@ h6 {
 }
 
 .header-title {
-  font-size: 1.5rem;
+  font-size: 1.75rem; /* Increased from 1.5rem to 1.75rem */
   font-weight: bold;
   margin: 0;
+  line-height: 1.2; /* Added line height for better spacing */
 }
 
 .mobile-selector {
@@ -287,9 +288,9 @@ h6 {
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem;
-  background-color: #f8f3ec; /* Keep the chat area with #f8f3ec */
-  padding-bottom: 100px; /* Space for input area */
-  margin-top: 70px; /* Space for fixed header */
+  background-color: #f8f3ec;
+  padding-bottom: 100px;
+  margin-top: 85px; /* Increased from 70px to 85px to account for taller header */
 }
 
 .chat-container {
@@ -508,7 +509,7 @@ h6 {
   .header {
     left: 0;
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 1rem 1rem; /* Slightly smaller padding on mobile but still larger than before */
     background-color: #f0e6da; /* Ensure header has correct background on mobile */
   }
 
@@ -545,7 +546,7 @@ h6 {
   }
 
   .header-title {
-    font-size: 1.25rem;
+    font-size: 1.5rem; /* Slightly smaller on mobile but still larger than before */
     margin: 0 0 0 40px; /* Fixed margin to ensure consistent spacing from menu icon */
     max-width: calc(100% - 50px); /* Ensure the title doesn't overlap with the menu */
     white-space: nowrap;
@@ -582,7 +583,7 @@ h6 {
 
   /* Fix chat alignment - reduce the space between search and first message */
   .chat-area {
-    padding-top: 90px; /* Reduced from 120px to bring the first message closer to the navbar */
+    padding-top: 100px; /* Increased from 90px to 100px for mobile */
     background-color: #f8f3ec; /* Ensure chat area has correct background on mobile */
   }
 
