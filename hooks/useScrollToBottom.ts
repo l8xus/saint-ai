@@ -13,28 +13,11 @@ export function useScrollToBottom<T extends HTMLElement>(): [RefObject<T>, RefOb
     if (container && end) {
       // Initial scroll to bottom
       setTimeout(() => {
-        end.scrollIntoView({ behavior: "smooth", block: "end" })
+        scrollToBottom(container, end)
       }, 100)
 
       const observer = new MutationObserver(() => {
-        // For Safari/iOS, use a different approach
-        const isSafari =
-          /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPad|iPhone|iPod/.test(navigator.userAgent)
-
-        if (isSafari) {
-          // Use setTimeout to ensure the scroll happens after content is rendered
-          setTimeout(() => {
-            // Use scrollTo instead of scrollIntoView for better iOS compatibility
-            const scrollHeight = container.scrollHeight
-            container.scrollTo({
-              top: scrollHeight,
-              behavior: "smooth",
-            })
-          }, 50)
-        } else {
-          // For other browsers, use scrollIntoView
-          end.scrollIntoView({ behavior: "smooth", block: "end" })
-        }
+        scrollToBottom(container, end)
       })
 
       observer.observe(container, {
@@ -47,6 +30,29 @@ export function useScrollToBottom<T extends HTMLElement>(): [RefObject<T>, RefOb
       return () => observer.disconnect()
     }
   }, [])
+
+  // Helper function to handle scrolling with better mobile support
+  const scrollToBottom = (container: HTMLElement, end: HTMLElement) => {
+    // Check if it's a mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+
+    // For mobile devices, use a more aggressive approach
+    if (isMobile) {
+      // First try with requestAnimationFrame for smoother scrolling
+      requestAnimationFrame(() => {
+        // Try both methods for maximum compatibility
+        end.scrollIntoView({ behavior: "auto", block: "end" })
+
+        // Also use direct scrollTo as a fallback
+        setTimeout(() => {
+          container.scrollTop = container.scrollHeight
+        }, 10)
+      })
+    } else {
+      // For desktop, use the smoother scrolling
+      end.scrollIntoView({ behavior: "smooth", block: "end" })
+    }
+  }
 
   return [containerRef, endRef]
 }
