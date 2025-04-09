@@ -238,7 +238,7 @@ h6 {
   border-bottom: 1px solid #d0b557;
   padding: 1.5rem 1.5rem; /* Increased padding from 1rem to 1.5rem */
   position: fixed;
-  top: 0;
+  top: 1.5rem;
   left: 300px;
   right: 0;
   z-index: 30;
@@ -270,7 +270,7 @@ h6 {
 }
 
 .header-title {
-  font-size: 1.75rem; /* Increased from 1.5rem to 1.75rem */
+  font-size: 1.5rem; 
   font-weight: bold;
   margin: 0;
   line-height: 1.2; /* Added line height for better spacing */
