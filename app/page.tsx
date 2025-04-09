@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
-import { ChevronLeft, ChevronRight, Menu, Search, Send, X, Copy, Check } from "lucide-react"
+import { ChevronLeft, ChevronRight, Menu, Search, Send, X, Copy } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 export default function Home() {
@@ -21,34 +21,18 @@ export default function Home() {
     image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/assissi-xsrYL2QtPtrEYH4rNJYmlDIPqYzdw0.jpeg",
     articleLink: "https://www.thecatholicvoice.com/saints/saint-francis-of-assisi-biography-miracles-and-wisdom",
   })
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(true)
   const suggestionsRef = useRef<HTMLDivElement>(null)
-  const [suggestions, setSuggestions] = useState<string[]>([
-    "What is your greatest teaching?",
-    "How did you find your calling?",
-    "What challenges did you face?",
-    "What advice would you give me?",
-    "Tell me about your spiritual journey",
-  ])
-
-  // States for copy functionality
-  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null)
-
-  // States for suggestion scrolling
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(true)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Search functionality
   const [searchQuery, setSearchQuery] = useState("")
   const [showSearchResults, setShowSearchResults] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // Create separate refs for desktop and mobile search
   const desktopSearchRef = useRef<HTMLDivElement>(null)
   const mobileSearchRef = useRef<HTMLDivElement>(null)
-
-  // Ref for chat container and messages end
-  const messagesContainerRef = useRef<HTMLDivElement>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Initialize with the saint from URL if available
   useEffect(() => {
@@ -70,88 +54,38 @@ export default function Home() {
     }
   }, [isMobileMenuOpen])
 
-  // Add a new state to track when suggestions are loading
-  const [suggestionsLoading, setSuggestionsLoading] = useState(false)
-
-  // Custom scroll to bottom function
-  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior, block: "start" })
-    }
-  }
-
-  // Update the fetchSuggestions function to set loading state
-  const fetchSuggestions = async (content: string) => {
-    try {
-      // Set loading to true when starting to fetch
-      setSuggestionsLoading(true)
-
-      const response = await fetch("/api/suggestions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`)
-      }
-
-      const data = await response.json()
-      if (data.suggestions && Array.isArray(data.suggestions)) {
-        setSuggestions(data.suggestions)
-
-        // Reset scroll position and update scroll buttons state
-        if (suggestionsRef.current) {
-          suggestionsRef.current.scrollLeft = 0
-          updateScrollButtonsState()
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching suggestions:", error)
-      // If there's an error, use default suggestions
-      setSuggestions([
-        "What is your greatest teaching?",
-        "How did you find your calling?",
-        "What challenges did you face?",
-        "What advice would you give me?",
-        "Tell me about your spiritual journey",
-      ])
-    } finally {
-      // Set loading to false when done
-      setSuggestionsLoading(false)
-    }
-  }
-
-  // Update the onFinish callback in useChat to clear suggestions first
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append } = useChat({
     initialMessages: [
       {
         id: "welcome-message",
         role: "assistant",
-        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
+        content: `Peace be with you, my child. I am ${saintInfo.name}. How may I share my wisdom with you today?`,
       },
     ],
     api: "/api/chat",
     body: {
       saintName: selectedSaint,
     },
-    onFinish: (message) => {
-      // Clear suggestions and set loading to true
-      setSuggestions([])
-      // Fetch suggestions based on the assistant's response
-      fetchSuggestions(message.content)
-      // Scroll to bottom after a short delay to ensure the message is rendered
-      setTimeout(() => scrollToBottom(), 100)
+    onFinish: () => {
+      // Check if there are user messages and hide suggestions if there are
+      const userMessages = messages.filter((msg) => msg.role === "user")
+      if (userMessages.length > 0) {
+        setShowSuggestions(false)
+      }
     },
   })
 
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
   // Scroll to bottom when messages change
   useEffect(() => {
-    if (messages.length > 0) {
-      scrollToBottom("auto")
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  // Check if there are user messages and update showSuggestions
+  useEffect(() => {
+    const userMessages = messages.filter((msg) => msg.role === "user")
+    setShowSuggestions(userMessages.length === 0)
   }, [messages])
 
   // List of all saints with their alternative names for search
@@ -217,9 +151,6 @@ export default function Home() {
       return saint.alternatives.some((alt) => normalizeText(alt).includes(normalizedQuery))
     })
     .map((saint) => saint.display)
-
-  // Add animation state for saint profile
-  const [profileAnimating, setProfileAnimating] = useState(false)
 
   // Update chat when saint changes
   useEffect(() => {
@@ -390,68 +321,25 @@ export default function Home() {
       },
     }
 
-    // Add animation for saint profile change
-    setProfileAnimating(true)
+    setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
 
-    // Update the saint info after a short delay for animation
-    setTimeout(() => {
-      // Update the saint info
-      setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
-      setProfileAnimating(false)
+    // Reset chat with new welcome message
+    setMessages([
+      {
+        id: "welcome-message",
+        role: "assistant",
+        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
+      },
+    ])
 
-      // Reset chat with new welcome message
-      setMessages([
-        {
-          id: "welcome-message",
-          role: "assistant",
-          content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
-        },
-      ])
+    // Show suggestions when changing saints
+    setShowSuggestions(true)
 
-      // Reset suggestions to default
-      setSuggestions([
-        "What is your greatest teaching?",
-        "How did you find your calling?",
-        "What challenges did you face?",
-        "What advice would you give me?",
-        "Tell me about your spiritual journey",
-      ])
-
-      // Clear search when saint is selected
-      setSearchQuery("")
-    }, 300)
+    // Clear search when saint is selected
+    setSearchQuery("")
   }, [selectedSaint, setMessages])
 
-  // Function to check if we can scroll left or right
-  const updateScrollButtonsState = () => {
-    if (!suggestionsRef.current) return
-
-    const { scrollLeft, scrollWidth, clientWidth } = suggestionsRef.current
-
-    // Can scroll left if we're not at the beginning
-    setCanScrollLeft(scrollLeft > 0)
-
-    // Can scroll right if we haven't reached the end
-    // Add a small buffer (5px) to account for rounding errors
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5)
-  }
-
-  // Add event listener to update scroll buttons state when scrolling
-  useEffect(() => {
-    const suggestionsElement = suggestionsRef.current
-    if (suggestionsElement) {
-      suggestionsElement.addEventListener("scroll", updateScrollButtonsState)
-
-      // Initial check
-      updateScrollButtonsState()
-
-      return () => {
-        suggestionsElement.removeEventListener("scroll", updateScrollButtonsState)
-      }
-    }
-  }, [suggestions])
-
-  // Scroll suggestions with button state check
+  // Scroll suggestions
   const scrollSuggestions = (direction: "left" | "right") => {
     if (suggestionsRef.current) {
       const scrollAmount = 200
@@ -460,39 +348,21 @@ export default function Home() {
       } else {
         suggestionsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" })
       }
-
-      // Update button states after scrolling
-      setTimeout(updateScrollButtonsState, 300)
     }
   }
 
-  // Function to copy message content
-  const copyMessageContent = (messageId: string, content: string) => {
-    // Create a temporary, invisible element to avoid layout shifts
-    const tempTextArea = document.createElement("textarea")
-    tempTextArea.value = content
-    tempTextArea.style.position = "absolute"
-    tempTextArea.style.left = "-9999px"
-    tempTextArea.style.top = "0"
-    document.body.appendChild(tempTextArea)
-
-    // Select and copy the text
-    tempTextArea.select()
-    document.execCommand("copy")
-
-    // Remove the temporary element
-    document.body.removeChild(tempTextArea)
-
-    // Set the copied message ID to show the check icon
-    setCopiedMessageId(messageId)
-
-    // Reset after 2 seconds
-    setTimeout(() => {
-      setCopiedMessageId(null)
-    }, 2000)
-  }
+  const suggestedQuestions = [
+    "What is your greatest teaching?",
+    "How did you find your calling?",
+    "What challenges did you face?",
+    "What advice would you give me?",
+    "Tell me about your spiritual journey",
+    "How did you pray?",
+    "What is your view on suffering?",
+  ]
 
   // Fix the handleSaintSelect function to ensure it properly updates the state
+
   const handleSaintSelect = (saint: string) => {
     // Set the selected saint
     setSelectedSaint(saint)
@@ -535,6 +405,11 @@ export default function Home() {
     e.currentTarget.src = "/placeholder.svg?height=200&width=200"
   }
 
+  // Function to copy message text to clipboard
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+  }
+
   // Function to handle suggestion click
   const handleSuggestionClick = (question: string) => {
     append({
@@ -542,45 +417,6 @@ export default function Home() {
       content: question,
     })
   }
-
-  // Add this useEffect to handle the single message case
-  // Find the existing useEffect that checks messages.length and replace it with this:
-
-  useEffect(() => {
-    // Check if there's only one message (the welcome message)
-    if (messagesContainerRef.current) {
-      if (messages.length <= 1) {
-        // Add a class to completely disable scrolling
-        messagesContainerRef.current.classList.add("first-message-only")
-
-        // Force scroll to top
-        messagesContainerRef.current.scrollTop = 0
-
-        // Disable all scroll events
-        const preventScroll = (e: Event) => {
-          e.preventDefault()
-          e.stopPropagation()
-          messagesContainerRef.current!.scrollTop = 0
-          return false
-        }
-
-        messagesContainerRef.current.addEventListener("scroll", preventScroll, { passive: false })
-        messagesContainerRef.current.addEventListener("touchmove", preventScroll, { passive: false })
-
-        return () => {
-          if (messagesContainerRef.current) {
-            messagesContainerRef.current.removeEventListener("scroll", preventScroll)
-            messagesContainerRef.current.removeEventListener("touchmove", preventScroll)
-          }
-        }
-      } else {
-        // Enable scrolling when there are multiple messages
-        messagesContainerRef.current.classList.remove("first-message-only")
-      }
-    }
-  }, [messages.length])
-
-  // Rest of your component...
 
   return (
     <div className="app-container">
@@ -626,7 +462,7 @@ export default function Home() {
           )}
         </div>
 
-        <div className={`saint-profile ${profileAnimating ? "saint-profile-enter" : ""}`}>
+        <div className="saint-profile">
           <div className="saint-image-container">
             <img
               src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
@@ -650,11 +486,11 @@ export default function Home() {
         <header className="header">
           <div className="header-content">
             <div className="header-left">
-              <h2 className="header-title">Dialogue with {selectedSaint}</h2>
+              <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
+                <Menu size={24} />
+              </button>
             </div>
-            <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
-              <Menu size={24} />
-            </button>
+            <h2 className="header-title">Dialogue with {selectedSaint}</h2>
           </div>
 
           <div className="mobile-selector">
@@ -673,6 +509,7 @@ export default function Home() {
               </div>
 
               {/* Fix the mobile search results to ensure they're properly clickable */}
+
               {showSearchResults && (
                 <div className="search-results mobile-search-results">
                   {filteredSaints.length > 0 ? (
@@ -697,9 +534,9 @@ export default function Home() {
             </div>
           </div>
         </header>
-        {/* Chat area - remove the single-message class as we're handling it with JS */}
-        // Replace the chat-area div with this: // Find the chat-area div and replace it with:
-        <div className={`chat-area ${messages.length <= 1 ? "first-message-only" : ""}`} ref={messagesContainerRef}>
+
+        {/* Chat area */}
+        <div className="chat-area">
           <div className="chat-container">
             {messages.map((message) => (
               <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
@@ -715,70 +552,47 @@ export default function Home() {
 
                 <div className="message-content">
                   <p>{message.content}</p>
-
-                  {/* Add copy button for saint messages only */}
-                  {message.role === "assistant" && (
+                  {message.role !== "user" && (
                     <button
-                      className="copy-button"
-                      onClick={() => copyMessageContent(message.id, message.content)}
+                      className="copy-btn"
+                      onClick={() => copyToClipboard(message.content)}
                       aria-label="Copy message"
                     >
-                      {copiedMessageId === message.id ? <Check size={16} /> : <Copy size={16} />}
-                      <span className={`copy-tooltip ${copiedMessageId === message.id ? "visible" : ""}`}>
-                        {copiedMessageId === message.id ? "Copied!" : "Copy"}
-                      </span>
+                      <Copy size={16} />
                     </button>
                   )}
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef} className="shrink-0 min-w-[24px] min-h-48"></div>
+            <div ref={messagesEndRef}></div>
           </div>
         </div>
+
         {/* Input area */}
         <div className="input-area">
           <div className="input-container">
-            {suggestionsLoading ? (
-              <div className="suggestions-loading">
-                <div className="loading-dot"></div>
-                <div className="loading-dot"></div>
-                <div className="loading-dot"></div>
-              </div>
-            ) : (
-              suggestions.length > 0 &&
-              !isLoading &&
-              !suggestionsLoading && (
-                <div className="suggestions-container">
-                  <button
-                    className="scroll-button scroll-left"
-                    onClick={() => scrollSuggestions("left")}
-                    disabled={!canScrollLeft}
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
+            {showSuggestions && (
+              <div className="suggestions-container">
+                <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+                  <ChevronLeft size={16} />
+                </button>
 
-                  <div ref={suggestionsRef} className="suggestions hide-scrollbar" onScroll={updateScrollButtonsState}>
-                    {suggestions.map((question, index) => (
-                      <button
-                        key={question}
-                        className="suggestion-button"
-                        onClick={() => handleSuggestionClick(question)}
-                        style={{ animationDelay: `${index * 0.1}s` }}
-                      >
-                        {question}
-                      </button>
-                    ))}
-                  </div>
-
-                  <button
-                    className="scroll-button scroll-right"
-                    onClick={() => scrollSuggestions("right")}
-                    disabled={!canScrollRight}
-                  >
-                    <ChevronRight size={16} />
-                  </button>
+                <div ref={suggestionsRef} className="suggestions hide-scrollbar">
+                  {suggestedQuestions.map((question) => (
+                    <button
+                      key={question}
+                      className="suggestion-button"
+                      onClick={() => handleSuggestionClick(question)}
+                    >
+                      {question}
+                    </button>
+                  ))}
                 </div>
-              )
+
+                <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
             )}
 
             <form onSubmit={handleSubmit} className="input-form">
@@ -803,4 +617,3 @@ export default function Home() {
     </div>
   )
 }
-
