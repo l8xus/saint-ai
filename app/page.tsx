@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useChat } from "ai/react"
+import { ChevronLeft, ChevronRight, Menu, Search, Send, X, Copy, Check } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useScrollToBottom } from "@/hooks/useScrollToBottom"
 
@@ -345,107 +346,864 @@ export default function Home() {
           "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/saint_peter_1960.6.32%20%281%29.jpg-Z5DNPucHrg52Wehgg1dJds6VXMCcSa.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-peter-biography-miracles-and-wisdom",
       },
-
-      // Add the newly uploaded saints with their Blob URLs
-      "St. Louis IX": {
-        name: "St. Louis IX",
-        years: "1214-1270",
-        description: "King of France, crusader, and patron of the arts who was known for his justice and piety.",
+      "St. Paul": {
+        name: "St. Paul",
+        years: "5-67",
+        description: "Apostle to the Gentiles, missionary, theologian, and author of many New Testament epistles.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Louis%20IX.jpg-E6ghPgfDdwW2HuzCvT3UqhVW2nqmCq.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-louis-ix-biography-miracles-and-wisdom",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/saint%20paul.jpg-wfs4TRIu5ex9kGvkye6vkM4E7QWpn1.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-paul-biography-miracles-and-wisdom",
+      },
+      "St. John the Evangelist": {
+        name: "St. John the Evangelist",
+        years: "6-100",
+        description:
+          "One of the Twelve Apostles of Jesus, author of the Gospel of John, three Epistles, and the Book of Revelation.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20the%20Evangelist-lr94ux9DDVRyRmkwCkGnp2EoFKXnI9.webp",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-the-evangelist-biography-miracles-and-wisdom",
+      },
+      "St. Athanasius": {
+        name: "St. Athanasius",
+        years: "296-373",
+        description:
+          "Bishop of Alexandria, Doctor of the Church, and defender of the divinity of Christ against Arianism.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Athanasius-UbK6Ktil0tdlVwlPJXugIw4ILZaGs0.png",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-athanasius-biography-miracles-and-wisdom",
+      },
+      "St. Jerome": {
+        name: "St. Jerome",
+        years: "347-420",
+        description: "Doctor of the Church, theologian, and translator of the Bible into Latin (the Vulgate).",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Jerome.jpg-s2peOmZ743ayIs7GPPF9ram0adu9qE.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-jerome-biography-miracles-and-wisdom",
+      },
+      "St. Benedict of Nursia": {
+        name: "St. Benedict of Nursia",
+        years: "480-547",
+        description: "Founder of Western monasticism and author of the Rule of Saint Benedict.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Benedict%20of%20Nursia.jpg-JCRJgGs7H6W5SBji3BTKWcm70YifUr.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-benedict-of-nursia-biography-miracles-and-wisdom",
+      },
+      "St. Gregory the Great": {
+        name: "St. Gregory the Great",
+        years: "540-604",
+        description: "Pope, Doctor of the Church, and reformer who significantly influenced the medieval Church.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Gregory%20the%20Great.jpg-CX6ws3DvvL4RM7TfilfPhJHmN0Zl2u.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-gregory-the-great-biography-miracles-and-wisdom",
+      },
+      "St. Clare of Assisi": {
+        name: "St. Clare of Assisi",
+        years: "1194-1253",
+        description: "Founder of the Order of Poor Ladies (Poor Clares) and close associate of St. Francis of Assisi.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Clare%20of%20Assisi-5HSeYGy7w8pLChdnhualb0xcvTZGrD.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-clare-of-assisi-biography-miracles-and-wisdom",
+      },
+      "St. Dominic": {
+        name: "St. Dominic",
+        years: "1170-1221",
+        description: "Founder of the Dominican Order, preacher, and champion of orthodox Catholic belief.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Dominic.jpg-5gMF4a0a5ttx201eMbnXI0CBb1kYoN.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-dominic-biography-miracles-and-wisdom",
+      },
+      "St. Catherine of Siena": {
+        name: "St. Catherine of Siena",
+        years: "1347-1380",
+        description: "Dominican tertiary, mystic, Doctor of the Church, and counselor to popes and rulers.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Catherine%20of%20Siena.jpg-hO1wgdMaejMvfu9OaS2EAhXC4ucxjq.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-catherine-of-siena-biography-miracles-and-wisdom",
+      },
+      "St. John of the Cross": {
+        name: "St. John of the Cross",
+        years: "1542-1591",
+        description:
+          "Spanish Carmelite friar, mystic, Doctor of the Church, and co-founder of the Discalced Carmelites.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20of%20the%20Cross.jpg-GiNBBx5qSI7arRfDwWlPtHv933qgB5.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-of-the-cross-biography-miracles-and-wisdom",
+      },
+      "St. Ignatius of Loyola": {
+        name: "St. Ignatius of Loyola",
+        years: "1491-1556",
+        description: "Founder of the Society of Jesus (Jesuits) and author of the Spiritual Exercises.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Ignatius%20of%20Loyola-ECzeGZM2uLsmyOTx82P8ssemObWgZY.webp",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-ignatius-of-loyola-biography-miracles-and-wisdom",
+      },
+      "St. Francis Xavier": {
+        name: "St. Francis Xavier",
+        years: "1506-1552",
+        description: "Co-founder of the Society of Jesus and pioneering missionary to Asia.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Francis%20Xavier.jpg-rFrq6g2TLReuMHL0U06e9kjQD4trvf.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-francis-xavier-biography-miracles-and-wisdom",
+      },
+      "St. Joan of Arc": {
+        name: "St. Joan of Arc",
+        years: "1412-1431",
+        description:
+          "French military leader, mystic, and martyr who led the French army to victory during the Hundred Years' War.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Joan%20of%20Arc-lAVAUp8KjvuzTk7hmFyCE1uaOczlLz.webp",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-joan-of-arc-biography-miracles-and-wisdom",
+      },
+      "St. Mother Teresa of Calcutta": {
+        name: "St. Mother Teresa of Calcutta",
+        years: "1910-1997",
+        description:
+          "Founder of the Missionaries of Charity and Nobel Peace Prize recipient known for her work with the poor.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Mother%20Teresa%20of%20Calcutta.jpg-VvPTNunrwxVfQmh3RlgUBFuvM47F6N.jpeg",
+        articleLink:
+          "https://www.thecatholicvoice.com/saints/saint-mother-teresa-of-calcutta-biography-miracles-and-wisdom",
+      },
+
+      // New saints to add
+      "St. Mary Magdalene": {
+        name: "St. Mary Magdalene",
+        years: "1st century",
+        description:
+          "Follower of Jesus, witness to his crucifixion and resurrection, and the first to see the risen Christ.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/saint-mary-magdalene.jpg-frAqy2RXKvFblGSPhzMLDYOIX0iR0W.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-mary-magdalene-biography-miracles-and-wisdom",
+      },
+      "St. Joseph": {
+        name: "St. Joseph",
+        years: "1st century BC-1st century AD",
+        description: "Foster father of Jesus Christ, husband of the Virgin Mary, and patron of the Universal Church.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Joseph.jpg-HF3sNWt5xdYJGJt8y47vAHnt66iDh9.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-joseph-biography-miracles-and-wisdom",
+      },
+      "St. Anne": {
+        name: "St. Anne",
+        years: "1st century BC",
+        description: "Mother of the Virgin Mary and grandmother of Jesus Christ, known for her patience and devotion.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Anne-TpgB5z2kNNYbJd1JCBK7jnl2KfivbD.webp",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-anne-biography-miracles-and-wisdom",
+      },
+      "St. Elizabeth of Hungary": {
+        name: "St. Elizabeth of Hungary",
+        years: "1207-1231",
+        description:
+          "Hungarian princess known for her charitable works and devotion to the poor despite her royal status.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Elizabeth%20of%20Hungary.jpg-lRcpuD3qDlEFLSqSuUdXyGROPSiF6H.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-elizabeth-of-hungary-biography-miracles-and-wisdom",
+      },
+      "St. Rose of Lima": {
+        name: "St. Rose of Lima",
+        years: "1586-1617",
+        description:
+          "First canonized saint of the Americas, known for her extreme asceticism and mystical experiences.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Rose%20of%20Lima.jpg-WG3ebRXxam3qbLi98MeX4d9DVrV5lJ.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-rose-of-lima-biography-miracles-and-wisdom",
+      },
+      "St. John Vianney": {
+        name: "St. John Vianney",
+        years: "1786-1859",
+        description:
+          "French parish priest known as the Curé of Ars, renowned for his wisdom in the confessional and spiritual direction.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Vianney.jpg-f6Pw7ZS1ofbPqMD5vF0U8ELVMJyUAJ.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-vianney-biography-miracles-and-wisdom",
+      },
+      "St. Bernadette Soubirous": {
+        name: "St. Bernadette Soubirous",
+        years: "1844-1879",
+        description:
+          "French visionary who witnessed apparitions of the Virgin Mary at Lourdes, leading to a major pilgrimage site.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQanhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-bernadette-soubirous-biography-miracles-and-wisdom",
+      },
+      "St. Kateri Tekakwitha": {
+        name: "St. Kateri Tekakwitha",
+        years: "1656-1680",
+        description:
+          "First Native American saint, known as the 'Lily of the Mohawks,' who converted to Catholicism despite persecution.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Kateri%20Tekakwitha.jpg-qNSdu3lEqekZUu4g9JXqoTci2oFPlt.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-kateri-tekakwitha-biography-miracles-and-wisdom",
+      },
+      "St. Pio of Pietrelcina": {
+        name: "St. Pio of Pietrelcina",
+        years: "1887-1968",
+        description:
+          "Italian Franciscan friar known as Padre Pio, famous for bearing the stigmata and for his spiritual gifts.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Pio%20of%20Pietrelcina.jpg-TyTkDqmvx9gZlDnyeYshJjPwtNuEmt.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-pio-of-pietrelcina-biography-miracles-and-wisdom",
+      },
+      "St. Anthony of Padua": {
+        name: "St. Anthony of Padua",
+        years: "1195-1231",
+        description: "Portuguese Franciscan friar known as the patron saint of lost items and a renowned preacher.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Anthony%20of%20Padua.jpg-3ZuU3MS4BduJqrmkuOLn9mote9XaDZ.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-anthony-of-padua-biography-miracles-and-wisdom",
+      },
+      "St. Aloysius Gonzaga": {
+        name: "St. Aloysius Gonzaga",
+        years: "1568-1591",
+        description:
+          "Italian Jesuit who renounced his noble inheritance to serve the sick and died young caring for plague victims.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Aloysius%20Gonzaga.jpg-sCdL89oROKJu6dUuavBEIiZN17Sc9E.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-aloysius-gonzaga-biography-miracles-and-wisdom",
+      },
+      "St. John Bosco": {
+        name: "St. John Bosco",
+        years: "1815-1888",
+        description: "Italian priest who dedicated his life to the education and formation of disadvantaged youth.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Bosco-N04HmG47edhxa6DO9uCs4UOLhOVfBU.png",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-bosco-biography-miracles-and-wisdom",
+      },
+      "St. Juan Diego": {
+        name: "St. Juan Diego",
+        years: "1474-1548",
+        description: "Indigenous Mexican to whom the Virgin of Guadalupe appeared, leading to millions of conversions.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Juan%20Diego.jpg-ASfzp0zB6qnHEXC1QkUDwBRNW3mKpD.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-juan-diego-biography-miracles-and-wisdom",
+      },
+      "St. Patrick": {
+        name: "St. Patrick",
+        years: "385-461",
+        description: "Missionary bishop and patron saint of Ireland who spread Christianity throughout the country.",
+        image: "/st-patricks-day-celebration.png",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-patrick-biography-miracles-and-wisdom",
+      },
+      "St. Valentine": {
+        name: "St. Valentine",
+        years: "3rd century",
+        description: "Roman priest and martyr associated with courtly love and now the patron saint of lovers.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Valentine-ycx5wMNKm90kpjbKCK6VByMx3H44iZ.webp",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-valentine-biography-miracles-and-wisdom",
+      },
+      "St. Boniface": {
+        name: "St. Boniface",
+        years: "675-754",
+        description: "English Benedictine monk known as the 'Apostle of Germany' for his missionary work.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Boniface.jpg-dlGiZRRjaFAF1jYQDasx0iUVo9dxO7.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-boniface-biography-miracles-and-wisdom",
+      },
+      "St. Andrew": {
+        name: "St. Andrew",
+        years: "1st century",
+        description: "One of the Twelve Apostles, brother of Peter, and patron saint of Scotland.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Andrew.jpg-A2jnxo3FpLgLGecblXe2KizO2SUCYK.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-andrew-biography-miracles-and-wisdom",
+      },
+      "St. Luke": {
+        name: "St. Luke",
+        years: "1st century",
+        description: "Author of the Gospel of Luke and Acts of the Apostles, physician, and companion of Paul.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Luke.jpg-xxhsMcd454oEv7gbV8yNl1K5JejOpg.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-luke-biography-miracles-and-wisdom",
+      },
+      "St. Mark": {
+        name: "St. Mark",
+        years: "1st century",
+        description: "Author of the Gospel of Mark, companion of Peter, and founder of the Church in Alexandria.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Mark.jpg-eGiTkweQMtGWofEv3I2lRD4IvDhFMh.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-mark-biography-miracles-and-wisdom",
+      },
+      "St. Matthew": {
+        name: "St. Matthew",
+        years: "1st century",
+        description: "Former tax collector who became an Apostle and author of the Gospel of Matthew.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Matthew-qHmlz5qudNWhoQdIhXkvfqEBAdkRdw.webp",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-matthew-biography-miracles-and-wisdom",
+      },
+      "St. Philip": {
+        name: "St. Philip",
+        years: "1st century",
+        description: "One of the Twelve Apostles who brought Nathanael to Jesus and preached in Greece and Phrygia.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Philip.jpg-uFXofoG55Gsjluh9zwCM0Ny0YYzJG1.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-philip-biography-miracles-and-wisdom",
+      },
+      "St. James the Greater": {
+        name: "St. James the Greater",
+        years: "1st century",
+        description: "One of the Twelve Apostles, son of Zebedee, and the first apostle to be martyred.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20James%20the%20Greater.jpg-gUumNeXIdZ3cFJg2SmVzOchGHHp1Td.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-james-the-greater-biography-miracles-and-wisdom",
+      },
+      "St. James the Lesser": {
+        name: "St. James the Lesser",
+        years: "1st century",
+        description: "One of the Twelve Apostles, son of Alphaeus, and author of the Epistle of James.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20James%20the%20Lesser-IrXQkPoUsLO96dYHUYMvTKsK3br6zE.webp",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-james-the-lesser-biography-miracles-and-wisdom",
+      },
+      "St. Bartholomew": {
+        name: "St. Bartholomew",
+        years: "1st century",
+        description: "One of the Twelve Apostles who preached in India and Armenia where he was martyred.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bartholomew.jpg-FOehFQ4MdWYsnUf0KIqk9AIKEVnAmE.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-bartholomew-biography-miracles-and-wisdom",
+      },
+      "St. Thomas the Apostle": {
+        name: "St. Thomas the Apostle",
+        years: "1st century",
+        description:
+          "One of the Twelve Apostles, known for his initial doubt in the resurrection and missionary work in India.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Thomas%20the%20Apostle.jpg-CRyqrBb1akAfx1FAcdJOj15onudis2.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-thomas-the-apostle-biography-miracles-and-wisdom",
+      },
+      "St. Jude Thaddaeus": {
+        name: "St. Jude Thaddaeus",
+        years: "1st century",
+        description: "One of the Twelve Apostles and patron saint of desperate cases and lost causes.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Jude%20Thaddaeus.jpg-DaFTLmP1lOTRxmfwBfuW11PrrPAWfr.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-jude-thaddaeus-biography-miracles-and-wisdom",
+      },
+      "St. Simon the Zealot": {
+        name: "St. Simon the Zealot",
+        years: "1st century",
+        description: "One of the Twelve Apostles who preached in Egypt and Persia.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Simon%20the%20Zealot.jpg-On6uKA97d397CqVOaQh32G6FjKCA9Z.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-simon-the-zealot-biography-miracles-and-wisdom",
+      },
+      "St. Barnabas": {
+        name: "St. Barnabas",
+        years: "1st century",
+        description: "Early Christian disciple and companion of Paul on his missionary journeys.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Barnabas-rxTO87IxsUhlQF8YSaHHzVW8yTc3Zx.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-barnabas-biography-miracles-and-wisdom",
+      },
+      "St. Timothy": {
+        name: "St. Timothy",
+        years: "17-97",
+        description: "Companion of Paul and recipient of two New Testament epistles, who became Bishop of Ephesus.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Timothy.jpg-MCJc8LbPaWni05SkLKCMUYPVoGoqjo.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-timothy-biography-miracles-and-wisdom",
+      },
+      "St. Titus": {
+        name: "St. Titus",
+        years: "1st century",
+        description: "Companion of Paul, recipient of a New Testament epistle, and Bishop of Crete.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Titus-xyRvCHldAYcZ9W79an5ceCDRLDTHWj.png",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-titus-biography-miracles-and-wisdom",
+      },
+      "St. Polycarp": {
+        name: "St. Polycarp",
+        years: "69-155",
+        description: "Bishop of Smyrna, disciple of John the Apostle, and early Church Father martyred for his faith.",
+        image: "/placeholder.svg?key=1jy2r",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-polycarp-biography-miracles-and-wisdom",
+      },
+      "St. Ignatius of Antioch": {
+        name: "St. Ignatius of Antioch",
+        years: "35-108",
+        description:
+          "Early Church Father and Bishop of Antioch who wrote influential epistles on his way to martyrdom in Rome.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Ignatius%20of%20Antioch.jpg-3XqBBGDk7Zy99g8FbGQoyS9V9fJfMS.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-ignatius-of-antioch-biography-miracles-and-wisdom",
+      },
+      "St. Justin Martyr": {
+        name: "St. Justin Martyr",
+        years: "100-165",
+        description: "Early Christian apologist who used philosophy to defend the faith before being martyred.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Justin%20Martyr.jpg-Bd2uQgWjDdPcEMiPMDZgZbmWeUr09q.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-justin-martyr-biography-miracles-and-wisdom",
+      },
+      "St. Clement of Rome": {
+        name: "St. Clement of Rome",
+        years: "35-99",
+        description: "Early Bishop of Rome and author of an important epistle to the Corinthians.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Clement%20of%20Rome-kTMX75Ru3fg01pziVpeT88hFUd21pd.gif",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-clement-of-rome-biography-miracles-and-wisdom",
+      },
+      "St. Ambrose": {
+        name: "St. Ambrose",
+        years: "340-397",
+        description:
+          "Bishop of Milan, Doctor of the Church, and influential figure in the conversion of St. Augustine.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Ambrose.jpg-QIp62bgCba85lipohRuA5w0nRt4pUv.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-ambrose-biography-miracles-and-wisdom",
+      },
+      "St. John Chrysostom": {
+        name: "St. John Chrysostom",
+        years: "347-407",
+        description: "Archbishop of Constantinople, Doctor of the Church, and renowned for his eloquent preaching.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Chrysostom.jpg-1K8PKtSJXe79JA67baglocR5OX08YN.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-chrysostom-biography-miracles-and-wisdom",
+      },
+      "St. Basil the Great": {
+        name: "St. Basil the Great",
+        years: "330-379",
+        description: "Bishop of Caesarea, Doctor of the Church, and founder of Eastern monasticism.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Basil%20the%20Great-ndEYEwNKTH4eNaXyGhmQYEw4FJ34o4.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-basil-the-great-biography-miracles-and-wisdom",
+      },
+      "St. Hilary of Poitiers": {
+        name: "St. Hilary of Poitiers",
+        years: "310-367",
+        description: "Bishop of Poitiers, Doctor of the Church, and defender of the Trinity against Arianism.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Hilary%20of%20Poitiers.jpg-sAlcE5LA6nOfdwWncoLnvSyUAS0qAE.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-hilary-of-poitiers-biography-miracles-and-wisdom",
+      },
+      "St. Leo the Great": {
+        name: "St. Leo the Great",
+        years: "400-461",
+        description: "Pope and Doctor of the Church who persuaded Attila the Hun to spare Rome.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Leo%20the%20Great.jpg-6fzsu9woTidUb8VC6IhYp8dmboQnCc.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-leo-the-great-biography-miracles-and-wisdom",
+      },
+      "St. Isidore of Seville": {
+        name: "St. Isidore of Seville",
+        years: "560-636",
+        description: "Archbishop of Seville, Doctor of the Church, and one of the most learned men of his time.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Isidore%20of%20Seville-ulMfd1GhMMTmj43yoDvDQFbWHRSAwP.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-isidore-of-seville-biography-miracles-and-wisdom",
       },
       "St. John Nepomucene": {
         name: "St. John Nepomucene",
         years: "1345-1393",
         description: "Priest and martyr who died rather than violate the seal of confession.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Nepomucene.jpg-GKrVgXr96FN95M4Jki1tbQQRuBHYu7.jpeg",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Nepomucene.jpg-fxXQZcWeKgrbb5LusPHBz3c1uPvj3F.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-john-nepomucene-biography-miracles-and-wisdom",
       },
-      "St. Stanislaus Kostka": {
-        name: "St. Stanislaus Kostka",
-        years: "1550-1568",
-        description: "Jesuit novice known for his holiness and devotion to the Eucharist despite his young age.",
+      "St. Louis IX": {
+        name: "St. Louis IX",
+        years: "1214-1270",
+        description: "King of France known for his piety, justice, and leadership during the Seventh Crusade.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Stanislaus%20Kostka.jpg-iPxpze6wXzkSWpRt0u7x4iRN6rSjHm.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-stanislaus-kostka-biography-miracles-and-wisdom",
-      },
-      "St. John Henry Newman": {
-        name: "St. John Henry Newman",
-        years: "1801-1890",
-        description: "Anglican priest who converted to Catholicism and became a cardinal and influential theologian.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Henry%20Newman.jpg-Cg11d6kD8bUDrgxMX53ejOfJVBUhos.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-henry-newman-biography-miracles-and-wisdom",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Louis%20IX.jpg-TcKfODt2faKes19Rmsv4OHBbzaHRfQ.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-louis-ix-biography-miracles-and-wisdom",
       },
       "St. Camillus de Lellis": {
         name: "St. Camillus de Lellis",
         years: "1550-1614",
-        description: "Former soldier who founded an order dedicated to caring for the sick and is patron of nurses.",
+        description: "Italian priest who founded an order dedicated to caring for the sick and is patron of nurses.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Camillus%20de%20Lellis.jpg-qY18tU0rFrs3wp2vqr9GfAvobXvcqa.jpeg",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Camillus%20de%20Lellis.jpg-zG19JTFAMMmx7r6ChGiJPPiaVR4FXU.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-camillus-de-lellis-biography-miracles-and-wisdom",
-      },
-      "St. John Eudes": {
-        name: "St. John Eudes",
-        years: "1601-1680",
-        description: "French missionary and founder who promoted devotion to the Sacred Hearts of Jesus and Mary.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Eudes-JsCRB4zlgPoshIfe1qSoqdw0eA9n6x.webp",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-eudes-biography-miracles-and-wisdom",
-      },
-      "St. Louis de Montfort": {
-        name: "St. Louis de Montfort",
-        years: "1673-1716",
-        description:
-          "French priest known for his devotion to the Blessed Virgin Mary and his influential Marian writings.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Louis%20de%20Montfort.jpg-sz8OAp1ziO7m9tih2XF5PPbU6HXXvO.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-louis-de-montfort-biography-miracles-and-wisdom",
       },
       "St. Maximilian Kolbe": {
         name: "St. Maximilian Kolbe",
         years: "1894-1941",
         description:
-          "Franciscan friar who volunteered to die in place of a stranger in the Auschwitz concentration camp.",
+          "Polish Franciscan friar who volunteered to die in place of a stranger in Auschwitz concentration camp.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Maximilian%20Kolbe.jpg-p6TkgdfD9qS9CgkP92zaz9xH6alWOx.jpeg",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Maximilian%20Kolbe.jpg-ZaeKquKYkX0CVp9d6BDV8lJm8nGHbt.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-maximilian-kolbe-biography-miracles-and-wisdom",
-      },
-      "St. Faustina Kowalska": {
-        name: "St. Faustina Kowalska",
-        years: "1905-1938",
-        description: "Polish nun who received visions of Jesus and promoted the Divine Mercy devotion.",
-        image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Faustina%20Kowalska.jpg-XXaH5SOgPnLg10uwYvo8VKaKaStQ5P.jpeg",
-        articleLink: "https://www.thecatholicvoice.com/saints/saint-faustina-kowalska-biography-miracles-and-wisdom",
       },
       "St. Alphonsus Liguori": {
         name: "St. Alphonsus Liguori",
         years: "1696-1787",
         description:
-          "Bishop, spiritual writer, composer, and founder of the Redemptorists who is a Doctor of the Church.",
+          "Italian bishop, Doctor of the Church, and founder of the Redemptorists known for his moral theology.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Alphonsus%20Liguori.jpg-FWq1MZHy2VtetWyWkqCqCFjNiCnZZc.jpeg",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Alphonsus%20Liguori.jpg-iWcUTZgqw6SFrdF8PImLB8xy54aJn9.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-alphonsus-liguori-biography-miracles-and-wisdom",
       },
-    }
-
-    // Update the saint info when the selected saint changes
-    if (saintsData[selectedSaint]) {
-      setSaintInfo(saintsData[selectedSaint])
-    }
-
-    // Reset the chat with a new welcome message
-    setMessages([
-      {
-        id: "welcome-message",
-        role: "assistant",
-        content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
+      "St. John Henry Newman": {
+        name: "St. John Henry Newman",
+        years: "1801-1890",
+        description: "English theologian, poet, and cardinal who converted from Anglicanism to Catholicism.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Henry%20Newman.jpg-fXFm7Mn8hgbJYtJw3NuFACzHZbliRi.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-henry-newman-biography-miracles-and-wisdom",
       },
-    ])
+      "St. Stanislaus Kostka": {
+        name: "St. Stanislaus Kostka",
+        years: "1550-1568",
+        description: "Polish novice of the Society of Jesus who persevered in his vocation despite family opposition.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Stanislaus%20Kostka.jpg-N3N4eeGku4fuErqlTv3YnQ4mogkrxZ.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-stanislaus-kostka-biography-miracles-and-wisdom",
+      },
+      "St. Louis de Montfort": {
+        name: "St. Louis de Montfort",
+        years: "1673-1716",
+        description: "French priest and Marian devotee known for his influence on Marian spirituality and devotion.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Louis%20de%20Montfort.jpg-K3AbuXjnbjeQiLMDH7V8cUDJEHSOXi.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-louis-de-montfort-biography-miracles-and-wisdom",
+      },
+      "St. John Eudes": {
+        name: "St. John Eudes",
+        years: "1601-1680",
+        description:
+          "French priest who founded the Congregation of Jesus and Mary and promoted devotion to the Sacred Hearts.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Eudes-Dydowq3DaXoaJjpC9rKAO3IvBeFwP1.webp",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-john-eudes-biography-miracles-and-wisdom",
+      },
+      "St. Faustina Kowalska": {
+        name: "St. Faustina Kowalska",
+        years: "1905-1938",
+        description: "Polish nun and mystic whose visions of Jesus inspired the Divine Mercy devotion.",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Faustina%20Kowalska.jpg-7jWXj79lzwesSmb2piSsm25DPxHuYd.jpeg",
+        articleLink: "https://www.thecatholicvoice.com/saints/saint-faustina-kowalska-biography-miracles-and-wisdom",
+      },
+    }
+
+    // Add animation for saint profile change
+    setProfileAnimating(true)
+
+    // Update the saint info after a short delay for animation
+    setTimeout(() => {
+      // Update the saint info
+      setSaintInfo(saintsData[selectedSaint as keyof typeof saintsData])
+      setProfileAnimating(false)
+
+      // Reset chat with new welcome message
+      setMessages([
+        {
+          id: "welcome-message",
+          role: "assistant",
+          content: `Peace be with you, my child. I am ${selectedSaint}. How may I share my wisdom with you today?`,
+        },
+      ])
+
+      // Reset suggestions to default
+      setSuggestions([
+        "What is your greatest teaching?",
+        "How did you find your calling?",
+        "What challenges did you face?",
+        "What advice would you give me?",
+        "Tell me about your spiritual journey",
+      ])
+
+      // Clear search when saint is selected
+      setSearchQuery("")
+    }, 300)
   }, [selectedSaint, setMessages])
 
-  // Rest of the component code...
+  // Scroll suggestions
+  const scrollSuggestions = (direction: "left" | "right") => {
+    if (suggestionsRef.current) {
+      const scrollAmount = 200
+      if (direction === "left") {
+        suggestionsRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" })
+      } else {
+        suggestionsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" })
+      }
+    }
+  }
+
+  // Fix the handleSaintSelect function to ensure it properly updates the state
+  const handleSaintSelect = (saint: string) => {
+    // Set the selected saint
+    setSelectedSaint(saint)
+    // Close the search results
+    setShowSearchResults(false)
+    // Close the mobile menu if it's open
+    setIsMobileMenuOpen(false)
+
+    // Update the URL with the selected saint
+    router.push(`/?saint=${encodeURIComponent(saint)}`, { scroll: false })
+  }
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+    setShowSearchResults(true)
+  }
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        desktopSearchRef.current &&
+        !desktopSearchRef.current.contains(event.target as Node) &&
+        mobileSearchRef.current &&
+        !mobileSearchRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchResults(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
+
+  // Function to handle image loading errors
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = "/placeholder.svg?height=200&width=200"
+  }
+
+  // Function to copy message content
+  const copyMessageContent = (messageId: string, content: string) => {
+    // Create a temporary, invisible element to avoid layout shifts
+    const tempTextArea = document.createElement("textarea")
+    tempTextArea.value = content
+    tempTextArea.style.position = "absolute"
+    tempTextArea.style.left = "-9999px"
+    tempTextArea.style.top = "0"
+    document.body.appendChild(tempTextArea)
+
+    // Select and copy the text
+    tempTextArea.select()
+    document.execCommand("copy")
+
+    // Remove the temporary element
+    document.body.removeChild(tempTextArea)
+
+    // Set the copied message ID to show the check icon
+    setCopiedMessageId(messageId)
+
+    // Reset after 2 seconds
+    setTimeout(() => {
+      setCopiedMessageId(null)
+    }, 2000)
+  }
+
+  return (
+    <div className="app-container">
+      {/* Sidebar */}
+      <div className={`sidebar ${isMobileMenuOpen ? "open" : ""}`}>
+        <div className="sidebar-header">
+          <h2 className="sidebar-title">Choose Your Saint</h2>
+          <button className="close-button" onClick={() => setIsMobileMenuOpen(false)}>
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Search input instead of dropdown */}
+        <div className="search-container" ref={desktopSearchRef}>
+          <div className="search-input-wrapper">
+            <Search size={18} className="search-icon" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search for a saint..."
+              className="search-input"
+              onFocus={() => setShowSearchResults(true)}
+            />
+          </div>
+
+          {showSearchResults && (
+            <div className="search-results">
+              {filteredSaints.length > 0 ? (
+                filteredSaints.map((saint) => (
+                  <div
+                    key={saint}
+                    className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
+                    onClick={() => handleSaintSelect(saint)}
+                  >
+                    {saint}
+                  </div>
+                ))
+              ) : (
+                <div className="search-no-results">No saints found</div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className={`saint-profile ${profileAnimating ? "saint-profile-enter" : ""}`}>
+          <div className="saint-image-container">
+            <img
+              src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
+              alt={saintInfo.name}
+              className="saint-image"
+              onError={handleImageError}
+            />
+          </div>
+          <h3 className="saint-name">{saintInfo.name}</h3>
+          <p className="saint-years">{saintInfo.years}</p>
+          <p className="saint-description">{saintInfo.description}</p>
+          <a href={saintInfo.articleLink} target="_blank" rel="noopener noreferrer" className="read-more">
+            Read More
+          </a>
+        </div>
+        <div className="sidebar-disclaimer">Content provided for educational and informational purposes only.</div>
+      </div>
+
+      {/* Main content */}
+      <div className="main-content">
+        {/* Header */}
+        <header className="header">
+          <div className="header-content">
+            <div className="header-left">
+              <h2 className="header-title">Dialogue with {selectedSaint}</h2>
+            </div>
+            <button className="menu-button" onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu size={24} />
+            </button>
+          </div>
+
+          <div className="mobile-selector">
+            {/* Mobile search input */}
+            <div className="search-container mobile-search" ref={mobileSearchRef}>
+              <div className="search-input-wrapper">
+                <Search size={16} className="search-icon" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search for a saint..."
+                  className="search-input"
+                  onFocus={() => setShowSearchResults(true)}
+                />
+              </div>
+
+              {/* Fix the mobile search results to ensure they're properly clickable */}
+              {showSearchResults && (
+                <div className="search-results mobile-search-results">
+                  {filteredSaints.length > 0 ? (
+                    filteredSaints.map((saint) => (
+                      <div
+                        key={saint}
+                        className={`search-result-item ${saint === selectedSaint ? "active" : ""}`}
+                        onClick={() => {
+                          handleSaintSelect(saint)
+                          // Force close the search results
+                          setShowSearchResults(false)
+                        }}
+                      >
+                        {saint}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="search-no-results">No saints found</div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Chat area */}
+        <div className="chat-area" ref={messagesContainerRef}>
+          <div className="chat-container">
+            {messages.map((message) => (
+              <div key={message.id} className={`message ${message.role === "user" ? "user" : ""}`}>
+                {message.role !== "user" && (
+                  <div className="message-avatar">
+                    <img
+                      src={saintInfo.image || "/placeholder.svg?height=200&width=200"}
+                      alt={selectedSaint}
+                      onError={handleImageError}
+                    />
+                  </div>
+                )}
+
+                <div className="message-content">
+                  <p>{message.content}</p>
+                  {/* Add copy button for saint messages only */}
+                  {message.role === "assistant" && (
+                    <button
+                      className="copy-button"
+                      onClick={() => copyMessageContent(message.id, message.content)}
+                      aria-label="Copy message"
+                    >
+                      {copiedMessageId === message.id ? <Check size={16} /> : <Copy size={16} />}
+                      <span className={`copy-tooltip ${copiedMessageId === message.id ? "visible" : ""}`}>
+                        {copiedMessageId === message.id ? "Copied!" : "Copy"}
+                      </span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} className="shrink-0 min-w-[24px] min-h-32"></div>
+          </div>
+        </div>
+
+        {/* Input area */}
+        <div className="input-area">
+          <div className="input-container">
+            {suggestionsLoading ? (
+              <div className="suggestions-loading">
+                <div className="loading-dot"></div>
+                <div className="loading-dot"></div>
+                <div className="loading-dot"></div>
+              </div>
+            ) : (
+              suggestions.length > 0 &&
+              !isLoading &&
+              !suggestionsLoading && (
+                <div className="suggestions-container">
+                  <button className="scroll-button scroll-left" onClick={() => scrollSuggestions("left")}>
+                    <ChevronLeft size={16} />
+                  </button>
+
+                  <div ref={suggestionsRef} className="suggestions hide-scrollbar">
+                    {suggestions.map((question, index) => (
+                      <button
+                        key={question}
+                        className="suggestion-button"
+                        onClick={() => handleSuggestionClick(question)}
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        {question}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button className="scroll-button scroll-right" onClick={() => scrollSuggestions("right")}>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              )
+            )}
+
+            <form onSubmit={handleFormSubmit} className="input-form">
+              <input
+                type="text"
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Ask for wisdom..."
+                className="input-field"
+                disabled={isLoading}
+              />
+              <button type="submit" disabled={isLoading || !input.trim()} className="send-button">
+                <span className="send-icon">
+                  <Send size={16} />
+                </span>
+                <span className="send-text">Send</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
