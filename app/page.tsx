@@ -524,7 +524,7 @@ export default function Home() {
         description:
           "French visionary who witnessed apparitions of the Virgin Mary at Lourdes, leading to a major pilgrimage site.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQanhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-bernadette-soubirous-biography-miracles-and-wisdom",
       },
       "St. Kateri Tekakwitha": {
@@ -637,28 +637,32 @@ export default function Home() {
         name: "St. Philip",
         years: "1st century",
         description: "One of the Twelve Apostles who brought Nathanael to Jesus and preached in Greece and Phrygia.",
-        image: "/images/saints/saint-philip.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Philip.jpg-uFXofoG55Gsjluh9zwCM0Ny0YYzJG1.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-philip-biography-miracles-and-wisdom",
       },
       "St. James the Greater": {
         name: "St. James the Greater",
         years: "1st century",
         description: "One of the Twelve Apostles, son of Zebedee, and the first apostle to be martyred.",
-        image: "/images/saints/saint-james-the-greater.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20James%20the%20Greater.jpg-gUumNeXIdZ3cFJg2SmVzOchGHHp1Td.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-james-the-greater-biography-miracles-and-wisdom",
       },
       "St. James the Lesser": {
         name: "St. James the Lesser",
         years: "1st century",
         description: "One of the Twelve Apostles, son of Alphaeus, and author of the Epistle of James.",
-        image: "/images/saints/saint-james-the-lesser.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20James%20the%20Lesser-IrXQkPoUsLO96dYHUYMvTKsK3br6zE.webp",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-james-the-lesser-biography-miracles-and-wisdom",
       },
       "St. Bartholomew": {
         name: "St. Bartholomew",
         years: "1st century",
         description: "One of the Twelve Apostles who preached in India and Armenia where he was martyred.",
-        image: "/images/saints/saint-bartholomew.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bartholomew.jpg-FOehFQ4MdWYsnUf0KIqk9AIKEVnAmE.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-bartholomew-biography-miracles-and-wisdom",
       },
       "St. Thomas the Apostle": {
@@ -666,42 +670,48 @@ export default function Home() {
         years: "1st century",
         description:
           "One of the Twelve Apostles, known for his initial doubt in the resurrection and missionary work in India.",
-        image: "/images/saints/saint-thomas-the-apostle.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Thomas%20the%20Apostle.jpg-CRyqrBb1akAfx1FAcdJOj15onudis2.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-thomas-the-apostle-biography-miracles-and-wisdom",
       },
       "St. Jude Thaddaeus": {
         name: "St. Jude Thaddaeus",
         years: "1st century",
         description: "One of the Twelve Apostles and patron saint of desperate cases and lost causes.",
-        image: "/images/saints/saint-jude-thaddaeus.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Jude%20Thaddaeus.jpg-DaFTLmP1lOTRxmfwBfuW11PrrPAWfr.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-jude-thaddaeus-biography-miracles-and-wisdom",
       },
       "St. Simon the Zealot": {
         name: "St. Simon the Zealot",
         years: "1st century",
         description: "One of the Twelve Apostles who preached in Egypt and Persia.",
-        image: "/images/saints/saint-simon-the-zealot.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Simon%20the%20Zealot.jpg-On6uKA97d397CqVOaQh32G6FjKCA9Z.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-simon-the-zealot-biography-miracles-and-wisdom",
       },
       "St. Barnabas": {
         name: "St. Barnabas",
         years: "1st century",
         description: "Early Christian disciple and companion of Paul on his missionary journeys.",
-        image: "/images/saints/saint-barnabas.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Barnabas-rxTO87IxsUhlQF8YSaHHzVW8yTc3Zx.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-barnabas-biography-miracles-and-wisdom",
       },
       "St. Timothy": {
         name: "St. Timothy",
         years: "17-97",
         description: "Companion of Paul and recipient of two New Testament epistles, who became Bishop of Ephesus.",
-        image: "/images/saints/saint-timothy.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Timothy.jpg-MCJc8LbPaWni05SkLKCMUYPVoGoqjo.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-timothy-biography-miracles-and-wisdom",
       },
       "St. Titus": {
         name: "St. Titus",
         years: "1st century",
         description: "Companion of Paul, recipient of a New Testament epistle, and Bishop of Crete.",
-        image: "/images/saints/saint-titus.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Titus-xyRvCHldAYcZ9W79an5ceCDRLDTHWj.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-titus-biography-miracles-and-wisdom",
       },
       "St. Polycarp": {
@@ -745,35 +755,35 @@ export default function Home() {
         name: "St. John Chrysostom",
         years: "347-407",
         description: "Archbishop of Constantinople, Doctor of the Church, and renowned for his eloquent preaching.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+John+Chrysostom",
+        image: "/St-John-Chrysostom-Icon.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-john-chrysostom-biography-miracles-and-wisdom",
       },
       "St. Basil the Great": {
         name: "St. Basil the Great",
         years: "330-379",
         description: "Bishop of Caesarea, Doctor of the Church, and founder of Eastern monasticism.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Basil+the+Great",
+        image: "/Saint Basil Teaching.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-basil-the-great-biography-miracles-and-wisdom",
       },
       "St. Hilary of Poitiers": {
         name: "St. Hilary of Poitiers",
         years: "310-367",
         description: "Bishop of Poitiers, Doctor of the Church, and defender of the Trinity against Arianism.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Hilary+of+Poitiers",
+        image: "/st-hilary-teaching.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-hilary-of-poitiers-biography-miracles-and-wisdom",
       },
       "St. Leo the Great": {
         name: "St. Leo the Great",
         years: "400-461",
         description: "Pope and Doctor of the Church who persuaded Attila the Hun to spare Rome.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Leo+the+Great",
+        image: "/Saint Leo the Great - Ecumenical Teacher.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-leo-the-great-biography-miracles-and-wisdom",
       },
       "St. Isidore of Seville": {
         name: "St. Isidore of Seville",
         years: "560-636",
         description: "Archbishop of Seville, Doctor of the Church, and one of the most learned men of his time.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Isidore+of+Seville",
+        image: "/Saint Isidore at His Desk.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-isidore-of-seville-biography-miracles-and-wisdom",
       },
       "St. John Nepomucene": {
