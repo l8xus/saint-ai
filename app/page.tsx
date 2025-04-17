@@ -524,7 +524,7 @@ export default function Home() {
         description:
           "French visionary who witnessed apparitions of the Virgin Mary at Lourdes, leading to a major pilgrimage site.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQanhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-bernadette-soubirous-biography-miracles-and-wisdom",
       },
       "St. Kateri Tekakwitha": {
@@ -637,28 +637,28 @@ export default function Home() {
         name: "St. Philip",
         years: "1st century",
         description: "One of the Twelve Apostles who brought Nathanael to Jesus and preached in Greece and Phrygia.",
-        image: "/Saint Philip the Apostle.png",
+        image: "/images/saints/saint-philip.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-philip-biography-miracles-and-wisdom",
       },
       "St. James the Greater": {
         name: "St. James the Greater",
         years: "1st century",
         description: "One of the Twelve Apostles, son of Zebedee, and the first apostle to be martyred.",
-        image: "/Saint James the Greater, Pilgrim Apostle.png",
+        image: "/images/saints/saint-james-the-greater.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-james-the-greater-biography-miracles-and-wisdom",
       },
       "St. James the Lesser": {
         name: "St. James the Lesser",
         years: "1st century",
         description: "One of the Twelve Apostles, son of Alphaeus, and author of the Epistle of James.",
-        image: "/Saint James the Lesser, Apostle.png",
+        image: "/images/saints/saint-james-the-lesser.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-james-the-lesser-biography-miracles-and-wisdom",
       },
       "St. Bartholomew": {
         name: "St. Bartholomew",
         years: "1st century",
         description: "One of the Twelve Apostles who preached in India and Armenia where he was martyred.",
-        image: "/Saint Bartholomew's Teaching.png",
+        image: "/images/saints/saint-bartholomew.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-bartholomew-biography-miracles-and-wisdom",
       },
       "St. Thomas the Apostle": {
@@ -666,49 +666,49 @@ export default function Home() {
         years: "1st century",
         description:
           "One of the Twelve Apostles, known for his initial doubt in the resurrection and missionary work in India.",
-        image: "/doubting-thomas.png",
+        image: "/images/saints/saint-thomas-the-apostle.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-thomas-the-apostle-biography-miracles-and-wisdom",
       },
       "St. Jude Thaddaeus": {
         name: "St. Jude Thaddaeus",
         years: "1st century",
         description: "One of the Twelve Apostles and patron saint of desperate cases and lost causes.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Jude+Thaddaeus",
+        image: "/images/saints/saint-jude-thaddaeus.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-jude-thaddaeus-biography-miracles-and-wisdom",
       },
       "St. Simon the Zealot": {
         name: "St. Simon the Zealot",
         years: "1st century",
         description: "One of the Twelve Apostles who preached in Egypt and Persia.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Simon+the+Zealot",
+        image: "/images/saints/saint-simon-the-zealot.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-simon-the-zealot-biography-miracles-and-wisdom",
       },
       "St. Barnabas": {
         name: "St. Barnabas",
         years: "1st century",
         description: "Early Christian disciple and companion of Paul on his missionary journeys.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Barnabas",
+        image: "/images/saints/saint-barnabas.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-barnabas-biography-miracles-and-wisdom",
       },
       "St. Timothy": {
         name: "St. Timothy",
         years: "17-97",
         description: "Companion of Paul and recipient of two New Testament epistles, who became Bishop of Ephesus.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Timothy",
+        image: "/images/saints/saint-timothy.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-timothy-biography-miracles-and-wisdom",
       },
       "St. Titus": {
         name: "St. Titus",
         years: "1st century",
         description: "Companion of Paul, recipient of a New Testament epistle, and Bishop of Crete.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Titus",
+        image: "/images/saints/saint-titus.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-titus-biography-miracles-and-wisdom",
       },
       "St. Polycarp": {
         name: "St. Polycarp",
         years: "69-155",
         description: "Bishop of Smyrna, disciple of John the Apostle, and early Church Father martyred for his faith.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Polycarp",
+        image: "/placeholder.svg?key=1jy2r",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-polycarp-biography-miracles-and-wisdom",
       },
       "St. Ignatius of Antioch": {
@@ -716,21 +716,21 @@ export default function Home() {
         years: "35-108",
         description:
           "Early Church Father and Bishop of Antioch who wrote influential epistles on his way to martyrdom in Rome.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Ignatius+of+Antioch",
+        image: "/Saint Ignatius Enthroned.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-ignatius-of-antioch-biography-miracles-and-wisdom",
       },
       "St. Justin Martyr": {
         name: "St. Justin Martyr",
         years: "100-165",
         description: "Early Christian apologist who used philosophy to defend the faith before being martyred.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Justin+Martyr",
+        image: "/SaintJustinMartyrTeaching.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-justin-martyr-biography-miracles-and-wisdom",
       },
       "St. Clement of Rome": {
         name: "St. Clement of Rome",
         years: "35-99",
         description: "Early Bishop of Rome and author of an important epistle to the Corinthians.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Clement+of+Rome",
+        image: "/Saint Clement Writing.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-clement-of-rome-biography-miracles-and-wisdom",
       },
       "St. Ambrose": {
@@ -738,7 +738,7 @@ export default function Home() {
         years: "340-397",
         description:
           "Bishop of Milan, Doctor of the Church, and influential figure in the conversion of St. Augustine.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Ambrose",
+        image: "/placeholder.svg?key=kosuv",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-ambrose-biography-miracles-and-wisdom",
       },
       "St. John Chrysostom": {
