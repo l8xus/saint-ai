@@ -524,7 +524,7 @@ export default function Home() {
         description:
           "French visionary who witnessed apparitions of the Virgin Mary at Lourdes, leading to a major pilgrimage site.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQanhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-bernadette-soubirous-biography-miracles-and-wisdom",
       },
       "St. Kateri Tekakwitha": {
@@ -558,21 +558,24 @@ export default function Home() {
         years: "1568-1591",
         description:
           "Italian Jesuit who renounced his noble inheritance to serve the sick and died young caring for plague victims.",
-        image: "/st-aloysius-gonzaga-prayer.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Aloysius%20Gonzaga.jpg-sCdL89oROKJu6dUuavBEIiZN17Sc9E.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-aloysius-gonzaga-biography-miracles-and-wisdom",
       },
       "St. John Bosco": {
         name: "St. John Bosco",
         years: "1815-1888",
         description: "Italian priest who dedicated his life to the education and formation of disadvantaged youth.",
-        image: "/placeholder.svg?key=xr9ie",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Bosco-N04HmG47edhxa6DO9uCs4UOLhOVfBU.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-john-bosco-biography-miracles-and-wisdom",
       },
       "St. Juan Diego": {
         name: "St. Juan Diego",
         years: "1474-1548",
         description: "Indigenous Mexican to whom the Virgin of Guadalupe appeared, leading to millions of conversions.",
-        image: "/humble-messenger.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Juan%20Diego.jpg-ASfzp0zB6qnHEXC1QkUDwBRNW3mKpD.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-juan-diego-biography-miracles-and-wisdom",
       },
       "St. Patrick": {
@@ -586,70 +589,76 @@ export default function Home() {
         name: "St. Valentine",
         years: "3rd century",
         description: "Roman priest and martyr associated with courtly love and now the patron saint of lovers.",
-        image: "/Saint Valentine's Blessing.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Valentine-ycx5wMNKm90kpjbKCK6VByMx3H44iZ.webp",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-valentine-biography-miracles-and-wisdom",
       },
       "St. Boniface": {
         name: "St. Boniface",
         years: "675-754",
         description: "English Benedictine monk known as the 'Apostle of Germany' for his missionary work.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Boniface",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Boniface.jpg-dlGiZRRjaFAF1jYQDasx0iUVo9dxO7.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-boniface-biography-miracles-and-wisdom",
       },
       "St. Andrew": {
         name: "St. Andrew",
         years: "1st century",
         description: "One of the Twelve Apostles, brother of Peter, and patron saint of Scotland.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Andrew",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Andrew.jpg-A2jnxo3FpLgLGecblXe2KizO2SUCYK.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-andrew-biography-miracles-and-wisdom",
       },
       "St. Luke": {
         name: "St. Luke",
         years: "1st century",
         description: "Author of the Gospel of Luke and Acts of the Apostles, physician, and companion of Paul.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Luke",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Luke.jpg-xxhsMcd454oEv7gbV8yNl1K5JejOpg.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-luke-biography-miracles-and-wisdom",
       },
       "St. Mark": {
         name: "St. Mark",
         years: "1st century",
         description: "Author of the Gospel of Mark, companion of Peter, and founder of the Church in Alexandria.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Mark",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Mark.jpg-eGiTkweQMtGWofEv3I2lRD4IvDhFMh.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-mark-biography-miracles-and-wisdom",
       },
       "St. Matthew": {
         name: "St. Matthew",
         years: "1st century",
         description: "Former tax collector who became an Apostle and author of the Gospel of Matthew.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Matthew",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Matthew-qHmlz5qudNWhoQdIhXkvfqEBAdkRdw.webp",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-matthew-biography-miracles-and-wisdom",
       },
       "St. Philip": {
         name: "St. Philip",
         years: "1st century",
         description: "One of the Twelve Apostles who brought Nathanael to Jesus and preached in Greece and Phrygia.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Philip",
+        image: "/Saint Philip the Apostle.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-philip-biography-miracles-and-wisdom",
       },
       "St. James the Greater": {
         name: "St. James the Greater",
         years: "1st century",
         description: "One of the Twelve Apostles, son of Zebedee, and the first apostle to be martyred.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+James+the+Greater",
+        image: "/Saint James the Greater, Pilgrim Apostle.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-james-the-greater-biography-miracles-and-wisdom",
       },
       "St. James the Lesser": {
         name: "St. James the Lesser",
         years: "1st century",
         description: "One of the Twelve Apostles, son of Alphaeus, and author of the Epistle of James.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+James+the+Lesser",
+        image: "/Saint James the Lesser, Apostle.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-james-the-lesser-biography-miracles-and-wisdom",
       },
       "St. Bartholomew": {
         name: "St. Bartholomew",
         years: "1st century",
         description: "One of the Twelve Apostles who preached in India and Armenia where he was martyred.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Bartholomew",
+        image: "/Saint Bartholomew's Teaching.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-bartholomew-biography-miracles-and-wisdom",
       },
       "St. Thomas the Apostle": {
@@ -657,7 +666,7 @@ export default function Home() {
         years: "1st century",
         description:
           "One of the Twelve Apostles, known for his initial doubt in the resurrection and missionary work in India.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Thomas+the+Apostle",
+        image: "/doubting-thomas.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-thomas-the-apostle-biography-miracles-and-wisdom",
       },
       "St. Jude Thaddaeus": {
