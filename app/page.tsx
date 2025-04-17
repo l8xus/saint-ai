@@ -524,7 +524,7 @@ export default function Home() {
         description:
           "French visionary who witnessed apparitions of the Virgin Mary at Lourdes, leading to a major pilgrimage site.",
         image:
-          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQanhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-bernadette-soubirous-biography-miracles-and-wisdom",
       },
       "St. Kateri Tekakwitha": {
@@ -726,21 +726,24 @@ export default function Home() {
         years: "35-108",
         description:
           "Early Church Father and Bishop of Antioch who wrote influential epistles on his way to martyrdom in Rome.",
-        image: "/Saint Ignatius Enthroned.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Ignatius%20of%20Antioch.jpg-3XqBBGDk7Zy99g8FbGQoyS9V9fJfMS.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-ignatius-of-antioch-biography-miracles-and-wisdom",
       },
       "St. Justin Martyr": {
         name: "St. Justin Martyr",
         years: "100-165",
         description: "Early Christian apologist who used philosophy to defend the faith before being martyred.",
-        image: "/SaintJustinMartyrTeaching.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Justin%20Martyr.jpg-Bd2uQgWjDdPcEMiPMDZgZbmWeUr09q.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-justin-martyr-biography-miracles-and-wisdom",
       },
       "St. Clement of Rome": {
         name: "St. Clement of Rome",
         years: "35-99",
         description: "Early Bishop of Rome and author of an important epistle to the Corinthians.",
-        image: "/Saint Clement Writing.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Clement%20of%20Rome-kTMX75Ru3fg01pziVpeT88hFUd21pd.gif",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-clement-of-rome-biography-miracles-and-wisdom",
       },
       "St. Ambrose": {
@@ -748,63 +751,69 @@ export default function Home() {
         years: "340-397",
         description:
           "Bishop of Milan, Doctor of the Church, and influential figure in the conversion of St. Augustine.",
-        image: "/placeholder.svg?key=kosuv",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Ambrose.jpg-QIp62bgCba85lipohRuA5w0nRt4pUv.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-ambrose-biography-miracles-and-wisdom",
       },
       "St. John Chrysostom": {
         name: "St. John Chrysostom",
         years: "347-407",
         description: "Archbishop of Constantinople, Doctor of the Church, and renowned for his eloquent preaching.",
-        image: "/St-John-Chrysostom-Icon.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Chrysostom.jpg-1K8PKtSJXe79JA67baglocR5OX08YN.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-john-chrysostom-biography-miracles-and-wisdom",
       },
       "St. Basil the Great": {
         name: "St. Basil the Great",
         years: "330-379",
         description: "Bishop of Caesarea, Doctor of the Church, and founder of Eastern monasticism.",
-        image: "/Saint Basil Teaching.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Basil%20the%20Great-ndEYEwNKTH4eNaXyGhmQYEw4FJ34o4.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-basil-the-great-biography-miracles-and-wisdom",
       },
       "St. Hilary of Poitiers": {
         name: "St. Hilary of Poitiers",
         years: "310-367",
         description: "Bishop of Poitiers, Doctor of the Church, and defender of the Trinity against Arianism.",
-        image: "/st-hilary-teaching.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Hilary%20of%20Poitiers.jpg-sAlcE5LA6nOfdwWncoLnvSyUAS0qAE.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-hilary-of-poitiers-biography-miracles-and-wisdom",
       },
       "St. Leo the Great": {
         name: "St. Leo the Great",
         years: "400-461",
         description: "Pope and Doctor of the Church who persuaded Attila the Hun to spare Rome.",
-        image: "/Saint Leo the Great - Ecumenical Teacher.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Leo%20the%20Great.jpg-6fzsu9woTidUb8VC6IhYp8dmboQnCc.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-leo-the-great-biography-miracles-and-wisdom",
       },
       "St. Isidore of Seville": {
         name: "St. Isidore of Seville",
         years: "560-636",
         description: "Archbishop of Seville, Doctor of the Church, and one of the most learned men of his time.",
-        image: "/Saint Isidore at His Desk.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Isidore%20of%20Seville-ulMfd1GhMMTmj43yoDvDQFbWHRSAwP.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-isidore-of-seville-biography-miracles-and-wisdom",
       },
       "St. John Nepomucene": {
         name: "St. John Nepomucene",
         years: "1345-1393",
         description: "Priest and martyr who died rather than violate the seal of confession.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+John+Nepomucene",
+        image: "/st-john-nepomucene-bridge.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-john-nepomucene-biography-miracles-and-wisdom",
       },
       "St. Louis IX": {
         name: "St. Louis IX",
         years: "1214-1270",
         description: "King of France known for his piety, justice, and leadership during the Seventh Crusade.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Louis+IX",
+        image: "/Saint Louis IX - Royal Devotion.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-louis-ix-biography-miracles-and-wisdom",
       },
       "St. Camillus de Lellis": {
         name: "St. Camillus de Lellis",
         years: "1550-1614",
         description: "Italian priest who founded an order dedicated to caring for the sick and is patron of nurses.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Camillus+de+Lellis",
+        image: "/Saint Camillus Attending the Sick.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-camillus-de-lellis-biography-miracles-and-wisdom",
       },
       "St. Maximilian Kolbe": {
@@ -812,7 +821,7 @@ export default function Home() {
         years: "1894-1941",
         description:
           "Polish Franciscan friar who volunteered to die in place of a stranger in Auschwitz concentration camp.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Maximilian+Kolbe",
+        image: "/Saint Maximilian Kolbe in Prayer.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-maximilian-kolbe-biography-miracles-and-wisdom",
       },
       "St. Alphonsus Liguori": {
@@ -820,7 +829,7 @@ export default function Home() {
         years: "1696-1787",
         description:
           "Italian bishop, Doctor of the Church, and founder of the Redemptorists known for his moral theology.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Alphonsus+Liguori",
+        image: "/Saint Alphonsus in Prayer.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-alphonsus-liguori-biography-miracles-and-wisdom",
       },
       "St. John Henry Newman": {
