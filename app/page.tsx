@@ -204,7 +204,10 @@ export default function Home() {
     { display: "St. Stanislaus Kostka", alternatives: ["saint stanislaus", "stanislaus kostka"] },
     { display: "St. Louis de Montfort", alternatives: ["saint louis de montfort", "louis de montfort"] },
     { display: "St. John Eudes", alternatives: ["saint john eudes", "john eudes"] },
-    { display: "St. Faustina Kowalska", alternatives: ["saint faustina", "faustina kowalska", "divine mercy"] },
+    {
+      display: "St. Faustina Kowalska",
+      alternatives: ["saint faustina kowalska", "faustina kowalska", "divine mercy"],
+    },
   ]
 
   // Helper function to normalize text for searching (remove accents, lowercase, etc.)
@@ -468,21 +471,24 @@ export default function Home() {
         years: "1st century",
         description:
           "Follower of Jesus, witness to his crucifixion and resurrection, and the first to see the risen Christ.",
-        image: "/woman-reading-scroll.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/saint-mary-magdalene.jpg-frAqy2RXKvFblGSPhzMLDYOIX0iR0W.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-mary-magdalene-biography-miracles-and-wisdom",
       },
       "St. Joseph": {
         name: "St. Joseph",
         years: "1st century BC-1st century AD",
         description: "Foster father of Jesus Christ, husband of the Virgin Mary, and patron of the Universal Church.",
-        image: "/Saint Joseph with Child.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Joseph.jpg-HF3sNWt5xdYJGJt8y47vAHnt66iDh9.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-joseph-biography-miracles-and-wisdom",
       },
       "St. Anne": {
         name: "St. Anne",
         years: "1st century BC",
         description: "Mother of the Virgin Mary and grandmother of Jesus Christ, known for her patience and devotion.",
-        image: "/placeholder.svg?key=rxmgn",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Anne-TpgB5z2kNNYbJd1JCBK7jnl2KfivbD.webp",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-anne-biography-miracles-and-wisdom",
       },
       "St. Elizabeth of Hungary": {
@@ -490,7 +496,8 @@ export default function Home() {
         years: "1207-1231",
         description:
           "Hungarian princess known for her charitable works and devotion to the poor despite her royal status.",
-        image: "/saint-elizabeth-charity.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Elizabeth%20of%20Hungary.jpg-lRcpuD3qDlEFLSqSuUdXyGROPSiF6H.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-elizabeth-of-hungary-biography-miracles-and-wisdom",
       },
       "St. Rose of Lima": {
@@ -498,7 +505,8 @@ export default function Home() {
         years: "1586-1617",
         description:
           "First canonized saint of the Americas, known for her extreme asceticism and mystical experiences.",
-        image: "/saint-rose-garden.png",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Rose%20of%20Lima.jpg-WG3ebRXxam3qbLi98MeX4d9DVrV5lJ.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-rose-of-lima-biography-miracles-and-wisdom",
       },
       "St. John Vianney": {
@@ -506,7 +514,8 @@ export default function Home() {
         years: "1786-1859",
         description:
           "French parish priest known as the Curé of Ars, renowned for his wisdom in the confessional and spiritual direction.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+John+Vianney",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20John%20Vianney.jpg-f6Pw7ZS1ofbPqMD5vF0U8ELVMJyUAJ.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-john-vianney-biography-miracles-and-wisdom",
       },
       "St. Bernadette Soubirous": {
@@ -514,7 +523,8 @@ export default function Home() {
         years: "1844-1879",
         description:
           "French visionary who witnessed apparitions of the Virgin Mary at Lourdes, leading to a major pilgrimage site.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Bernadette+Soubirous",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Bernadette%20Soubirous.jpg-sljJvWjF3yZ1Ocm0nOBKoNN5QD8vqQ.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-bernadette-soubirous-biography-miracles-and-wisdom",
       },
       "St. Kateri Tekakwitha": {
@@ -522,7 +532,8 @@ export default function Home() {
         years: "1656-1680",
         description:
           "First Native American saint, known as the 'Lily of the Mohawks,' who converted to Catholicism despite persecution.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Kateri+Tekakwitha",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Kateri%20Tekakwitha.jpg-qNSdu3lEqekZUu4g9JXqoTci2oFPlt.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-kateri-tekakwitha-biography-miracles-and-wisdom",
       },
       "St. Pio of Pietrelcina": {
@@ -530,14 +541,16 @@ export default function Home() {
         years: "1887-1968",
         description:
           "Italian Franciscan friar known as Padre Pio, famous for bearing the stigmata and for his spiritual gifts.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Pio+of+Pietrelcina",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Pio%20of%20Pietrelcina.jpg-TyTkDqmvx9gZlDnyeYshJjPwtNuEmt.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-pio-of-pietrelcina-biography-miracles-and-wisdom",
       },
       "St. Anthony of Padua": {
         name: "St. Anthony of Padua",
         years: "1195-1231",
         description: "Portuguese Franciscan friar known as the patron saint of lost items and a renowned preacher.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Anthony+of+Padua",
+        image:
+          "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Saint%20Anthony%20of%20Padua.jpg-3ZuU3MS4BduJqrmkuOLn9mote9XaDZ.jpeg",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-anthony-of-padua-biography-miracles-and-wisdom",
       },
       "St. Aloysius Gonzaga": {
@@ -545,35 +558,35 @@ export default function Home() {
         years: "1568-1591",
         description:
           "Italian Jesuit who renounced his noble inheritance to serve the sick and died young caring for plague victims.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Aloysius+Gonzaga",
+        image: "/st-aloysius-gonzaga-prayer.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-aloysius-gonzaga-biography-miracles-and-wisdom",
       },
       "St. John Bosco": {
         name: "St. John Bosco",
         years: "1815-1888",
         description: "Italian priest who dedicated his life to the education and formation of disadvantaged youth.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+John+Bosco",
+        image: "/placeholder.svg?key=xr9ie",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-john-bosco-biography-miracles-and-wisdom",
       },
       "St. Juan Diego": {
         name: "St. Juan Diego",
         years: "1474-1548",
         description: "Indigenous Mexican to whom the Virgin of Guadalupe appeared, leading to millions of conversions.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Juan+Diego",
+        image: "/humble-messenger.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-juan-diego-biography-miracles-and-wisdom",
       },
       "St. Patrick": {
         name: "St. Patrick",
         years: "385-461",
         description: "Missionary bishop and patron saint of Ireland who spread Christianity throughout the country.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Patrick",
+        image: "/st-patricks-day-celebration.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-patrick-biography-miracles-and-wisdom",
       },
       "St. Valentine": {
         name: "St. Valentine",
         years: "3rd century",
         description: "Roman priest and martyr associated with courtly love and now the patron saint of lovers.",
-        image: "/placeholder.svg?height=200&width=200&query=St.+Valentine",
+        image: "/Saint Valentine's Blessing.png",
         articleLink: "https://www.thecatholicvoice.com/saints/saint-valentine-biography-miracles-and-wisdom",
       },
       "St. Boniface": {
